@@ -45,6 +45,18 @@ jobs:
           script: |
             cd /var/www/NextStarter
             git pull origin main
+            # Install dependencies globally
+            sudo npm install -g next
+            # Clean install dependencies
+            rm -rf node_modules
+            rm -rf .next
             npm ci
+            # Build the application
             npm run build
-            pm2 restart nextjs-app || pm2 start npm --name "nextjs-app" -- start
+            # Kill any existing process on port 3000
+            sudo lsof -ti:3000 | xargs -r sudo kill -9
+            # Start the application with PM2 using the full path to next
+            pm2 delete nextjs-app || true
+            pm2 start npm --name "nextjs-app" -- start
+            # Make sure port 3000 is open in the firewall
+            sudo ufw allow 3000/tcp
