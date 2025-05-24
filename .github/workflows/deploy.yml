@@ -33,7 +33,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd /var/www/nextjs-app
+            cd /var/www/NextStarter
             git pull origin main
             npm ci
             npm run build
