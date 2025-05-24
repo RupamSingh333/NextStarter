@@ -1,26 +1,35 @@
-import Image from "next/image";
+import Head from "next/head";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <header className="text-center">
-        <h1 className="text-4xl font-bold">Welcome to My App</h1>
-      </header>
-      <main className="flex flex-col items-center">
-        <Image
-          src="/images/hero-image.png"
-          alt="Hero Image"
-          width={500}
-          height={300}
-          className="rounded-lg shadow-lg"
-        />
-        <p className="mt-4 text-lg text-gray-700">
-          This is a simple Next.js application with a responsive layout.
-        </p>
-      </main>
-      <footer className="text-center text-sm text-gray-500">
-        © 2023 My App. All rights reserved.
-      </footer>
-    </div>
+    <>
+      <Head>
+        <title>My Next Starter</title>
+        <meta name="description" content="Welcome to My Next.js Starter App" />
+      </Head>
+
+      <div className="min-h-screen flex flex-col justify-between bg-white text-gray-900 font-sans">
+        
+        {/* Header */}
+        <header className="w-full py-6 px-4 border-b bg-gray-100 text-center">
+          <h1 className="text-3xl font-bold">My Next Starter</h1>
+        </header>
+
+        {/* Main Content */}
+        <main className="flex-1 flex flex-col items-center justify-center px-4 py-16 text-center">
+          <h2 className="text-4xl sm:text-5xl font-bold mb-6">
+            Welcome to My App
+          </h2>
+          <p className="text-lg text-gray-700 max-w-xl">
+            This is a simple and clean Next.js template. You can start building your amazing app from here.
+          </p>
+        </main>
+
+        {/* Footer */}
+        <footer className="w-full py-4 px-4 border-t text-center text-sm text-gray-500 bg-gray-100">
+          © {new Date().getFullYear()} My App. All rights reserved.
+        </footer>
+      </div>
+    </>
   );
 }
