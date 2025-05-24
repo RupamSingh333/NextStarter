@@ -51,6 +51,15 @@ jobs:
           script: |
             cd /var/www/NextStarter
             git pull origin main
+            # Clean install
+            rm -rf node_modules
+            rm -rf .next
             npm ci
+            # Install next globally
+            sudo npm install -g next
+            # Build the application
             npm run build
-            pm2 restart nextjs-app || pm2 start npm --name "nextjs-app" -- start
+            # Stop any existing PM2 process
+            pm2 delete nextjs-app || true
+            # Start the application with PM2 using the full path to npm
+            pm2 start npm --name "nextjs-app" -- run start
