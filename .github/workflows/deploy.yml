@@ -49,17 +49,28 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            # Fix Git ownership issue
+            sudo git config --global --add safe.directory /var/www/NextStarter
+
+            # Set correct permissions for the application directory
+            sudo chown -R ${{ secrets.EC2_USERNAME }}:${{ secrets.EC2_USERNAME }} /var/www/NextStarter
+
             cd /var/www/NextStarter
             git pull origin main
-            # Clean install
-            rm -rf node_modules
-            rm -rf .next
+
+            # Clean install with correct permissions
+            sudo rm -rf node_modules
+            sudo rm -rf .next
             npm ci
+
             # Install next globally
             sudo npm install -g next
+
             # Build the application
             npm run build
+
             # Stop any existing PM2 process
             pm2 delete nextjs-app || true
+
             # Start the application with PM2 using the full path to npm
             pm2 start npm --name "nextjs-app" -- run start
