@@ -1,5 +1,5 @@
 import { NextResponse,NextRequest } from 'next/server';
-import { cookies } from 'next/headers';
+// import { cookies } from 'next/headers';
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
 export async function GET(req: NextRequest) {

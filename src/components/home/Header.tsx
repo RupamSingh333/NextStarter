@@ -8,7 +8,7 @@ import { ThemeToggleButton } from '../common/ThemeToggleButton';
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { user, loading, logout } = useAuth();
+  const { user, logout } = useAuth();
 
   return (
     <header className="fixed top-0 left-0 w-full bg-white dark:bg-gray-900 shadow-sm z-50">
