@@ -113,11 +113,14 @@ export default function SignInForm() {
         setError(data.message || 'Invalid OTP. Please try again.');
         toast.error('Invalid OTP. Please try again.');
       }
-    } catch (error: any) {
-      setError(error.message || 'Invalid OTP. Please try again.');
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Invalid OTP. Please try again.';
+      setError(message);
       console.error('Verification error:', error);
-      toast.error('Invalid OTP. Please try again.');
-    } finally {
+      toast.error(message);
+    }
+
+    finally {
       setLoading(false);
     }
   };
@@ -194,10 +197,10 @@ export default function SignInForm() {
                         type="button"
                         onClick={() => timer === 0 && handleSendOtp()}
                         disabled={timer > 0}
-                        className={`text-sm ${timer > 0 
-                          ? 'text-gray-400 cursor-not-allowed' 
+                        className={`text-sm ${timer > 0
+                          ? 'text-gray-400 cursor-not-allowed'
                           : 'text-brand-500 hover:text-brand-600 dark:text-brand-400'
-                        }`}
+                          }`}
                       >
                         {timer > 0 ? `Resend OTP in ${timer}s` : 'Resend OTP'}
                       </button>
@@ -205,9 +208,9 @@ export default function SignInForm() {
                   </div>
                 )}
                 <div>
-                  <Button 
-                    className="w-full mt-2" 
-                    size="sm" 
+                  <Button
+                    className="w-full mt-2"
+                    size="sm"
                     disabled={loading}
                   >
                     {loading ? "Please wait..." : isOtpSent ? "Verify OTP" : "Send OTP"}

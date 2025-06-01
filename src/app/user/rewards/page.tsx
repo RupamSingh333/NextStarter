@@ -5,8 +5,8 @@ import WelcomeHeader from '@/components/dashboard/WelcomeHeader';
 import Header from '@/components/home/Header';
 import Footer from '@/components/home/Footer';
 import DashboardLayout from '@/components/layout/DashboardLayout';
-import { formatDistanceToNow } from 'date-fns';
-import { useState, useEffect } from 'react';
+// import { formatDistanceToNow } from 'date-fns';
+// import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 export default function RewardsPage() {
 
