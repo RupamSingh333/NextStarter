@@ -68,11 +68,13 @@ export default function SignInForm() {
         setError(data.message || 'Failed to send OTP. Please try again.');
         toast.error('Failed to send OTP. Please try again.');
       }
-    } catch (error: any) {
-      setError(error.message || 'Failed to send OTP. Please try again.');
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to send OTP. Please try again.';
+      setError(message);
       console.error('Login error:', error);
-      toast.error('Failed to send OTP. Please try again.');
-    } finally {
+      toast.error(message);
+    }
+    finally {
       setLoading(false);
     }
   };
