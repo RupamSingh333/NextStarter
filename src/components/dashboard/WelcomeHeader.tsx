@@ -12,7 +12,7 @@ const WelcomeHeader = ({ name, loanAmount }: WelcomeHeaderProps) => {
         Welcome (Namaste) {name}!
       </h1>
       <p className="text-gray-600 dark:text-gray-300 mt-2">
-        Your RepayKaro loan outstanding is ₹{loanAmount.toFixed(2)}
+        Your OkCredit loan outstanding is ₹{loanAmount.toFixed(2)}
       </p>
     </div>
   );

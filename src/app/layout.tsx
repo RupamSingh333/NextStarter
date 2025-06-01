@@ -6,15 +6,14 @@ import { Toaster } from 'react-hot-toast';
 import { SidebarProvider } from '@/context/SidebarContext';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { AuthProvider } from '@/context/AuthContext';
-import { LoadingProvider } from '@/providers/LoadingProvider';
 
 const outfit = Outfit({
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: 'RepayKaro Dashboard',
-  description: 'RepayKaro user dashboard for loan management',
+  title: 'OkCredit Dashboard',
+  description: 'OkCredit user dashboard for loan management',
 };
 
 export default function RootLayout({
@@ -27,11 +26,7 @@ export default function RootLayout({
       <body className={`${outfit.className} dark:bg-gray-900`}>
         <AuthProvider>
           <ThemeProvider>
-            <SidebarProvider>
-              <LoadingProvider>
-                {children}
-              </LoadingProvider>
-            </SidebarProvider>
+            <SidebarProvider>{children}</SidebarProvider>
           </ThemeProvider>
         </AuthProvider>
         <Toaster

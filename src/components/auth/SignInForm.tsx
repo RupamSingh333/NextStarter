@@ -5,20 +5,16 @@ import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
 import { ChevronLeftIcon } from "@/icons";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { toast } from 'react-hot-toast';
-import PageLoader from "@/components/ui/loading/PageLoader";
 
 export default function SignInForm() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') || '/user/dashboard';
   const [mobileNumber, setMobileNumber] = useState("");
   const [otp, setOtp] = useState("");
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isRedirecting, setIsRedirecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [timer, setTimer] = useState(0);
 
@@ -66,7 +62,7 @@ export default function SignInForm() {
       if (data.success) {
         setIsOtpSent(true);
         setError(null);
-        setTimer(60);
+        setTimer(60); // Start 60 seconds timer
         toast.success('OTP sent successfully!');
       } else {
         setError(data.message || 'Failed to send OTP. Please try again.');
@@ -94,6 +90,7 @@ export default function SignInForm() {
 
     try {
       const response = await fetch(`/api/login`, {
+
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -102,22 +99,16 @@ export default function SignInForm() {
           phone: mobileNumber,
           otp: otp
         }),
-        credentials: 'include'
+        credentials: 'include' // Important for handling cookies
       });
 
       const data = await response.json();
 
       if (data.success) {
-        setIsRedirecting(true);
+        router.push('/user/dashboard');
+        // Force a page refresh to update the header with new user state
+        window.location.href = '/';
         toast.success('Login successful!');
-        
-        // Navigate to the callback URL or dashboard
-        router.push(callbackUrl);
-        
-        // Then reload the page after a short delay to ensure all auth states are updated
-        setTimeout(() => {
-          window.location.href = callbackUrl;
-        }, 100);
       } else {
         setError(data.message || 'Invalid OTP. Please try again.');
         toast.error('Invalid OTP. Please try again.');
@@ -127,15 +118,9 @@ export default function SignInForm() {
       console.error('Verification error:', error);
       toast.error('Invalid OTP. Please try again.');
     } finally {
-      if (!isRedirecting) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
   };
-
-  if (isRedirecting) {
-    return <PageLoader />;
-  }
 
   return (
     <div className="flex flex-col flex-1 lg:w-1/2 w-full px-4 sm:px-6">

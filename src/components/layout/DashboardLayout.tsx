@@ -73,7 +73,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       >
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between h-16 px-4 bg-[rgb(53,56,140)]">
-            <span className="text-xl font-bold text-white">RepayKaro</span>
+            <span className="text-xl font-bold text-white">OkCredit</span>
             <button
               className="p-1 rounded-md md:hidden"
               onClick={() => setIsSidebarOpen(false)}
