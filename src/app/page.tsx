@@ -1,61 +1,118 @@
-import Head from "next/head";
+import Image from 'next/image';
+import Link from 'next/link';
+import Header from '@/components/home/Header';
+import Footer from '@/components/home/Footer';
+import type { Metadata } from "next";
 
-export default function Home() {
-  return (
-    <>
-      <Head>
-        <title>My Next Starter</title>
-        <meta name="description" content="Welcome to My Next.js Starter App" />
-      </Head>
+export const metadata: Metadata = {
+    title:
+        "RepayKaro - Loan Repayment Management",
+    description: "Simplify your loan repayment process with RepayKaro. Track, plan, and manage your loans efficiently.",
+    keywords: "loan repayment, loan management, financial planning, debt tracking, personal finance",
+};
 
-      <div className="min-h-screen flex flex-col justify-between bg-white text-gray-900 font-sans">
-        
-        {/* Header */}
-        <header className="w-full py-6 px-6 border-b bg-indigo-600 text-white text-center shadow-md">
-          <h1 className="text-4xl font-extrabold tracking-tight">My Next Starter</h1>
-          <p className="mt-1 text-indigo-200">Clean & Modern Next.js Template</p>
-        </header>
+export default function HomePage() {
+    return (
+        <div className="min-h-screen flex flex-col">
+            <Header />
 
-        {/* Main Content */}
-        <main className="flex-1 flex flex-col items-center justify-center px-6 py-16 max-w-4xl mx-auto text-center">
-          <h2 className="text-5xl font-extrabold mb-8 leading-tight text-indigo-700">
-            Welcome to My App
-          </h2>
-          <p className="text-lg text-gray-700 max-w-3xl mb-16">
-            This is a simple and clean Next.js template. You can start building your amazing app from here.
-          </p>
+            {/* Hero Section */}
+            <main className="flex-grow">
+                <section className="pt-20 pb-12 md:pt-32 md:pb-20 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+                    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                            <div>
+                                <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+                                    Simplify Your Loan Repayment with RepayKaro
+                                </h1>
+                                <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
+                                    Managing loan repayments has never been easier. Track, plan, and repay your loans efficiently with our smart platform.
+                                </p>
+                                <div className="flex flex-col sm:flex-row gap-4">
+                                    <Link
+                                        href="/signin"
+                                        className="inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-brand-500 hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500"
+                                    >
+                                        Get Started
+                                    </Link>
+                                    <Link
+                                        href="#features"
+                                        className="inline-flex justify-center items-center px-6 py-3 border border-gray-300 dark:border-gray-600 text-base font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                                    >
+                                        Learn More
+                                    </Link>
+                                </div>
+                            </div>
+                            <div className="hidden md:block">
+                                <Image
+                                    src="/images/carousel/carousel-01.png"
+                                    alt="RepayKaro Platform"
+                                    width={600}
+                                    height={400}
+                                    className="w-full"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
-          {/* CI/CD Section */}
-          <section className="w-full bg-indigo-50 rounded-lg p-8 shadow-md text-left">
-            <h3 className="text-2xl font-semibold text-indigo-800 mb-4">🚀 CI/CD Pipeline Setup</h3>
-            <ol className="list-decimal list-inside space-y-3 text-gray-800">
-              <li>
-                <strong>Push to GitHub:</strong> Whenever you push code to the <code className="bg-gray-200 px-1 rounded">main</code> branch, the pipeline triggers.
-              </li>
-              <li>
-                <strong>GitHub Actions Build:</strong> The pipeline installs dependencies and runs <code className="bg-gray-200 px-1 rounded">npm run build</code>. If the build fails, deployment stops automatically.
-              </li>
-              <li>
-                <strong>Deploy to EC2:</strong> On successful build, GitHub Actions connects to your EC2 server using SSH, pulls the latest code, installs dependencies, builds again on the server, and reloads your app with <code className="bg-gray-200 px-1 rounded">pm2</code>.
-              </li>
-              <li>
-                <strong>Public Folder Handling:</strong> Your <code className="bg-gray-200 px-1 rounded">public</code> folder contains large assets ignored by Git. These files are uploaded manually once to the EC2 server, ensuring fast git operations.
-              </li>
-              <li>
-                <strong>Automatic Rollback:</strong> If the build or PM2 reload fails, the deployment halts preventing broken production updates.
-              </li>
-            </ol>
-            <p className="mt-6 text-sm text-indigo-600 italic">
-              * Developed by Yogesh Sir
-            </p>
-          </section>
-        </main>
+                {/* Features Section */}
+                <section id="features" className="py-16 bg-white dark:bg-gray-900">
+                    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                        <h2 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-12">
+                            Why Choose RepayKaro?
+                        </h2>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            {/* Feature 1 */}
+                            <div className="p-6 rounded-lg bg-gray-50 dark:bg-gray-800">
+                                <div className="w-12 h-12 bg-brand-500 rounded-lg flex items-center justify-center mb-4">
+                                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                                    Easy Tracking
+                                </h3>
+                                <p className="text-gray-600 dark:text-gray-400">
+                                    Track all your loans in one place with our intuitive dashboard.
+                                </p>
+                            </div>
 
-        {/* Footer */}
-        <footer className="w-full py-4 px-6 border-t text-center text-sm text-gray-500 bg-indigo-100">
-          © {new Date().getFullYear()} My App. All rights reserved.
-        </footer>
-      </div>
-    </>
-  );
-}
+                            {/* Feature 2 */}
+                            <div className="p-6 rounded-lg bg-gray-50 dark:bg-gray-800">
+                                <div className="w-12 h-12 bg-brand-500 rounded-lg flex items-center justify-center mb-4">
+                                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                    </svg>
+                                </div>
+                                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                                    Smart Reminders
+                                </h3>
+                                <p className="text-gray-600 dark:text-gray-400">
+                                    Never miss a payment with automated reminders and notifications.
+                                </p>
+                            </div>
+
+                            {/* Feature 3 */}
+                            <div className="p-6 rounded-lg bg-gray-50 dark:bg-gray-800">
+                                <div className="w-12 h-12 bg-brand-500 rounded-lg flex items-center justify-center mb-4">
+                                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                    </svg>
+                                </div>
+                                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                                    Quick Processing
+                                </h3>
+                                <p className="text-gray-600 dark:text-gray-400">
+                                    Fast and secure payment processing for all your loan repayments.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <Footer />
+        </div>
+    );
+} 

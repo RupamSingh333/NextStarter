@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="280" height="180" viewBox="0 0 280 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="280" height="180" fill="#2D3748"/>
+  <path d="M140 90m-50 0a50 50 0 1 0 100 0a50 50 0 1 0 -100 0" stroke="#A0AEC0" stroke-width="4" stroke-dasharray="8 8"/>
+  <text x="140" y="95" font-family="Arial" font-size="14" fill="#A0AEC0" text-anchor="middle">Scratch here to reveal</text>
+  <path d="M120 70L160 110M160 70L120 110" stroke="#A0AEC0" stroke-width="4"/>
+</svg> 
