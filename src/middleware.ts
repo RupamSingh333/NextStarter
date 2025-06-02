@@ -9,7 +9,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Check if it's a public route
-  const isPublicRoute = publicRoutes.some(route => pathname === route || pathname.startsWith('/api/'));
+  // const isPublicRoute = publicRoutes.some(route => pathname === route || pathname.startsWith('/api/'));
   
   // Check if it's a protected route (starts with /user or /admin)
   const isProtectedRoute = pathname.startsWith('/user') || pathname.startsWith('/admin');
