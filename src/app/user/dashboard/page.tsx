@@ -46,11 +46,6 @@ export default function DashboardPage() {
     );
   }
 
-
-  if (!user) {
-    return <p>You are not logged in.</p>;
-  }
-
   return (
     <DashboardLayout>
       <Header />

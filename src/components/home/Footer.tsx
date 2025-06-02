@@ -111,7 +111,7 @@ const Footer = () => {
                 Welcome to RepayKaro
               </h3>
               <p className="text-xs text-gray-600 dark:text-gray-300">
-                We're here to help you with any questions or assistance you need.
+                We&apos;re here to help you with any questions or assistance you need.
               </p>
             </div>
             

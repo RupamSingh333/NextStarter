@@ -89,7 +89,7 @@ export default function ScratchCards() {
   }
 
   return (
-    <div className="p-4">
+    <div className="p-4 relative z-0">
       <h2 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-200">
         Your Scratch Cards
       </h2>
@@ -102,7 +102,7 @@ export default function ScratchCards() {
               className="relative rounded-xl border shadow-sm bg-white dark:bg-gray-800 overflow-hidden"
             >
               {card.scratched === 0 ? (
-                <div className="p-4">
+                <div className="p-4 relative z-10">
                   <ScratchCard
                     width={280}
                     height={180}

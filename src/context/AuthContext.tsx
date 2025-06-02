@@ -95,7 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } else {
       setLoading(false);
     }
-  }, []);
+  }, [checkAuth, user]);
 
   // Debounced window focus check
   useEffect(() => {
@@ -114,7 +114,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       clearTimeout(timeout);
       window.removeEventListener('focus', handleFocus);
     };
-  }, [user]);
+  }, [user, checkAuth]);
 
   return (
     <AuthContext.Provider value={{ user, loading, checkAuth, logout }}>
