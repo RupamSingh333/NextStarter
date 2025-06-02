@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import UploadModal from '../dashboard/UploadModal';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'react-hot-toast';
-import { TrashIcon } from '@heroicons/react/24/outline';
+// import { TrashIcon } from '@heroicons/react/24/outline';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
