@@ -81,7 +81,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (data.success) {
         setUser(null);
-        router.push('/signin');
+        router.push('/');
+        window.location.reload();
       }
     } catch (error) {
       console.error('Logout error:', error);
@@ -95,18 +96,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } else {
       setLoading(false);
     }
-  }, [checkAuth, user]);
+  }, []);
 
-  // Debounced window focus check
+  // Window focus check with better control
   useEffect(() => {
     let timeout: NodeJS.Timeout;
+    let isCheckingAuth = false;
 
     const handleFocus = () => {
-      timeout = setTimeout(() => {
-        if (!user) {
-          checkAuth();
-        }
-      }, 300); // Debounce delay
+      if (!isCheckingAuth && !user) {
+        isCheckingAuth = true;
+        timeout = setTimeout(() => {
+          checkAuth().finally(() => {
+            isCheckingAuth = false;
+          });
+        }, 300);
+      }
     };
 
     window.addEventListener('focus', handleFocus);
@@ -114,7 +119,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       clearTimeout(timeout);
       window.removeEventListener('focus', handleFocus);
     };
-  }, [user, checkAuth]);
+  }, [user]);
 
   return (
     <AuthContext.Provider value={{ user, loading, checkAuth, logout }}>

@@ -5,13 +5,10 @@ import React, { useState } from 'react';
 const Footer = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const handleCall = () => {
-    setIsDrawerOpen(true);
+  const toggleDrawer = () => {
+    setIsDrawerOpen(prev => !prev);
   };
-
-  const handleCloseDrawer = () => {
-    setIsDrawerOpen(false);
-  };
+  
 
   const makePhoneCall = () => {
     window.location.href = 'tel:+918178953143';
@@ -58,7 +55,7 @@ const Footer = () => {
       {/* Call Button */}
       <div className="fixed bottom-4 right-4 z-20">
         <button
-          onClick={handleCall}
+          onClick={toggleDrawer}
           className="flex items-center space-x-2 bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 px-4 py-2 rounded-full shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
         >
           <svg
@@ -93,7 +90,7 @@ const Footer = () => {
             Contact Us
           </h2>
           <button
-            onClick={handleCloseDrawer}
+            onClick={toggleDrawer}
             className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors flex items-center justify-center"
             aria-label="Close"
           >

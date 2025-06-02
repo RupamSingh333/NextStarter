@@ -11,7 +11,7 @@ import { toast } from 'react-hot-toast';
 
 export default function SignInForm() {
   const router = useRouter();
-  const [mobileNumber, setMobileNumber] = useState("");
+  const [mobileNumber, setMobileNumber] = useState("8538945025");
   const [otp, setOtp] = useState("");
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -92,7 +92,6 @@ export default function SignInForm() {
 
     try {
       const response = await fetch(`/api/login`, {
-
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -107,9 +106,16 @@ export default function SignInForm() {
       const data = await response.json();
 
       if (data.success) {
-        router.push('/user/dashboard');
-        // Force a page refresh to update the header with new user state
-        window.location.href = '/';
+        // Get the callback URL from query parameters
+        const params = new URLSearchParams(window.location.search);
+        const callbackUrl = params.get('callbackUrl');
+        
+        // Redirect to callback URL if exists, otherwise to dashboard
+        const redirectUrl = callbackUrl || '/user/dashboard';
+        router.push(redirectUrl);
+        
+        // Force a page refresh to update all states
+        window.location.reload();
         toast.success('Login successful!');
       } else {
         setError(data.message || 'Invalid OTP. Please try again.');
