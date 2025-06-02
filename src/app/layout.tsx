@@ -12,8 +12,8 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: 'OkCredit Dashboard',
-  description: 'OkCredit user dashboard for loan management',
+  title: 'RepayKarot Dashboard',
+  description: 'RepayKarot user dashboard for loan management',
 };
 
 export default function RootLayout({

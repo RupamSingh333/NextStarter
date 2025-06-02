@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-// import Header from '../home/Header';
-// import Footer from '../home/Footer';
 import UploadModal from '../dashboard/UploadModal';
 import { useAuth } from '@/context/AuthContext';
+import { toast } from 'react-hot-toast';
+import { TrashIcon } from '@heroicons/react/24/outline';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -17,11 +17,97 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const pathname = usePathname();
   const { logout } = useAuth();
+  const [uploadedScreenshots, setUploadedScreenshots] = useState<Array<{
+    _id: string;
+    screen_shot: string;
+    isActive: boolean;
+    createdAt: string;
+  }>>([]);
+  const [isUploading, setIsUploading] = useState(false);
 
-  const handleUpload = (file: File) => {
-    // Handle the file upload here
-    console.log('Uploading file:', file);
-    // You can implement your file upload logic here
+  useEffect(() => {
+    // Fetch existing screenshots when component mounts
+    const fetchScreenshots = async () => {
+      try {
+        const response = await fetch('/api/screenshots', {
+          credentials: 'include'
+        });
+        const data = await response.json();
+        if (data.success) {
+          // console.log(data.screenshots);
+          setUploadedScreenshots(data.screenshots || []);
+        }
+      } catch (error) {
+        console.error('Error fetching screenshots:', error);
+      }
+    };
+
+    fetchScreenshots();
+  }, []);
+
+  const handleUpload = async (file: File) => {
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('screenshot', file);
+
+      const response = await fetch('/api/screenshots', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include'
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        // Add the new screenshot to the list
+        if (data.screen_shot) {
+          setUploadedScreenshots(prev => [...prev, data.screen_shot]);
+        }
+        toast.success('Screenshot uploaded successfully!');
+        setIsUploadModalOpen(false);
+      } else {
+        toast.error(data.message || 'Failed to upload screenshot');
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error('Failed to upload screenshot');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleDeleteScreenshot = async (screenshotId: string) => {
+    // First ask for confirmation
+    const confirmDelete = window.confirm('Are you sure you want to delete this screenshot?');
+    
+    if (!confirmDelete) {
+      return;
+    }
+
+    // Show loading toast that will be updated based on the promise result
+    toast.promise(
+      // The delete operation promise
+      (async () => {
+        const response = await fetch(`/api/screenshots/${screenshotId}`, {
+          method: 'DELETE',
+          credentials: 'include'
+        });
+
+        const data = await response.json();
+        if (!data.success) {
+          throw new Error(data.message || 'Failed to delete screenshot');
+        }
+
+        // Update state only after successful deletion
+        setUploadedScreenshots(prev => prev.filter(screenshot => screenshot._id !== screenshotId));
+        return data;
+      })(),
+      {
+        loading: 'Deleting screenshot...',
+        success: 'Screenshot deleted successfully!',
+        error: (err) => err.message || 'Failed to delete screenshot'
+      }
+    );
   };
 
   const menuItems = [
@@ -73,7 +159,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       >
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between h-16 px-4 bg-[rgb(53,56,140)]">
-            <span className="text-xl font-bold text-white">OkCredit</span>
+            <span className="text-xl font-bold text-white">RepayKarot</span>
             <button
               className="p-1 rounded-md md:hidden"
               onClick={() => setIsSidebarOpen(false)}
@@ -149,7 +235,9 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         </header>
 
         {/* Content */}
-        {children}
+        <div className="flex-1 overflow-y-auto">
+          {children}
+        </div>
       </div>
 
       {/* Mobile Sidebar Overlay */}
@@ -165,6 +253,9 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         isOpen={isUploadModalOpen}
         onClose={() => setIsUploadModalOpen(false)}
         onUpload={handleUpload}
+        isUploading={isUploading}
+        uploadedScreenshots={uploadedScreenshots}
+        onDelete={handleDeleteScreenshot}
       />
     </div>
   );

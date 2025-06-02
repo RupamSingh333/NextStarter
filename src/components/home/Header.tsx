@@ -19,14 +19,14 @@ const Header = () => {
             <Link href="/" className="block w-full h-full">
               <Image
                 src="/images/logo/rpk.webp"
-                alt="OkCredit"
+                alt="RepayKarot"
                 fill
                 className="object-contain dark:hidden"
                 priority
               />
               <Image
                 src="/images/logo/rpk.webp"
-                alt="OkCredit"
+                alt="RepayKarot"
                 fill
                 className="object-contain hidden dark:block"
                 priority

@@ -70,12 +70,13 @@ export async function POST(req: NextRequest) {
       user: userData.data,
     })
 
+    // Universal cookie settings
     response.cookies.set('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: 'none',
+      secure: true,
       path: '/',
-      maxAge: 60 * 60 * 24, // 1 day
+      maxAge: 60 * 60 * 24 * 30, // 30 days
     })
 
     return response
