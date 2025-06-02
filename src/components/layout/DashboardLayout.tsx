@@ -25,23 +25,23 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   }>>([]);
   const [isUploading, setIsUploading] = useState(false);
 
-  useEffect(() => {
-    // Fetch existing screenshots when component mounts
-    const fetchScreenshots = async () => {
-      try {
-        const response = await fetch('/api/screenshots', {
-          credentials: 'include'
-        });
-        const data = await response.json();
-        if (data.success) {
-          // console.log(data.screenshots);
-          setUploadedScreenshots(data.screenshots || []);
-        }
-      } catch (error) {
-        console.error('Error fetching screenshots:', error);
+  // Fetch existing screenshots when component mounts
+  const fetchScreenshots = async () => {
+    try {
+      const response = await fetch('/api/screenshots', {
+        credentials: 'include'
+      });
+      const data = await response.json();
+      if (data.success) {
+        // console.log(data.screenshots);
+        setUploadedScreenshots(data.screenshots || []);
       }
-    };
-
+    } catch (error) {
+      console.error('Error fetching screenshots:', error);
+    }
+  };
+  
+  useEffect(() => {
     fetchScreenshots();
   }, []);
 
@@ -153,12 +153,12 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-[rgb(63,66,150)] transform transition-transform duration-200 ease-in-out md:relative md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-900 transform transition-transform duration-200 ease-in-out md:relative md:translate-x-0 ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between h-16 px-4 bg-[rgb(53,56,140)]">
+          <div className="flex items-center justify-between h-16 px-4 bg-blue-600 dark:bg-gray-950">
             <span className="text-xl font-bold text-white">RepayKarot</span>
             <button
               className="p-1 rounded-md md:hidden"
@@ -186,7 +186,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 <button
                   key={item.label}
                   onClick={item.onClick}
-                  className="flex items-center w-full px-4 py-3 text-white rounded-lg hover:bg-[rgb(73,76,160)] transition-colors"
+                  className="flex items-center w-full px-4 py-3 text-gray-700 dark:text-white rounded-lg hover:bg-gray-100 hover:text-blue-600 dark:hover:bg-gray-800 dark:hover:text-white transition-colors"
                 >
                   {item.icon}
                   <span className="ml-3">{item.label}</span>
@@ -195,8 +195,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 <Link
                   key={item.label}
                   href={item.href!}
-                  className={`flex items-center px-4 py-3 text-white rounded-lg hover:bg-[rgb(73,76,160)] transition-colors ${
-                    pathname === item.href ? 'bg-[rgb(73,76,160)]' : ''
+                  className={`flex items-center px-4 py-3 text-gray-700 dark:text-white rounded-lg hover:bg-gray-100 hover:text-blue-600 dark:hover:bg-gray-800 dark:hover:text-white transition-colors ${
+                    pathname === item.href ? 'bg-gray-100 text-blue-600 dark:bg-gray-800 dark:text-white' : ''
                   }`}
                 >
                   {item.icon}

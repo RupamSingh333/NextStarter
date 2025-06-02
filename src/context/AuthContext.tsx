@@ -42,17 +42,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const checkAuth = async () => {
     try {
+      setLoading(true);
+
       const response = await fetch('/api/login', {
         method: 'GET',
-        credentials: 'include'
+        credentials: 'include',
       });
 
       const data = await response.json();
 
       if (data.success) {
         setUser(data.user);
+        if (window.location.pathname === '/' || window.location.pathname === '/signin') {
+          router.push('/user/dashboard');
+        }
       } else {
         setUser(null);
+        if (window.location.pathname.startsWith('/user')) {
+          router.push('/signin');
+        }
       }
     } catch (error) {
       console.error('Error checking authentication:', error);
@@ -66,7 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const response = await fetch('/api/logout', {
         method: 'POST',
-        credentials: 'include'
+        credentials: 'include',
       });
 
       const data = await response.json();
@@ -80,22 +88,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Check auth status when the app loads
+  // Initial check only if user is null
   useEffect(() => {
-    checkAuth();
+    if (!user) {
+      checkAuth();
+    } else {
+      setLoading(false);
+    }
   }, []);
 
-  // Check auth status when the focus returns to the window
+  // Debounced window focus check
   useEffect(() => {
+    let timeout: NodeJS.Timeout;
+
     const handleFocus = () => {
-      checkAuth();
+      timeout = setTimeout(() => {
+        if (!user) {
+          checkAuth();
+        }
+      }, 300); // Debounce delay
     };
 
     window.addEventListener('focus', handleFocus);
     return () => {
+      clearTimeout(timeout);
       window.removeEventListener('focus', handleFocus);
     };
-  }, []);
+  }, [user]);
 
   return (
     <AuthContext.Provider value={{ user, loading, checkAuth, logout }}>
@@ -110,4 +129,4 @@ export function useAuth() {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-} 
+}

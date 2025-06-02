@@ -27,6 +27,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(signInUrl);
   }
 
+  // Special handling for admin routes - you can add additional checks here
+  if (pathname.startsWith('/admin')) {
+    // Add your admin role check here if needed
+    // For now, we'll just use the basic auth check above
+  }
+
   return NextResponse.next();
 }
 
