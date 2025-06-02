@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
 
     const validateData = await validateRes.json()
 
-    if (!validateRes.ok || !validateData.success || !validateData.jwtToken) {
+    if (!validateData.success || !validateData.jwtToken) {
       return NextResponse.json({
         success: false,
         message: validateData.message || 'OTP validation failed',
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
 
     const userData = await userRes.json()
 
-    if (!userRes.ok || !userData.success) {
+    if (!userData.success) {
       return NextResponse.json({
         success: false,
         message: 'Failed to fetch user details',
@@ -70,11 +70,11 @@ export async function POST(req: NextRequest) {
       user: userData.data,
     })
 
-    // Universal cookie settings
+    // Cookie settings optimized for IP-based hosting
     response.cookies.set('token', token, {
       httpOnly: true,
-      sameSite: 'none',
-      secure: true,
+      secure: false, // Since we're using HTTP
+      sameSite: 'lax',
       path: '/',
       maxAge: 60 * 60 * 24 * 30, // 30 days
     })
