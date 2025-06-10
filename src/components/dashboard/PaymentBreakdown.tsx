@@ -7,12 +7,17 @@ import { useAuth } from '@/context/AuthContext';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
+// Define types for decimal values
+type DecimalValue = {
+  $numberDecimal: string;
+} | string | number | undefined | null;
+
 // Helper function to safely parse decimal values
-const parseDecimalValue = (value: any): number => {
+const parseDecimalValue = (value: DecimalValue): number => {
   if (!value) return 0;
   if (typeof value === 'number') return value;
   if (typeof value === 'string') return parseFloat(value);
-  if (typeof value === 'object' && value.$numberDecimal) {
+  if (typeof value === 'object' && '$numberDecimal' in value) {
     return parseFloat(value.$numberDecimal);
   }
   return 0;

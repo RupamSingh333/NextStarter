@@ -13,7 +13,7 @@ import { useAuth } from '@/context/AuthContext';
 
 export default function SignInForm() {
   const router = useRouter();
-  const { login } = useAuth();
+  // const { login } = useAuth();
   const [mobileNumber, setMobileNumber] = useState("8538945025");
   const [otp, setOtp] = useState("");
   const [isOtpSent, setIsOtpSent] = useState(false);

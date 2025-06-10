@@ -31,12 +31,17 @@ interface Admin {
   name: string;
 }
 
+type LoginData = {
+  user: User;
+  admin: Admin;
+}
+
 interface AuthContextType {
   user: User | null;
   admin: Admin | null;
   isLoading: boolean;
   loading: boolean;
-  login: (data: any, type: 'user' | 'admin') => void;
+  login: (data: Partial<LoginData[keyof LoginData]>, type: 'user' | 'admin') => void;
   logout: (type: 'user' | 'admin') => void;
   checkAuth: () => Promise<void>;
 }
@@ -49,13 +54,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [admin, setAdmin] = useState<Admin | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const login = (data: any, type: 'user' | 'admin') => {
+  const login = (data: Partial<LoginData[keyof LoginData]>, type: 'user' | 'admin') => {
     if (type === 'user') {
       // Store full user data
-      setUser(data);
+      setUser(data as User);
       localStorage.setItem('user', JSON.stringify(data));
     } else {
-      const { email, name } = data;
+      const { email, name } = data as Admin;
       setAdmin({ email, name });
       localStorage.setItem('admin', JSON.stringify({ email, name }));
     }
