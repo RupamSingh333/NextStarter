@@ -40,6 +40,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       console.error('Error fetching screenshots:', error);
     }
   };
+
+  const handleLogout = () => {
+    logout('user');
+  };
   
   useEffect(() => {
     fetchScreenshots();
@@ -145,7 +149,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         </svg>
       ),
       label: 'Logout',
-      onClick: logout,
+      onClick: handleLogout,
     },
   ];
 

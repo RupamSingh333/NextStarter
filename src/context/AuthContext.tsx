@@ -9,9 +9,9 @@ interface DecimalValue {
 
 interface User {
   _id: string;
-  customer: string;
   phone: string;
-  fore_closure: string;
+  customer: boolean;
+  fore_closure: DecimalValue;
   settlement: DecimalValue;
   minimum_part_payment: DecimalValue;
   foreclosure_reward: DecimalValue;
@@ -26,103 +26,132 @@ interface User {
   updatedAt: string;
 }
 
+interface Admin {
+  email: string;
+  name: string;
+}
+
 interface AuthContextType {
   user: User | null;
+  admin: Admin | null;
+  isLoading: boolean;
   loading: boolean;
+  login: (data: any, type: 'user' | 'admin') => void;
+  logout: (type: 'user' | 'admin') => void;
   checkAuth: () => Promise<void>;
-  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const [user, setUser] = useState<User | null>(null);
+  const [admin, setAdmin] = useState<Admin | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const checkAuth = async () => {
-    try {
-      setLoading(true);
-
-      const response = await fetch('/api/login', {
-        method: 'GET',
-        credentials: 'include',
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setUser(data.user);
-        if (window.location.pathname === '/' || window.location.pathname === '/signin') {
-          router.push('/user/dashboard');
-        }
-      } else {
-        setUser(null);
-        if (window.location.pathname.startsWith('/user')) {
-          router.push('/signin');
-        }
-      }
-    } catch (error) {
-      console.error('Error checking authentication:', error);
-      setUser(null);
-    } finally {
-      setLoading(false);
+  const login = (data: any, type: 'user' | 'admin') => {
+    if (type === 'user') {
+      // Store full user data
+      setUser(data);
+      localStorage.setItem('user', JSON.stringify(data));
+    } else {
+      const { email, name } = data;
+      setAdmin({ email, name });
+      localStorage.setItem('admin', JSON.stringify({ email, name }));
     }
   };
 
-  const logout = async () => {
+  const logout = async (type: 'user' | 'admin') => {
     try {
-      const response = await fetch('/api/logout', {
+      // Call logout API endpoint
+      const response = await fetch(`/api/${type === 'admin' ? 'admin/' : ''}logout`, {
         method: 'POST',
         credentials: 'include',
       });
 
-      const data = await response.json();
+      if (!response.ok) {
+        throw new Error('Logout failed');
+      }
 
-      if (data.success) {
+      // Clear local storage and state
+      if (type === 'user') {
+        localStorage.removeItem('user');
+        localStorage.removeItem('userToken');
         setUser(null);
-        router.push('/');
-        window.location.reload();
+        router.push('/signin');
+      } else {
+        localStorage.removeItem('admin');
+        setAdmin(null);
+        router.push('/login');
       }
     } catch (error) {
       console.error('Logout error:', error);
     }
   };
 
-  // Initial check only if user is null
+  const checkAuth = async () => {
+    setIsLoading(true);
+    try {
+      // Check user auth
+      const userResponse = await fetch('/api/login', {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      if (userResponse.ok) {
+        const userData = await userResponse.json();
+        if (userData.success && userData.user) {
+          // Store full user data
+          setUser(userData.user);
+        }
+      }
+
+      // Check admin auth
+      const adminResponse = await fetch('/api/admin/login', {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      if (adminResponse.ok) {
+        const adminData = await adminResponse.json();
+        if (adminData.success && adminData.user) {
+          const { email, name } = adminData.user;
+          setAdmin({ email, name });
+        }
+      }
+    } catch (error) {
+      console.error('Auth check error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    if (!user) {
-      checkAuth();
-    } else {
-      setLoading(false);
+    // Check authentication status on mount
+    checkAuth();
+
+    // Try to restore from localStorage
+    const storedUser = localStorage.getItem('user');
+    const storedAdmin = localStorage.getItem('admin');
+
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+    if (storedAdmin) {
+      setAdmin(JSON.parse(storedAdmin));
     }
   }, []);
 
-  // Window focus check with better control
-  useEffect(() => {
-    let timeout: NodeJS.Timeout;
-    let isCheckingAuth = false;
-
-    const handleFocus = () => {
-      if (!isCheckingAuth && !user) {
-        isCheckingAuth = true;
-        timeout = setTimeout(() => {
-          checkAuth().finally(() => {
-            isCheckingAuth = false;
-          });
-        }, 300);
-      }
-    };
-
-    window.addEventListener('focus', handleFocus);
-    return () => {
-      clearTimeout(timeout);
-      window.removeEventListener('focus', handleFocus);
-    };
-  }, [user]);
-
   return (
-    <AuthContext.Provider value={{ user, loading, checkAuth, logout }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      admin, 
+      isLoading, 
+      loading: isLoading,
+      login, 
+      logout, 
+      checkAuth 
+    }}>
       {children}
     </AuthContext.Provider>
   );

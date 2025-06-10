@@ -5,18 +5,18 @@ import { Metadata } from "next";
 import React from "react";
 
 export const metadata: Metadata = {
-  title: "Next.js Basic Table | RepayKaro - Next.js Dashboard Template",
+  title: "Customers List | RepayKaro - Dashboard",
   description:
-    "This is Next.js Basic Table  page for RepayKaro  Tailwind CSS Admin Dashboard Template",
+    "This is Customers List page for RepayKaro Admin Dashboard",
   // other metadata
 };
 
 export default function BasicTables() {
   return (
     <div>
-      <PageBreadcrumb pageTitle="Basic Table" />
+      <PageBreadcrumb pageTitle="Customers List" />
       <div className="space-y-6">
-        <ComponentCard title="Basic Table 1">
+        <ComponentCard title="Customers List">
           <BasicTableOne />
         </ComponentCard>
       </div>

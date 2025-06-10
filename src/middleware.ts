@@ -6,30 +6,39 @@ import type { NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get('token')?.value;
+  const adminToken = request.cookies.get('admin_token')?.value;
   const { pathname } = request.nextUrl;
 
+  // Define public routes
+  const isAdminLoginPage = pathname === '/login';
+  const isUserLoginPage = pathname === '/signin';
+  const isUserRoute = pathname.startsWith('/user');
+  const isAdminRoute = pathname.startsWith('/admin');
+  
   // Check if it's a public route
   // const isPublicRoute = publicRoutes.some(route => pathname === route || pathname.startsWith('/api/'));
   
-  // Check if it's a protected route (starts with /user or /admin)
-  const isProtectedRoute = pathname.startsWith('/user') || pathname.startsWith('/admin');
-  
-  // If accessing auth pages while logged in, redirect to dashboard
-  if ((pathname === '/signin' || pathname === '/auth/signin') && token) {
+  // If already logged in and trying to access login pages, redirect to respective dashboards
+  if (isUserLoginPage && token) {
     return NextResponse.redirect(new URL('/user/dashboard', request.url));
   }
 
-  // If accessing protected routes without token, redirect to signin
-  if (isProtectedRoute && !token) {
+  if (isAdminLoginPage && adminToken) {
+    return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+  }
+
+  // Handle user routes protection
+  if (isUserRoute && !token) {
     const signInUrl = new URL('/signin', request.url);
     signInUrl.searchParams.set('callbackUrl', pathname);
     return NextResponse.redirect(signInUrl);
   }
 
-  // Special handling for admin routes - you can add additional checks here
-  if (pathname.startsWith('/admin')) {
-    // Add your admin role check here if needed
-    // For now, we'll just use the basic auth check above
+  // Handle admin routes protection
+  if (isAdminRoute && !isAdminLoginPage && !adminToken) {
+    const adminLoginUrl = new URL('/login', request.url);
+    adminLoginUrl.searchParams.set('callbackUrl', pathname);
+    return NextResponse.redirect(adminLoginUrl);
   }
 
   return NextResponse.next();
@@ -45,7 +54,8 @@ export const config = {
      */
     '/user/:path*',
     '/admin/:path*',
-    '/auth/:path*',
+    '/login',
+    '/signin',
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ]
 }; 

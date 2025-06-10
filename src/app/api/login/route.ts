@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
       },
     })
 
-    const userData = await userRes.json()
+    const userData = await userRes.json();    
 
     if (!userData.success) {
       return NextResponse.json({
@@ -63,12 +63,21 @@ export async function POST(req: NextRequest) {
       }, { status: 500 })
     }
 
+    // console.log('userData', userData);
+    
+    const { customer } = userData.client || {};
+
     // Step 4: Set JWT token in cookie
     const response = NextResponse.json({
       success: true,
       message: 'Login successful',
-      user: userData.data,
-    })
+      user: {
+        phone,
+        customer: customer || false,
+      },
+      userData: userData.client,
+      token,
+    });
 
     // Cookie settings optimized for IP-based hosting
     response.cookies.set('token', token, {

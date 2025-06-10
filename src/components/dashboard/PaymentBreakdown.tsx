@@ -7,6 +7,17 @@ import { useAuth } from '@/context/AuthContext';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
+// Helper function to safely parse decimal values
+const parseDecimalValue = (value: any): number => {
+  if (!value) return 0;
+  if (typeof value === 'number') return value;
+  if (typeof value === 'string') return parseFloat(value);
+  if (typeof value === 'object' && value.$numberDecimal) {
+    return parseFloat(value.$numberDecimal);
+  }
+  return 0;
+};
+
 const PaymentBreakdown = () => {
   const { user, loading } = useAuth();
 
@@ -18,13 +29,14 @@ const PaymentBreakdown = () => {
     return null;
   }
 
-  // Convert decimal string values to numbers
-  const foreclosureAmount = parseFloat(user.fore_closure);
-  const settlementAmount = parseFloat(user.settlement.$numberDecimal);
-  const minimumPaymentAmount = parseFloat(user.minimum_part_payment.$numberDecimal);
-  const foreclosureReward = parseFloat(user.foreclosure_reward.$numberDecimal);
-  const settlementReward = parseFloat(user.settlement_reward.$numberDecimal);
-  const minimumPaymentReward = parseFloat(user.minimum_part_payment_reward.$numberDecimal);
+
+  // Safely convert decimal values to numbers
+  const foreclosureAmount = parseDecimalValue(user.fore_closure);
+  const settlementAmount = parseDecimalValue(user.settlement);
+  const minimumPaymentAmount = parseDecimalValue(user.minimum_part_payment);
+  const foreclosureReward = parseDecimalValue(user.foreclosure_reward);
+  const settlementReward = parseDecimalValue(user.settlement_reward);
+  const minimumPaymentReward = parseDecimalValue(user.minimum_part_payment_reward);
 
   const data = {
     labels: ['Foreclosure', 'Settlement', 'Minimum Payment'],
