@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
-import { useAuth } from '@/context/AuthContext';
+// import { useAuth } from '@/context/AuthContext';
 
 export default function SignInForm() {
   const router = useRouter();
