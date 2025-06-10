@@ -14,8 +14,8 @@ export default function AdminLoginForm() {
   const router = useRouter();
   const { login } = useAuth();
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: 'gaurav@gmail.com',
+    password: 'admin@123',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

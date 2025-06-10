@@ -9,11 +9,11 @@ import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
-// import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/AuthContext';
 
 export default function SignInForm() {
   const router = useRouter();
-  // const { login } = useAuth();
+  const { login } = useAuth();
   const [mobileNumber, setMobileNumber] = useState("8538945025");
   const [otp, setOtp] = useState("");
   const [isOtpSent, setIsOtpSent] = useState(false);
@@ -113,19 +113,10 @@ export default function SignInForm() {
         throw new Error(data.message || 'Failed to verify OTP');
       }
       if (data.success) {
-        // console.log('data', data.userData);
-        
-        // Use auth context to handle login
-        // login(data.userData, 'user');
+        // Use auth context to handle login and redirect
+        login(data.user, 'user');
         localStorage.setItem('userToken', data.token || '');
-
-        // Redirect to callback or dashboard
-        const params = new URLSearchParams(window.location.search);
-        const callbackUrl = params.get('callbackUrl');
-        const redirectUrl = callbackUrl || '/user/dashboard';
-
         toast.success('Login successful!');
-        router.push(redirectUrl);
       } else {
         setError(data.message || 'Invalid OTP. Please try again.');
         toast.error(data.message || 'Invalid OTP. Please try again.');

@@ -59,10 +59,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Store full user data
       setUser(data as User);
       localStorage.setItem('user', JSON.stringify(data));
+      // Redirect to home page after user login
+      router.push('/');
     } else {
       const { email, name } = data as Admin;
       setAdmin({ email, name });
       localStorage.setItem('admin', JSON.stringify({ email, name }));
+      // Redirect to admin dashboard after admin login
+      router.push('/admin/dashboard');
     }
   };
 
@@ -83,14 +87,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         localStorage.removeItem('user');
         localStorage.removeItem('userToken');
         setUser(null);
+        // Redirect to signin page
+        router.push('/signin');
+      } else {
+        localStorage.removeItem('admin');
+        setAdmin(null);
+        // Redirect to admin login page
+        router.push('/login');
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Even if API call fails, clear local state and redirect
+      if (type === 'user') {
+        localStorage.removeItem('user');
+        localStorage.removeItem('userToken');
+        setUser(null);
         router.push('/signin');
       } else {
         localStorage.removeItem('admin');
         setAdmin(null);
         router.push('/login');
       }
-    } catch (error) {
-      console.error('Logout error:', error);
     }
   };
 
@@ -108,6 +125,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (userData.success && userData.user) {
           // Store full user data
           setUser(userData.user);
+        } else {
+          // If not authenticated and on a protected route, redirect to login
+          const isProtectedRoute = window.location.pathname.startsWith('/user/');
+          if (isProtectedRoute) {
+            router.push('/signin');
+          }
         }
       }
 
@@ -122,10 +145,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (adminData.success && adminData.user) {
           const { email, name } = adminData.user;
           setAdmin({ email, name });
+        } else {
+          // If not authenticated and on a protected route, redirect to login
+          const isProtectedRoute = window.location.pathname.startsWith('/admin/');
+          if (isProtectedRoute) {
+            router.push('/login');
+          }
         }
       }
     } catch (error) {
       console.error('Auth check error:', error);
+      // On error, clear state and redirect if on protected route
+      const currentPath = window.location.pathname;
+      if (currentPath.startsWith('/user/')) {
+        setUser(null);
+        router.push('/signin');
+      } else if (currentPath.startsWith('/admin/')) {
+        setAdmin(null);
+        router.push('/login');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -152,7 +190,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       user, 
       admin, 
       isLoading, 
-      loading: isLoading,
+      loading: isLoading, 
       login, 
       logout, 
       checkAuth 
