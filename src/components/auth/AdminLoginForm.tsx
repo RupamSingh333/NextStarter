@@ -77,7 +77,7 @@ export default function AdminLoginForm() {
         // Get callback URL or default to dashboard
         const params = new URLSearchParams(window.location.search);
         const callbackUrl = params.get('callbackUrl');
-        const redirectUrl = callbackUrl || '/admin/dashboard';
+        const redirectUrl = callbackUrl || '/admin';
 
         toast.success('Login successful!');
         router.push(redirectUrl);

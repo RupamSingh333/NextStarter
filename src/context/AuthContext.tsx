@@ -66,7 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setAdmin({ email, name });
       localStorage.setItem('admin', JSON.stringify({ email, name }));
       // Redirect to admin dashboard after admin login
-      router.push('/admin/dashboard');
+      router.push('/admin');
     }
   };
 
@@ -86,14 +86,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (type === 'user') {
         localStorage.removeItem('user');
         localStorage.removeItem('userToken');
+        // Clear all cookies
+        document.cookie.split(';').forEach(cookie => {
+          document.cookie = cookie
+            .replace(/^ +/, '')
+            .replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
+        });
         setUser(null);
-        // Redirect to signin page
+        // Redirect and refresh
         router.push('/signin');
+        window.location.reload();
       } else {
         localStorage.removeItem('admin');
+        // Clear all cookies
+        document.cookie.split(';').forEach(cookie => {
+          document.cookie = cookie
+            .replace(/^ +/, '')
+            .replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
+        });
         setAdmin(null);
-        // Redirect to admin login page
+        // Redirect and refresh
         router.push('/login');
+        window.location.reload();
       }
     } catch (error) {
       console.error('Logout error:', error);
@@ -101,12 +115,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (type === 'user') {
         localStorage.removeItem('user');
         localStorage.removeItem('userToken');
+        // Clear all cookies
+        document.cookie.split(';').forEach(cookie => {
+          document.cookie = cookie
+            .replace(/^ +/, '')
+            .replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
+        });
         setUser(null);
         router.push('/signin');
+        window.location.reload();
       } else {
         localStorage.removeItem('admin');
+        // Clear all cookies
+        document.cookie.split(';').forEach(cookie => {
+          document.cookie = cookie
+            .replace(/^ +/, '')
+            .replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
+        });
         setAdmin(null);
         router.push('/login');
+        window.location.reload();
       }
     }
   };
@@ -119,6 +147,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         method: 'GET',
         credentials: 'include',
       });
+
+      // console.log('userResponse', userResponse);
 
       if (userResponse.ok) {
         const userData = await userResponse.json();

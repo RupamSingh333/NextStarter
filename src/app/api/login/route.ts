@@ -103,22 +103,23 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
     try {
       const token = req.cookies.get('token')?.value
-    //   console.log(token)
+      // console.log(token)
       if (!token) {
         return NextResponse.json({
           success: false,
           message: 'Unauthorized. No token found.',
         }, { status: 401 })
       }
+  // console.log('token', token);
   
       const userRes = await fetch(`${API_BASE_URL}/clients/get-client`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
+      // console.log(userRes)
   
       const userData = await userRes.json()
-    //   console.log(userData)
       if (!userData.success) {
         return NextResponse.json({
           success: false,

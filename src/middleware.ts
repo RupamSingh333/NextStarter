@@ -24,7 +24,7 @@ export async function middleware(request: NextRequest) {
   }
 
   if (isAdminLoginPage && adminToken) {
-    return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+    return NextResponse.redirect(new URL('/admin', request.url));
   }
 
   // Handle user routes protection
