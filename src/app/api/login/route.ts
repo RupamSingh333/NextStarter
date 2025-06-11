@@ -117,13 +117,14 @@ export async function GET(req: NextRequest) {
           Authorization: `Bearer ${token}`,
         },
       })
-      // console.log(userRes)
-  
+      
       const userData = await userRes.json()
+      // console.log(userData)
+
       if (!userData.success) {
         return NextResponse.json({
           success: false,
-          message: 'Failed to fetch user info',
+          message: userData.message || 'Failed to fetch user info',
         }, { status: 401 })
       }
   

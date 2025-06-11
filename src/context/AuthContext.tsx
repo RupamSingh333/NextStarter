@@ -139,65 +139,75 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const clearAuthData = (type: 'user' | 'admin') => {
+    if (type === 'user') {
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      setUser(null);
+      if (window.location.pathname.startsWith('/user/')) {
+        router.push('/signin');
+      }
+    } else if (type === 'admin') {
+      localStorage.removeItem('admin_token');
+      setAdmin(null);
+      if (window.location.pathname.startsWith('/admin/')) {
+        router.push('/login');
+      }
+    }
+
+    // Clear all cookies
+    document.cookie.split(';').forEach(cookie => {
+      document.cookie = cookie
+        .replace(/^ +/, '')
+        .replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
+    });
+  };
+
   const checkAuth = async () => {
     setIsLoading(true);
     try {
-      // Check user auth
+      // ==== Check USER Auth ====
       const userResponse = await fetch('/api/login', {
         method: 'GET',
         credentials: 'include',
       });
 
-      // console.log('userResponse', userResponse);
+      const userData = await userResponse.json();
 
-      if (userResponse.ok) {
-        const userData = await userResponse.json();
-        if (userData.success && userData.user) {
-          // Store full user data
-          setUser(userData.user);
-        } else {
-          // If not authenticated and on a protected route, redirect to login
-          const isProtectedRoute = window.location.pathname.startsWith('/user/');
-          if (isProtectedRoute) {
-            router.push('/signin');
-          }
-        }
+      if (userResponse.ok && userData.success) {
+        setUser(userData.user);
+      } else {
+        clearAuthData('user');
       }
 
-      // Check admin auth
+      // ==== Check ADMIN Auth ====
       const adminResponse = await fetch('/api/admin/login', {
         method: 'GET',
         credentials: 'include',
       });
 
-      if (adminResponse.ok) {
-        const adminData = await adminResponse.json();
-        if (adminData.success && adminData.user) {
-          const { email, name } = adminData.user;
-          setAdmin({ email, name });
-        } else {
-          // If not authenticated and on a protected route, redirect to login
-          const isProtectedRoute = window.location.pathname.startsWith('/admin/');
-          if (isProtectedRoute) {
-            router.push('/login');
-          }
-        }
+      const adminData = await adminResponse.json();
+
+      if (adminResponse.ok && adminData.success && adminData.user) {
+        const { email, name } = adminData.user;
+        setAdmin({ email, name });
+      } else {
+        clearAuthData('admin');
       }
     } catch (error) {
       console.error('Auth check error:', error);
-      // On error, clear state and redirect if on protected route
+      // fallback: check current path and clear relevant auth
       const currentPath = window.location.pathname;
       if (currentPath.startsWith('/user/')) {
-        setUser(null);
-        router.push('/signin');
+        clearAuthData('user');
       } else if (currentPath.startsWith('/admin/')) {
-        setAdmin(null);
-        router.push('/login');
+        clearAuthData('admin');
       }
     } finally {
       setIsLoading(false);
     }
   };
+
 
   useEffect(() => {
     // Check authentication status on mount
@@ -216,14 +226,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      admin, 
-      isLoading, 
-      loading: isLoading, 
-      login, 
-      logout, 
-      checkAuth 
+    <AuthContext.Provider value={{
+      user,
+      admin,
+      isLoading,
+      loading: isLoading,
+      login,
+      logout,
+      checkAuth
     }}>
       {children}
     </AuthContext.Provider>
