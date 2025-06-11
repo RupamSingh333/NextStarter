@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { toast } from 'react-hot-toast';
 import { TrashIcon } from '@heroicons/react/24/outline';
+import Image from 'next/image';
+
 
 interface Screenshot {
   _id: string;
@@ -18,13 +20,13 @@ interface UploadModalProps {
   onDelete: (id: string) => Promise<void>;
 }
 
-const UploadModal = ({ 
-  isOpen, 
-  onClose, 
-  onUpload, 
+const UploadModal = ({
+  isOpen,
+  onClose,
+  onUpload,
   isUploading,
   uploadedScreenshots,
-  onDelete 
+  onDelete
 }: UploadModalProps) => {
   const [preview, setPreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -42,7 +44,7 @@ const UploadModal = ({
         toast.error('Please select an image file');
         return;
       }
-      
+
       // Validate file size (10MB)
       if (file.size > 10 * 1024 * 1024) {
         toast.error('File size should be less than 10MB');
@@ -90,7 +92,7 @@ const UploadModal = ({
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
-      
+
       <div className="flex min-h-screen items-center justify-center p-4">
         <div className="relative w-full max-w-3xl transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-6 text-left shadow-xl transition-all">
           {/* Delete Confirmation Dialog */}
@@ -147,7 +149,15 @@ const UploadModal = ({
                   <div className="text-center">
                     {preview ? (
                       <div className="mb-4">
-                        <img src={preview} alt="Preview" className="mx-auto max-h-64 rounded-lg" />
+                        {/* <img src={preview} alt="Preview" className="mx-auto max-h-64 rounded-lg" /> */}
+                        <Image
+                          src={preview || ''}  // must provide a string, not null
+                          alt="Preview"
+                          className="mx-auto rounded-lg"
+                          width={400}         // provide width and height or use layout='fill'
+                          height={256}
+                          style={{ maxHeight: '16rem', objectFit: 'contain' }} // replicate max-h-64 and aspect
+                        />
                       </div>
                     ) : (
                       <svg
@@ -162,12 +172,11 @@ const UploadModal = ({
                         />
                       </svg>
                     )}
-                    
+
                     <label
                       htmlFor="file-upload"
-                      className={`relative cursor-pointer rounded-md bg-white dark:bg-gray-800 font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500 ${
-                        isUploading ? 'opacity-50 cursor-not-allowed' : ''
-                      }`}
+                      className={`relative cursor-pointer rounded-md bg-white dark:bg-gray-800 font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500 ${isUploading ? 'opacity-50 cursor-not-allowed' : ''
+                        }`}
                     >
                       <span>Upload a file</span>
                       <input
@@ -202,11 +211,10 @@ const UploadModal = ({
                   type="button"
                   onClick={handleSubmit}
                   disabled={!selectedFile || isUploading}
-                  className={`rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm ${
-                    selectedFile && !isUploading
-                      ? 'bg-indigo-600 hover:bg-indigo-500'
-                      : 'bg-indigo-400 cursor-not-allowed'
-                  }`}
+                  className={`rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm ${selectedFile && !isUploading
+                    ? 'bg-indigo-600 hover:bg-indigo-500'
+                    : 'bg-indigo-400 cursor-not-allowed'
+                    }`}
                 >
                   {isUploading ? 'Uploading...' : 'Upload'}
                 </button>
@@ -221,14 +229,21 @@ const UploadModal = ({
               <div className="space-y-4 max-h-[400px] overflow-y-auto">
                 {uploadedScreenshots.length > 0 ? (
                   uploadedScreenshots.map((screenshot) => (
-                    <div 
+                    <div
                       key={screenshot._id}
                       className="relative group rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700"
                     >
-                      <img
+                      {/* <img
                         src={screenshot.screen_shot}
                         alt="Payment Screenshot"
                         className="w-full h-auto"
+                      /> */}
+                      <Image
+                        src={screenshot.screen_shot}
+                        alt="Payment Screenshot"
+                        fill
+                        style={{ objectFit: 'contain' }}
+                        unoptimized={true} // Optional: Use if image is external or you don't want optimization
                       />
                       <button
                         onClick={() => handleDeleteClick(screenshot._id)}
