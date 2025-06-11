@@ -6,7 +6,9 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 export async function GET(request: NextRequest) {
   try {
     // Get admin token from cookies
-    const adminToken = (await cookies()).get('adminToken')?.value;
+    const adminToken = (await cookies()).get('admin_token')?.value;
+    // const adminToken = request.cookies.get('admin_token')?.value
+    // console.log('adminToken', adminToken);
 
     if (!adminToken) {
       return NextResponse.json(
