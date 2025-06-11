@@ -43,39 +43,6 @@ export async function GET(req: NextRequest) {
       data: userCouponData.coupon,
     })
 
-
-    // Example scratch cards data - replace with your actual API call
-    const mockCards = [
-      {
-        _id: '1',
-        amount: '0.25',
-        couponCode: 'RPa36d8590d03',
-        validDays: 30,
-        isScratched: true,
-        isRedeemed: false,
-        createdAt: new Date().toISOString()
-      },
-      {
-        _id: '2',
-        amount: '0.07',
-        couponCode: 'RP3fd50ed38c2',
-        validDays: 180,
-        isScratched: true,
-        isRedeemed: true,
-        createdAt: new Date().toISOString()
-      },
-      {
-        _id: '3',
-        amount: '5.02',
-        couponCode: 'RP1f6589a4d1e',
-        validDays: 365,
-        isScratched: true,
-        isRedeemed: false,
-        createdAt: new Date().toISOString()
-      }
-    ];
-
-    return NextResponse.json({ success: true, cards: mockCards });
   } catch (error) {
     console.error('Error fetching scratch cards:', error);
     return NextResponse.json(

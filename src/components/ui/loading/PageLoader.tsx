@@ -1,16 +1,23 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 
 const PageLoader = () => {
   return (
-    <div className="fixed inset-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm z-50 flex items-center justify-center">
-      <div className="flex flex-col items-center">
-        <div className="relative">
-          <div className="h-16 w-16 rounded-full border-t-4 border-b-4 border-primary-500 animate-spin"></div>
-          <div className="absolute inset-0 h-16 w-16 rounded-full border-t-4 border-b-4 border-primary-500 animate-spin" style={{ animationDelay: '-0.3s' }}></div>
-        </div>
-        <p className="mt-4 text-sm text-gray-600 dark:text-gray-300 animate-pulse">Loading your dashboard...</p>
-      </div>
-    </div>
+    <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="absolute inset-0 z-50 flex items-center justify-center bg-white/60 dark:bg-black/40 backdrop-blur-sm"
+      >
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.3 }}
+          className="rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent animate-spin"
+        ></motion.div>
+      </motion.div>
+    </>
   );
 };
 

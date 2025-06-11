@@ -23,14 +23,14 @@ const Header = () => {
           <div className="flex-shrink-0 relative w-[120px] md:w-[150px] h-[40px]">
             <Link href="/" className="block w-full h-full">
               <Image
-                src="/images/logo/rpk.webp"
+                src="/images/logo/repayKaroLogo.svg"
                 alt="RepayKarot"
                 fill
                 className="object-contain dark:hidden"
                 priority
               />
               <Image
-                src="/images/logo/rpk.webp"
+                src="/images/logo/repayKaroLogo.svg"
                 alt="RepayKarot"
                 fill
                 className="object-contain hidden dark:block"
@@ -73,14 +73,14 @@ const Header = () => {
             <div className="flex-shrink-0 relative w-[120px] md:w-[150px] h-[40px]">
               <Link href="/" className="block w-full h-full">
                 <Image
-                  src="/images/logo/rpk.webp"
+                  src="/images/logo/repayKaroLogo.svg"
                   alt="RepayKarot"
                   fill
                   className="object-contain dark:hidden"
                   priority
                 />
                 <Image
-                  src="/images/logo/rpk.webp"
+                  src="/images/logo/repayKaroLogo.svg"
                   alt="RepayKarot"
                   fill
                   className="object-contain hidden dark:block"
@@ -124,14 +124,14 @@ const Header = () => {
           <div className="flex-shrink-0 relative w-[120px] md:w-[150px] h-[40px]">
             <Link href="/" className="block w-full h-full">
               <Image
-                src="/images/logo/rpk.webp"
+                src="/images/logo/repayKaroLogo.svg"
                 alt="RepayKarot"
                 fill
                 className="object-contain dark:hidden"
                 priority
               />
               <Image
-                src="/images/logo/rpk.webp"
+                src="/images/logo/repayKaroLogo.svg"
                 alt="RepayKarot"
                 fill
                 className="object-contain hidden dark:block"
