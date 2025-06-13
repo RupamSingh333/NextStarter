@@ -123,7 +123,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      user: data.client,
+      user: data?.client || {},
     });
 
   } catch (error) {

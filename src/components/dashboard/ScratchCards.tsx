@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ScratchCard } from 'next-scratchcard';
 import { toast } from 'react-hot-toast';
 
@@ -24,9 +24,12 @@ export default function ScratchCards() {
   const [cards, setCards] = useState<ScratchCard[]>([]);
   const [loading, setLoading] = useState(true);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const hasFetched = useRef(false);
 
   // Fetch scratch cards data
   useEffect(() => {
+    if (hasFetched.current) return;
+
     const fetchCards = async () => {
       try {
         const response = await fetch('/api/scratch-cards', {
@@ -41,6 +44,7 @@ export default function ScratchCards() {
         console.error('Error fetching scratch cards:', error);
       } finally {
         setLoading(false);
+        hasFetched.current = true;
       }
     };
 
