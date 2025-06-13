@@ -12,6 +12,17 @@ type DecimalValue = {
   $numberDecimal: string;
 } | string | number | undefined | null;
 
+interface User {
+  fore_closure: DecimalValue;
+  settlement: DecimalValue;
+  minimum_part_payment: DecimalValue;
+  foreclosure_reward: DecimalValue;
+  settlement_reward: DecimalValue;
+  minimum_part_payment_reward: DecimalValue;
+  isPaid: boolean;
+  payment_url?: string;
+}
+
 // Helper function to safely parse decimal values
 const parseDecimalValue = (value: DecimalValue): number => {
   if (!value) return 0;
@@ -23,7 +34,7 @@ const parseDecimalValue = (value: DecimalValue): number => {
   return 0;
 };
 
-const PaymentBreakdown = ({user, loading}: {user: any, loading: boolean}) => {
+const PaymentBreakdown = ({user, loading}: {user: User | null, loading: boolean}) => {
 
   if (loading) {
     return <div className="animate-pulse">Loading...</div>;
