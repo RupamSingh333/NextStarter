@@ -79,7 +79,6 @@ export const EcommerceMetrics = () => {
         title="Users"
         value={users.userCount}
         badgeColor="success"
-        badgeChange="+0.00%"
         icon={<GroupIcon className="text-blue-600 size-6 dark:text-blue-300" />}
         subValues={[
           { label: "Active", value: users.activeUserCount, color: "green" },
@@ -92,7 +91,6 @@ export const EcommerceMetrics = () => {
         title="Customers"
         value={customers.customerCount}
         badgeColor="success"
-        badgeChange="+11.01%"
         icon={<GroupIcon className="text-gray-800 size-6 dark:text-white/90" />}
         subValues={[
           { label: "Paid", value: customers.piadCustomerCount, color: "green" },
@@ -110,7 +108,6 @@ export const EcommerceMetrics = () => {
         }
         prefix="₹"
         badgeColor="success"
-        badgeChange="+3.14%"
         icon={<BoxIconLine className="text-yellow-600 size-6 dark:text-yellow-400" />}
         subValues={[
           { label: "Foreclosure", value: parseFloat(payments.paidForeClosureSum) },
@@ -125,7 +122,6 @@ export const EcommerceMetrics = () => {
         value={parseFloat(payments.foreClosureSum)}
         prefix="₹"
         badgeColor="success"
-        badgeChange="+2.10%"
         icon={<BoxIconLine className="text-purple-600 size-6 dark:text-purple-400" />}
         subValues={[
           {
@@ -147,7 +143,6 @@ export const EcommerceMetrics = () => {
         value={parseFloat(payments.settlementSum)}
         prefix="₹"
         badgeColor="success"
-        badgeChange="+1.75%"
         icon={<BoxIconLine className="text-cyan-600 size-6 dark:text-cyan-400" />}
         subValues={[
           {
@@ -169,7 +164,6 @@ export const EcommerceMetrics = () => {
         value={parseFloat(payments.partialSum)}
         prefix="₹"
         badgeColor="success"
-        badgeChange="+1.20%"
         icon={<BoxIconLine className="text-orange-600 size-6 dark:text-orange-400" />}
         subValues={[
           {
@@ -193,7 +187,6 @@ interface MetricCardProps {
   title: string;
   value: number | string;
   prefix?: string;
-  badgeChange: string;
   badgeColor: "success" | "error";
   icon: React.ReactNode;
   subValues?: {
@@ -207,13 +200,10 @@ const MetricCard = ({
   title,
   value,
   prefix = "",
-  badgeChange,
   badgeColor,
   icon,
   subValues = [],
 }: MetricCardProps) => {
-  const isNegative = badgeColor === "error";
-
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] shadow-sm hover:shadow-md transition-all">
       <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
