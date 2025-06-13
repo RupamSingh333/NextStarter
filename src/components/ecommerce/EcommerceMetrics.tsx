@@ -78,7 +78,6 @@ export const EcommerceMetrics = () => {
       <MetricCard
         title="Users"
         value={users.userCount}
-        badgeColor="success"
         icon={<GroupIcon className="text-blue-600 size-6 dark:text-blue-300" />}
         subValues={[
           { label: "Active", value: users.activeUserCount, color: "green" },
@@ -90,7 +89,6 @@ export const EcommerceMetrics = () => {
       <MetricCard
         title="Customers"
         value={customers.customerCount}
-        badgeColor="success"
         icon={<GroupIcon className="text-gray-800 size-6 dark:text-white/90" />}
         subValues={[
           { label: "Paid", value: customers.piadCustomerCount, color: "green" },
@@ -107,7 +105,6 @@ export const EcommerceMetrics = () => {
           parseFloat(payments.paidPartialSum)
         }
         prefix="₹"
-        badgeColor="success"
         icon={<BoxIconLine className="text-yellow-600 size-6 dark:text-yellow-400" />}
         subValues={[
           { label: "Foreclosure", value: parseFloat(payments.paidForeClosureSum) },
@@ -121,7 +118,6 @@ export const EcommerceMetrics = () => {
         title="Foreclosure Payment"
         value={parseFloat(payments.foreClosureSum)}
         prefix="₹"
-        badgeColor="success"
         icon={<BoxIconLine className="text-purple-600 size-6 dark:text-purple-400" />}
         subValues={[
           {
@@ -142,7 +138,6 @@ export const EcommerceMetrics = () => {
         title="Settlement Payment"
         value={parseFloat(payments.settlementSum)}
         prefix="₹"
-        badgeColor="success"
         icon={<BoxIconLine className="text-cyan-600 size-6 dark:text-cyan-400" />}
         subValues={[
           {
@@ -163,7 +158,6 @@ export const EcommerceMetrics = () => {
         title="Partial Payment"
         value={parseFloat(payments.partialSum)}
         prefix="₹"
-        badgeColor="success"
         icon={<BoxIconLine className="text-orange-600 size-6 dark:text-orange-400" />}
         subValues={[
           {
@@ -187,7 +181,6 @@ interface MetricCardProps {
   title: string;
   value: number | string;
   prefix?: string;
-  badgeColor: "success" | "error";
   icon: React.ReactNode;
   subValues?: {
     label: string;
@@ -200,7 +193,6 @@ const MetricCard = ({
   title,
   value,
   prefix = "",
-  badgeColor,
   icon,
   subValues = [],
 }: MetricCardProps) => {
