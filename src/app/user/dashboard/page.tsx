@@ -14,7 +14,7 @@ export default function DashboardPage() {
   const [relativeLogin, setRelativeLogin] = useState<string | null>(null);
 
   useEffect(() => {
-    checkAuth();
+    // checkAuth();
     if (user?.last_login) {
       const formatted = formatDistanceToNow(new Date(user.last_login), { addSuffix: true });
       setRelativeLogin(formatted);

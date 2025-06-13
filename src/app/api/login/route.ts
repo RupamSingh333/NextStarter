@@ -89,6 +89,14 @@ export async function POST(req: NextRequest) {
       maxAge: 60 * 60 * 24 * 30, // 30 days
     })
 
+    response.cookies.set('admin_token', '', { 
+      maxAge: 0,
+      path: '/',
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax'
+    })
+
     return response
 
   } catch (error) {

@@ -9,5 +9,14 @@ export async function POST() {
     secure: false,
     sameSite: 'lax'
   })
+
+  response.cookies.set('token', '', { 
+    maxAge: 0,
+    path: '/',
+    httpOnly: true,
+    secure: false,
+    sameSite: 'lax'
+  })
+  
   return response
 } 
