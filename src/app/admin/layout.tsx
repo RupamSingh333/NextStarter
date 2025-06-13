@@ -4,7 +4,10 @@ import { useSidebar } from "@/context/SidebarContext";
 import AppHeader from "@/layout/AppHeader";
 import AppSidebar from "@/layout/AppSidebar";
 import Backdrop from "@/layout/Backdrop";
-import React from "react";
+import React, { useEffect } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import Loading from "@/components/ui/loading/PageLoader"; // ✅ Import your loading component
 
 export default function AdminLayout({
   children,
@@ -12,27 +15,42 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
+  const { admin, isLoading } = useAuth();
+  const router = useRouter();
 
-  // Dynamic class for main content margin based on sidebar state
+  // Redirect to login if admin is not authenticated
+  useEffect(() => {
+    if (!isLoading && !admin) {
+      router.push("/login");
+    }
+  }, [isLoading, admin, router]);
+
+  // Show loading animation while checking auth
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loading /> {/* ✅ Use your custom loading component */}
+      </div>
+    );
+  }
+
   const mainContentMargin = isMobileOpen
     ? "ml-0"
     : isExpanded || isHovered
-    ? "lg:ml-[290px]"
-    : "lg:ml-[90px]";
+      ? "lg:ml-[290px]"
+      : "lg:ml-[90px]";
 
   return (
     <div className="min-h-screen xl:flex">
-      {/* Sidebar and Backdrop */}
       <AppSidebar />
       <Backdrop />
-      {/* Main Content Area */}
       <div
-        className={`flex-1 transition-all  duration-300 ease-in-out ${mainContentMargin}`}
+        className={`flex-1 transition-all duration-300 ease-in-out ${mainContentMargin}`}
       >
-        {/* Header */}
         <AppHeader />
-        {/* Page Content */}
-        <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">{children}</div>
+        <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
+          {children}
+        </div>
       </div>
     </div>
   );

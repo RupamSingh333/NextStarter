@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { fetchWithAuth } from '@/lib/fetchWithAuth';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export async function POST(req: NextRequest) {
   try {
@@ -101,43 +102,35 @@ export async function POST(req: NextRequest) {
 
 // GET: Return user info using token from cookie
 export async function GET(req: NextRequest) {
-    try {
-      const token = req.cookies.get('token')?.value
-      // console.log(token)
-      if (!token) {
-        return NextResponse.json({
-          success: false,
-          message: 'Unauthorized. No token found.',
-        }, { status: 401 })
-      }
-  // console.log('token', token);
-  
-      const userRes = await fetch(`${API_BASE_URL}/clients/get-client`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      
-      const userData = await userRes.json()
-      // console.log(userData)
+  try {
+    const token = req.cookies.get('token')?.value;
 
-      if (!userData.success) {
-        return NextResponse.json({
-          success: false,
-          message: userData.message || 'Failed to fetch user info',
-        }, { status: 401 })
-      }
-  
-      return NextResponse.json({
-        success: true,
-        user: userData.client,
-      })
-  
-    } catch (error) {
-      console.error('Get user API error:', error)
+    if (!token) {
       return NextResponse.json({
         success: false,
-        message: 'Internal server error',
-      }, { status: 500 })
+        message: 'Unauthorized. No token found.',
+      }, { status: 401 });
     }
+
+    const { data, nextResponse } = await fetchWithAuth(
+      `${API_BASE_URL}/clients/get-client`,
+      {},
+      token,
+      'token' // name of the cookie to clear if invalid
+    );
+
+    if (nextResponse) return nextResponse;
+
+    return NextResponse.json({
+      success: true,
+      user: data.client,
+    });
+
+  } catch (error) {
+    console.error('Get user API error:', error);
+    return NextResponse.json({
+      success: false,
+      message: 'Internal server error',
+    }, { status: 500 });
+  }
 }

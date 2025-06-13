@@ -11,9 +11,13 @@ import {
 } from '../ui/table';
 import Badge from '../ui/badge/Badge';
 import Image from 'next/image';
-import Button from '../ui/button/Button';
+import Button from "@/components/ui/button/Button";
+import { Modal } from "@/components/ui/modal";
+import Label from "@/components/form/Label";
 import Pagination from '../tables/Pagination';
 import PageLoader from '../ui/loading/PageLoader';
+import { toast } from 'react-hot-toast';
+import { useModal } from "@/hooks/useModal";
 
 
 interface Customer {
@@ -48,19 +52,41 @@ export default function BasicTableOne() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
-  const pageSize = 10;
+  const [pageSize, setPageSize] = useState(10);
+  const [selectedStatus, setSelectedStatus] = useState(-1); // -1: All
+  const paymentStatus = [
+    { id: -1, name: 'All' },
+    { id: 1, name: 'Paid' },
+    { id: 0, name: 'Unpaid' },
+    { id: 3, name: 'Logged In' },
+    // { id: 2, name: 'Not Logged In' },
+  ];
+  const basePageSizes = [10, 25, 50, 100, 500];
 
-  const fetchCustomers = async (page: number) => {
+  const getPageSizeOptions = () => {
+    if (totalRecords === 0) return [10];
+    const filtered = basePageSizes.filter((size) => size < totalRecords);
+    if (!filtered.includes(totalRecords)) {
+      filtered.push(totalRecords);
+    }
+    return [...new Set(filtered)].sort((a, b) => a - b);
+  };
+
+  const pageSizeOptions = getPageSizeOptions();
+
+
+  const fetchCustomers = async (page: number, size: number, status: number) => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/admin/customers/list?page=${page}&limit=${pageSize}`, {
-        credentials: 'include',
-      });
+      const response = await fetch(
+        `/api/admin/customers/list?page=${page}&perPage=${size}&filter=${status}`,
+        { credentials: 'include' }
+      );
       const data = await response.json();
       if (data.success) {
         setCustomerList(data.data);
         setTotalRecords(data.totalRecords);
-        setTotalPages(Math.ceil(data.totalRecords / pageSize));
+        setTotalPages(Math.ceil(data.totalRecords / size));
       }
     } catch (error) {
       console.error('Error fetching customers:', error);
@@ -70,8 +96,61 @@ export default function BasicTableOne() {
   };
 
   useEffect(() => {
-    fetchCustomers(currentPage);
-  }, [currentPage]);
+    fetchCustomers(currentPage, pageSize, selectedStatus);
+  }, [currentPage, pageSize, selectedStatus]);
+
+
+
+  const { isOpen, openModal, closeModal } = useModal();
+  const [statusType, setStatusType] = useState("1");
+  const [selectedID, setSelectedId] = useState<string | undefined>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+const handleSubmit = async () => {
+  closeModal(); // Start loading
+
+  const updatePromise: Promise<string> = new Promise(async (resolve, reject) => {
+    try {
+      const response = await fetch("/api/admin/customers/update-payment-type", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          uniqueId: selectedID,
+          payment_type: statusType,
+        }),
+      });
+
+      const data = await response.json().catch(() => ({})); // handle invalid JSON
+      // console.log("Update response:", data);
+      
+      if (!data.success) {
+        // Always resolve with an error message to be handled by toast
+        return reject(data.message || "Something went wrong while updating payment type.");
+      }
+
+      resolve("Payment type updated successfully");
+    } catch (error: any) {
+      // Catch all network or unexpected errors
+      reject("Unable to connect to the server. Please try again.");
+    }
+  });
+
+  toast.promise(updatePromise, {
+    loading: "Updating payment type...",
+    success: (msg: string) => msg,
+    error: (err) => err,
+  });
+
+  try {
+    await updatePromise;
+    closeModal(); // Close modal after success
+    fetchCustomers(currentPage, pageSize, selectedStatus); // Refresh list
+  } finally {
+    setIsSubmitting(false); // Stop loading
+  }
+};
+
+
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] relative">
@@ -80,6 +159,45 @@ export default function BasicTableOne() {
           <PageLoader />
         </div>
       )}
+
+      {/* Filter Controls */}
+      <div className="flex justify-between items-center p-4 gap-4 flex-wrap">
+        <div className="flex items-center gap-2">
+          <label className="text-sm font-medium text-gray-700">Page Size:</label>
+          <select
+            value={pageSize}
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+              setCurrentPage(1); // Reset to page 1
+            }}
+            className="border border-gray-300 rounded-md px-2 py-1 text-sm"
+          >
+            {pageSizeOptions.map((size) => (
+              <option key={size} value={size}>
+                {size} / page
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <label className="text-sm font-medium text-gray-700">Payment Status:</label>
+          <select
+            value={selectedStatus}
+            onChange={(e) => {
+              setSelectedStatus(Number(e.target.value));
+              setCurrentPage(1); // Reset to page 1
+            }}
+            className="border border-gray-300 rounded-md px-2 py-1 text-sm"
+          >
+            {paymentStatus.map((status) => (
+              <option key={status.id} value={status.id}>
+                {status.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
 
       <div className="max-w-full overflow-x-auto">
         <div className="min-w-[700px] md:min-w-[1100px]">
@@ -177,12 +295,22 @@ export default function BasicTableOne() {
                   </TableCell>
                   {/* Action cell: keep Edit and Delete buttons, replace Activate/Deactivate button with label */}
                   <TableCell className="px-5 py-4 text-start space-x-2 flex items-center gap-2">
-                    <Button size="sm" variant="primary">Edit</Button>
-                    <Button size="sm" variant="outline">Delete</Button>
-                    <Badge size="sm" color={cust.isActive ? 'success' : 'error'}>
-                      {cust.isActive ? 'Active' : 'Inactive'}
-                    </Badge>
+                    {(cust.isPaid === true && cust.payments.length > 0) && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedId(cust._id); // Set customer ID
+                          openModal(); // Open modal
+                        }}
+                        className="focus:outline-none"
+                      >
+                        <Badge size="sm" color={cust.isActive ? 'success' : 'error'}>
+                          {cust.isActive ? 'Active' : 'Inactive'}
+                        </Badge>
+                      </button>
+                    )}
                   </TableCell>
+
                 </TableRow>
               ))}
             </TableBody>
@@ -199,6 +327,44 @@ export default function BasicTableOne() {
           onPageChange={(page) => setCurrentPage(page)}
         />
       </div>
+
+      <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[400px] p-5 lg:p-8">
+        <h4 className="mb-4 text-base font-semibold text-gray-800 dark:text-white">
+          Update Status
+        </h4>
+        <Label>Select Payment Type</Label>
+        <select
+          className="form-control w-full mt-2 border rounded px-3 py-2 text-sm"
+          value={statusType}
+          onChange={(e) => setStatusType(e.target.value)}
+        >
+          <option value="1">FORECLOSURE</option>
+          <option value="2">SETTLEMENT</option>
+          <option value="3">PART PAYMENT</option>
+        </select>
+
+        <div className="flex justify-end gap-3 mt-4">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={closeModal}
+            disabled={isSubmitting}
+          >
+            Cancel
+          </Button>
+          <Button
+            size="sm"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Updating..." : "Update"}
+          </Button>
+        </div>
+
+      </Modal>
+
+
+
     </div>
   );
 }

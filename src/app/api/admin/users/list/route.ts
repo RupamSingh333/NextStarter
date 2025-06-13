@@ -21,11 +21,11 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const page = searchParams.get('page') || '1';
     const perPage = searchParams.get('perPage') || '10';
-    const filter = searchParams.get('filter') || '-1';
+    const email = searchParams.get('email') || '';
 
     // Call external API
     const response = await fetch(
-      `${API_BASE_URL}/customers/list?page=${page}&perPage=${perPage}&filter=${filter}`,
+      `${API_BASE_URL}/users/list?page=${page}&perPage=${perPage}&email=${email}`,
       {
         headers: {
           'Authorization': `Bearer ${adminToken}`,
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
     );
 
     if (!response.ok) {
-      throw new Error('Failed to fetch customers');
+      throw new Error('Failed to fetch users list');
     }
     
     const data = await response.json();
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
   }catch (error: any) {
   // console.error('Error fetching customers:', error);
   return NextResponse.json(
-    { success: false, message: 'Failed to fetch customers' },
+    { success: false, message: 'Failed to fetch users list' },
     { status: 500 }
   );
 }

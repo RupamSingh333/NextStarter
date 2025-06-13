@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { fetchWithAuth } from '@/lib/fetchWithAuth';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 
@@ -12,7 +13,8 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({ email, password }),
     })
 
-    const loginData = await loginRes.json()
+    const loginData = await loginRes.json();
+    // console.log('Admin Login Response:', loginData)
 
     if (!loginData.success || !loginData.jwtToken) {
       return NextResponse.json({
@@ -54,30 +56,37 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// GET: Return admin info using token from cookie
 export async function GET(req: NextRequest) {
   try {
-    const token = req.cookies.get('admin_token')?.value
+    const token = req.cookies.get('admin_token')?.value;
 
     if (!token) {
       return NextResponse.json({
         success: false,
         message: 'Unauthorized. No admin token found.',
-      }, { status: 401 })
+      }, { status: 401 });
     }
 
-    // You might want to add an admin verification endpoint here
-    // For now, we'll just verify the token exists
+    const { data, nextResponse } = await fetchWithAuth(
+      `${API_BASE_URL}/profile/profile`,
+      {},
+      token,
+      'admin_token'
+    );
+
+    if (nextResponse) return nextResponse;
+
     return NextResponse.json({
       success: true,
-      isAdmin: true,
-    })
+      user: data.user,
+      message: data.message || 'Admin info fetched successfully',
+    }, { status: 200 });
 
   } catch (error) {
-    console.error('Get admin API error:', error)
+    console.error('Get admin API error:', error);
     return NextResponse.json({
       success: false,
       message: 'Internal server error',
-    }, { status: 500 })
+    }, { status: 500 });
   }
-} 
+}

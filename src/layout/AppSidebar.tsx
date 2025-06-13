@@ -41,12 +41,12 @@ const navItems: NavItem[] = [
   {
     icon: <UserCircleIcon />,
     name: "Customers",
-    path: "/admin/basic-tables",
+    path: "/admin/customers-list",
     // subItems: [{ name: "Customers List", path: "/admin/basic-tables", pro: false }]
   },
   {  name: "Users",
     icon: <UserCircleIcon />,
-    path: "/admin/basic-tables",
+    path: "/admin/users-list",
   },
   // {
   //   name: "Forms",
