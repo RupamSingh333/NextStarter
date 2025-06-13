@@ -19,7 +19,7 @@ export default function DashboardPage() {
       const formatted = formatDistanceToNow(new Date(user.last_login), { addSuffix: true });
       setRelativeLogin(formatted);
     }
-  }, []);
+  }, [user?.last_login]);
 
   if (loading) {
     return (
