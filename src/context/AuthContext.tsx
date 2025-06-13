@@ -156,29 +156,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const checkAuth = async () => {
     setIsLoading(true);
     try {
-      const userResponse = await fetch('/api/login', {
-        method: 'GET',
-        credentials: 'include',
-      });
-      const userData = await userResponse.json();
-      if (userResponse.ok && userData.success) {
-        setUser(userData.user);
-        setIsAuthenticatedUser(true);
-      } else {
-        clearAuthData('user');
+      const currentPath = window.location.pathname;
+      
+      // Only check user auth if we're on user routes
+      if (currentPath.startsWith('/user/') || currentPath === '/') {
+        const userResponse = await fetch('/api/login', {
+          method: 'GET',
+          credentials: 'include',
+        });
+        const userData = await userResponse.json();
+        if (userResponse.ok && userData.success) {
+          setUser(userData.user);
+          setIsAuthenticatedUser(true);
+        } else {
+          clearAuthData('user');
+        }
       }
 
-      const adminResponse = await fetch('/api/admin/login', {
-        method: 'GET',
-        credentials: 'include',
-      });
-      const adminData = await adminResponse.json();
-      if (adminResponse.ok && adminData.success && adminData.user) {
-        const { email, name } = adminData.user;
-        setAdmin({ email, name });
-        setIsAuthenticatedAdmin(true);
-      } else {
-        clearAuthData('admin');
+      // Only check admin auth if we're on admin routes
+      if (currentPath.startsWith('/admin/')) {
+        const adminResponse = await fetch('/api/admin/login', {
+          method: 'GET',
+          credentials: 'include',
+        });
+        const adminData = await adminResponse.json();
+        if (adminResponse.ok && adminData.success && adminData.user) {
+          const { email, name } = adminData.user;
+          setAdmin({ email, name });
+          setIsAuthenticatedAdmin(true);
+        } else {
+          clearAuthData('admin');
+        }
       }
     } catch (error) {
       console.error('Auth check error:', error);
