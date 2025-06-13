@@ -10,7 +10,7 @@ import { useAuth } from '@/context/AuthContext';
 import { formatDistanceToNow } from 'date-fns';
 
 export default function DashboardPage() {
-  const { user, loading, checkAuth } = useAuth();
+  const { user, loading } = useAuth();
   const [relativeLogin, setRelativeLogin] = useState<string | null>(null);
 
   useEffect(() => {
