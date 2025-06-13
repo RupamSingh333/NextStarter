@@ -43,12 +43,12 @@ export async function GET(request: NextRequest) {
     // console.log('>Response status:', data);  
 
     return NextResponse.json(data);
-  }catch (error: any) {
-  // console.error('Error fetching customers:', error);
-  return NextResponse.json(
-    { success: false, message: 'Failed to fetch users list' },
-    { status: 500 }
-  );
-}
-
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Failed to fetch users list';
+    // console.error('Error fetching users:', errorMessage);
+    return NextResponse.json(
+      { success: false, message: errorMessage },
+      { status: 500 }
+    );
+  }
 } 

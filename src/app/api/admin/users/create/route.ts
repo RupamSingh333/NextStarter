@@ -1,5 +1,3 @@
-// File: app/api/admin/users/create/route.ts
-
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
@@ -8,8 +6,6 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 export async function POST(request: NextRequest) {
   try {
     const adminToken = (await cookies()).get('admin_token')?.value;
-    // const adminToken = request.cookies.get('admin_token')?.value
-    // console.log('adminToken', adminToken);
 
     if (!adminToken) {
       return NextResponse.json(
@@ -50,8 +46,9 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(result, { status: 200 });
-  } catch (error: any) {
-    console.error('Create user error:', error.message);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    console.error('Create user error:', errorMessage);
     return NextResponse.json(
       {
         success: false,

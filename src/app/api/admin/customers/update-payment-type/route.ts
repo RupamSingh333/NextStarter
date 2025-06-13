@@ -54,13 +54,14 @@ export async function PUT(request: NextRequest) {
 
     const data = await response.json();
     return NextResponse.json(data, { status: 200 });
-  } catch (error: any) {
-    console.error('Error updating customer payment type:', error.message);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    console.error('Error updating customer payment type:', errorMessage);
+
     return NextResponse.json(
       {
         success: false,
-        message:
-          'Something went wrong while updating payment type. Please try again later.',
+        message: 'Something went wrong while updating payment type. Please try again later.',
       },
       { status: 500 }
     );

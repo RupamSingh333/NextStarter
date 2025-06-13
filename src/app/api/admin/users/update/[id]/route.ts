@@ -46,8 +46,9 @@ export async function PUT(request: NextRequest, context: { params: { id: string 
     }
 
     return NextResponse.json(result, { status: 200 });
-  } catch (error: any) {
-    console.error('Update user error:', error.message);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+    console.error('Update user error:', errorMessage);
     return NextResponse.json(
       {
         success: false,
