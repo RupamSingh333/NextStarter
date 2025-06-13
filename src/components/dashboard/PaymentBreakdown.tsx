@@ -3,7 +3,7 @@
 import React from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { useAuth } from '@/context/AuthContext';
+// import { useAuth } from '@/context/AuthContext';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -23,8 +23,7 @@ const parseDecimalValue = (value: DecimalValue): number => {
   return 0;
 };
 
-const PaymentBreakdown = () => {
-  const { user, loading } = useAuth();
+const PaymentBreakdown = ({user, loading}: {user: any, loading: boolean}) => {
 
   if (loading) {
     return <div className="animate-pulse">Loading...</div>;

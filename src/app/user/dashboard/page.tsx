@@ -57,7 +57,7 @@ export default function DashboardPage() {
             name={String(user?.customer || '')}
             loanAmount={Number(user?.fore_closure) || 0}
           />
-          <PaymentBreakdown />
+          <PaymentBreakdown user={user} loading={loading} />
 
           {/* Footer Info */}
           <div className="mt-8 text-sm text-gray-600 dark:text-gray-400">
