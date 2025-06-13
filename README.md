@@ -1,4 +1,4 @@
-Rupam Singh # TailAdmin Next.js - Free Next.js Tailwind Admin Dashboard Template
+{process.env.COMPANY_NAME} # TailAdmin Next.js - Free Next.js Tailwind Admin Dashboard Template
 
 
 ![TailAdmin - Next.js Dashboard Preview](./banner.png)

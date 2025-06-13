@@ -115,7 +115,7 @@ const handleSubmit = async () => {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          uniqueId: selectedID,
+          customer_id: selectedID,
           payment_type: statusType,
         }),
       });
@@ -163,14 +163,14 @@ const handleSubmit = async () => {
       {/* Filter Controls */}
       <div className="flex justify-between items-center p-4 gap-4 flex-wrap">
         <div className="flex items-center gap-2">
-          <label className="text-sm font-medium text-gray-700">Page Size:</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-white ">Page Size:</label>
           <select
             value={pageSize}
             onChange={(e) => {
               setPageSize(Number(e.target.value));
               setCurrentPage(1); // Reset to page 1
             }}
-            className="border border-gray-300 rounded-md px-2 py-1 text-sm"
+            className="border border-gray-300 bg-white rounded-md px-2 py-1 text-sm"
           >
             {pageSizeOptions.map((size) => (
               <option key={size} value={size}>
@@ -181,14 +181,14 @@ const handleSubmit = async () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <label className="text-sm font-medium text-gray-700">Payment Status:</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-white">Payment Status:</label>
           <select
             value={selectedStatus}
             onChange={(e) => {
               setSelectedStatus(Number(e.target.value));
               setCurrentPage(1); // Reset to page 1
             }}
-            className="border border-gray-300 rounded-md px-2 py-1 text-sm"
+            className="border border-gray-300 rounded-md px-2 py-1 text-sm bg-white"
           >
             {paymentStatus.map((status) => (
               <option key={status.id} value={status.id}>
@@ -295,7 +295,7 @@ const handleSubmit = async () => {
                   </TableCell>
                   {/* Action cell: keep Edit and Delete buttons, replace Activate/Deactivate button with label */}
                   <TableCell className="px-5 py-4 text-start space-x-2 flex items-center gap-2">
-                    {(cust.isPaid === true && cust.payments.length > 0) && (
+                    {(cust.isPaid === false && cust.payments.length > 0) && (
                       <button
                         type="button"
                         onClick={() => {
@@ -362,8 +362,6 @@ const handleSubmit = async () => {
         </div>
 
       </Modal>
-
-
 
     </div>
   );

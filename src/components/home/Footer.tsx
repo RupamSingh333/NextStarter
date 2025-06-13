@@ -1,9 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const Footer = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [companyName, setCompanyName] = useState('RepayKaro');
+  const companyEmail = process.env.NEXT_PUBLIC_COMPANY_EMAIL || 'hr@repaykaro.com';
+  const companyPhone = process.env.NEXT_PUBLIC_COMPANY_PHONE || '+918178953143';
+
+  useEffect(() => {
+    // Set company name after component mounts to avoid hydration mismatch
+    setCompanyName(process.env.NEXT_PUBLIC_COMPANY_NAME || 'RepayKaro');
+  }, []);
 
   const toggleDrawer = () => {
     setIsDrawerOpen(prev => !prev);
@@ -22,20 +30,20 @@ const Footer = () => {
           <div className="text-center md:text-left mb-4 md:mb-0">
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Designed & Developed by{' '}
-              <span className="font-semibold text-gray-800 dark:text-gray-200">Rupam Singh</span>
+              <span className="font-semibold text-gray-800 dark:text-gray-200">{companyName}</span>
             </p>
             <div className="flex flex-col md:flex-row gap-2 md:gap-4 mt-1 text-sm text-gray-500 dark:text-gray-500">
               <button 
                 onClick={makePhoneCall}
                 className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors cursor-pointer"
               >
-                +91 8178953143
+                {companyPhone}
               </button>
               <a 
                 href="mailto:hr@repaykaro.com"
                 className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
               >
-                hr@repaykaro.com
+                {companyEmail}
               </a>
             </div>
           </div>

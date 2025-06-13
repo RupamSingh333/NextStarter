@@ -15,7 +15,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
-    if (!body || !body.payment_type || !body.uniqueId) {
+    if (!body || !body.payment_type || !body.customer_id) {
       return NextResponse.json(
         { success: false, message: 'Invalid request body.' },
         { status: 400 }
