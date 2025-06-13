@@ -129,7 +129,7 @@ const handleSubmit = async () => {
       }
 
       resolve("Payment type updated successfully");
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Catch all network or unexpected errors
       reject("Unable to connect to the server. Please try again.");
     }
