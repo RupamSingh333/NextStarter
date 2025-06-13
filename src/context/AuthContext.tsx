@@ -205,7 +205,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setAdmin(JSON.parse(storedAdmin));
       setIsAuthenticatedAdmin(true);
     }
-  }, [checkAuth]);
+  }, []);
 
   return (
     <AuthContext.Provider

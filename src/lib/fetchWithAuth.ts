@@ -6,7 +6,7 @@ export async function fetchWithAuth(
   options: RequestInit = {},
   token: string,
   tokenName: 'admin_token' | 'token'
-): Promise<{ data?: unknown; nextResponse?: NextResponse }> {
+): Promise<{ data?: any; nextResponse?: NextResponse }> {
   try {
     const response = await fetch(url, {
       ...options,

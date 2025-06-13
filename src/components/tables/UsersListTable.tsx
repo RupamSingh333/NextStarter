@@ -118,7 +118,7 @@ export default function UsersListTable() {
         });
 
         try {
-            await promise;
+            const result = await promise;
             fetchUsers(currentPage, pageSize);
             setCreateFormData({ name: '', email: '', password: '' });
             setIsCreateModalOpen(false);

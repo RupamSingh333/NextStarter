@@ -54,7 +54,7 @@ export default function DashboardPage() {
       <main className="flex-1 overflow-y-auto pt-16">
         <div className="container mx-auto px-4 py-8">
           <WelcomeHeader
-            name={typeof user?.customer === 'string' ? user.customer : ''}
+            name={user?.customer || ''}
             loanAmount={Number(user?.fore_closure) || 0}
           />
           <PaymentBreakdown />
