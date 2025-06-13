@@ -1,12 +1,18 @@
 // lib/fetchWithAuth.ts
 import { NextResponse } from 'next/server';
 
-export async function fetchWithAuth(
+interface ApiResponse<T = unknown> {
+  success: boolean;
+  message?: string;
+  data?: T;
+}
+
+export async function fetchWithAuth<T = unknown>(
   url: string,
   options: RequestInit = {},
   token: string,
   tokenName: 'admin_token' | 'token'
-): Promise<{ data?: any; nextResponse?: NextResponse }> {
+): Promise<{ data?: ApiResponse<T>; nextResponse?: NextResponse }> {
   try {
     const response = await fetch(url, {
       ...options,
@@ -18,7 +24,7 @@ export async function fetchWithAuth(
       cache: 'no-store',
     });
 
-    const data = await response.json();
+    const data = await response.json() as ApiResponse<T>;
 
     if (!data.success || response.status === 401) {
       const res = NextResponse.json(
