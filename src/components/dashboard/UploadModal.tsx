@@ -1,8 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
-
 
 interface Screenshot {
   _id: string;
@@ -16,8 +15,6 @@ interface UploadModalProps {
   onClose: () => void;
   onUpload: (file: File) => Promise<void>;
   isUploading: boolean;
-  uploadedScreenshots: Screenshot[];
-  onDelete: (id: string) => Promise<void>;
 }
 
 const UploadModal = ({
@@ -25,8 +22,6 @@ const UploadModal = ({
   onClose,
   onUpload,
   isUploading,
-  uploadedScreenshots,
-  onDelete
 }: UploadModalProps) => {
   const [preview, setPreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -35,6 +30,30 @@ const UploadModal = ({
     screenshotId: null
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [uploadedScreenshots, setUploadedScreenshots] = useState<Screenshot[]>([]);
+
+  const fetchScreenshots = async (): Promise<void> => {
+    try {
+      const response = await fetch('/api/screenshots', {
+        credentials: 'include'
+      });
+      const data = await response.json();
+      if (data.success) {
+        // console.log('Fetched screenshots:', data.screenshots);
+        setUploadedScreenshots(data.screenshots || []);
+      }
+    } catch (error) {
+      console.error('Error fetching screenshots:', error);
+      toast.error('Failed to fetch screenshots');
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchScreenshots();
+    }
+  }, [isOpen]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -70,6 +89,8 @@ const UploadModal = ({
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
         }
+        // Refresh screenshots after successful upload
+        // await fetchScreenshots();
       } catch (error) {
         console.error('Upload error:', error);
       }
@@ -77,14 +98,48 @@ const UploadModal = ({
   };
 
   const handleDeleteClick = (screenshotId: string) => {
+    console.log('Deleting screenshot with ID:', screenshotId);
     setDeleteConfirmation({ isOpen: true, screenshotId });
   };
 
   const handleConfirmDelete = async () => {
-    if (deleteConfirmation.screenshotId) {
-      await onDelete(deleteConfirmation.screenshotId);
-      setDeleteConfirmation({ isOpen: false, screenshotId: null });
-    }
+    const screenshotId = deleteConfirmation.screenshotId;
+    // console.log('Confirming delete for screenshot ID:', screenshotId);
+    if (!screenshotId) return;
+
+    toast.promise(
+      (async () => {
+        try {
+          // console.log('Making delete request for ID:', screenshotId);
+          const response = await fetch(`/api/screenshots/${screenshotId}`, {
+            method: 'DELETE',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+
+          const data = await response.json();
+          // console.log('Delete response:', data);
+          if (!data.success) {
+            throw new Error(data.message || 'Failed to delete screenshot');
+          }
+
+          await fetchScreenshots();
+          return 'Screenshot deleted successfully';
+        } catch (error) {
+          console.error('Delete error:', error);
+          throw new Error('Failed to delete screenshot');
+        } finally {
+          setDeleteConfirmation({ isOpen: false, screenshotId: null });
+        }
+      })(),
+      {
+        loading: 'Deleting screenshot...',
+        success: (message) => message,
+        error: (err) => err.message
+      }
+    );
   };
 
   if (!isOpen) return null;
@@ -231,28 +286,39 @@ const UploadModal = ({
                   uploadedScreenshots.map((screenshot) => (
                     <div
                       key={screenshot._id}
-                      className="relative group rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700"
+                      className="relative group rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 aspect-[4/3]"
                     >
-                      {/* <img
-                        src={screenshot.screen_shot}
-                        alt="Payment Screenshot"
-                        className="w-full h-auto"
-                      /> */}
+                      <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+                        <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                      </div>
                       <Image
                         src={screenshot.screen_shot}
                         alt="Payment Screenshot"
                         fill
-                        style={{ objectFit: 'contain' }}
-                        unoptimized={true} // Optional: Use if image is external or you don't want optimization
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-contain transition-opacity duration-300"
+                        onLoadingComplete={(img) => {
+                          img.classList.remove('opacity-0');
+                          img.previousElementSibling?.classList.add('hidden');
+                        }}
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = '/images/placeholder.png'; // Add a placeholder image
+                          target.previousElementSibling?.classList.add('hidden');
+                        }}
+                        unoptimized={true}
                       />
                       <button
-                        onClick={() => handleDeleteClick(screenshot._id)}
-                        className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 hover:bg-red-600"
+                        onClick={() => {
+                          console.log('Delete button clicked for screenshot:', screenshot);
+                          handleDeleteClick(screenshot._id);
+                        }}
+                        className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-70 hover:opacity-100 transition-opacity duration-200 hover:bg-red-600 z-10 shadow-lg"
                         title="Delete screenshot"
                       >
                         <TrashIcon className="h-4 w-4" />
                       </button>
-                      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-2">
+                      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-2 z-10">
                         {new Date(screenshot.createdAt).toLocaleDateString()}
                       </div>
                     </div>

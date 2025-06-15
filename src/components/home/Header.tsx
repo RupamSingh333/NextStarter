@@ -1,14 +1,46 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
 import { ThemeToggleButton } from '../common/ThemeToggleButton';
+import UploadModal from '../dashboard/UploadModal';
+import { toast } from 'react-hot-toast';
+
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, loading, logout } = useAuth();
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handleUpload = async (file: File) => {
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('screenshot', file);
+
+      const response = await fetch('/api/screenshots', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include'
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        toast.success('Screenshot uploaded successfully!');
+        setIsUploadModalOpen(false);
+      } else {
+        toast.error(data.message || 'Failed to upload screenshot');
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error('Failed to upload screenshot');
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const handleLogout = () => {
     logout('user');
@@ -176,6 +208,11 @@ const Header = () => {
                 >
                   Rewards
                 </Link>
+
+                <button onClick={() => setIsUploadModalOpen(true)} className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 border-t border-gray-200 dark:border-gray-700">
+                  Upload Screenshot
+                </button>
+
                 <button
                   onClick={handleLogout}
                   className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 border-t border-gray-200 dark:border-gray-700"
@@ -234,6 +271,12 @@ const Header = () => {
               >
                 Rewards
               </Link>
+
+              <button onClick={() => setIsUploadModalOpen(true)} className="block px-4 py-2 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">
+                Upload Screenshot
+              </button>
+
+
               <button
                 onClick={handleLogout}
                 className="block w-full text-left px-4 py-2 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
@@ -243,6 +286,14 @@ const Header = () => {
             </div>
           </div>
         )}
+
+        {/* Upload Modal */}
+        <UploadModal
+          isOpen={isUploadModalOpen}
+          onClose={() => setIsUploadModalOpen(false)}
+          onUpload={handleUpload}
+          isUploading={isUploading}
+        />
       </div>
     </header>
   );

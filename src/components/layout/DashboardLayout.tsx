@@ -17,37 +17,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const pathname = usePathname();
   const { logout } = useAuth();
-  const [uploadedScreenshots, setUploadedScreenshots] = useState<Array<{
-    _id: string;
-    screen_shot: string;
-    isActive: boolean;
-    createdAt: string;
-  }>>([]);
   const [isUploading, setIsUploading] = useState(false);
-
-  // Fetch existing screenshots when component mounts
-  const fetchScreenshots = async () => {
-    try {
-      const response = await fetch('/api/screenshots', {
-        credentials: 'include'
-      });
-      const data = await response.json();
-      if (data.success) {
-        // console.log(data.screenshots);
-        setUploadedScreenshots(data.screenshots || []);
-      }
-    } catch (error) {
-      console.error('Error fetching screenshots:', error);
-    }
-  };
-
   const handleLogout = () => {
     logout('user');
   };
-  
-  useEffect(() => {
-    fetchScreenshots();
-  }, []);
 
   const handleUpload = async (file: File) => {
     setIsUploading(true);
@@ -63,10 +36,6 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
       const data = await response.json();
       if (data.success) {
-        // Add the new screenshot to the list
-        if (data.screen_shot) {
-          setUploadedScreenshots(prev => [...prev, data.screen_shot]);
-        }
         toast.success('Screenshot uploaded successfully!');
         setIsUploadModalOpen(false);
       } else {
@@ -80,39 +49,6 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     }
   };
 
-  const handleDeleteScreenshot = async (screenshotId: string) => {
-    // First ask for confirmation
-    const confirmDelete = window.confirm('Are you sure you want to delete this screenshot?');
-    
-    if (!confirmDelete) {
-      return;
-    }
-
-    // Show loading toast that will be updated based on the promise result
-    toast.promise(
-      // The delete operation promise
-      (async () => {
-        const response = await fetch(`/api/screenshots/${screenshotId}`, {
-          method: 'DELETE',
-          credentials: 'include'
-        });
-
-        const data = await response.json();
-        if (!data.success) {
-          throw new Error(data.message || 'Failed to delete screenshot');
-        }
-
-        // Update state only after successful deletion
-        setUploadedScreenshots(prev => prev.filter(screenshot => screenshot._id !== screenshotId));
-        return data;
-      })(),
-      {
-        loading: 'Deleting screenshot...',
-        success: 'Screenshot deleted successfully!',
-        error: (err) => err.message || 'Failed to delete screenshot'
-      }
-    );
-  };
 
   const menuItems = [
     {
@@ -258,8 +194,6 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         onClose={() => setIsUploadModalOpen(false)}
         onUpload={handleUpload}
         isUploading={isUploading}
-        uploadedScreenshots={uploadedScreenshots}
-        onDelete={handleDeleteScreenshot}
       />
     </div>
   );

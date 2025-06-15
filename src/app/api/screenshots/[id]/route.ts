@@ -16,7 +16,14 @@ export async function DELETE(
       }, { status: 401 });
     }
 
-    const { id } = params;
+    // Get the ID from the URL path
+    const id = req.url.split('/').pop();
+    if (!id) {
+      return NextResponse.json({
+        success: false,
+        message: 'Screenshot ID is required',
+      }, { status: 400 });
+    }
 
     const response = await fetch(`${API_BASE_URL}/clients/delete-screenshot/${id}`, {
       method: 'DELETE',
