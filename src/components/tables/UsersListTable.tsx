@@ -142,12 +142,15 @@ export default function UsersListTable() {
         setIsSubmitting(true);
         closeModal();
 
-        const filteredFormData = Object.entries(formData).reduce((acc, [key, value]) => {
-            if (value !== '' && value !== null && value !== undefined) {
-                (acc as any)[key] = value;
-            }
-            return acc;
-        }, {} as { [key: string]: any });
+        const filteredFormData = Object.entries(formData).reduce(
+            (acc: Record<string, string | number | boolean>, [key, value]) => {
+                if (value !== '' && value !== null && value !== undefined) {
+                    acc[key] = value as string | number | boolean;
+                }
+                return acc;
+            },
+            {} as Record<string, string | number | boolean>
+        );
 
         const promise = fetch(`/api/admin/users/update/${editUserId}`, {
             method: 'PUT',
