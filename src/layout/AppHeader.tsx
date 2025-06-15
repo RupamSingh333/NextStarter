@@ -83,22 +83,15 @@ const AppHeader: React.FC = () => {
             {/* Cross Icon */}
           </button>
 
-          <Link href="/admin" className="lg:hidden">
-            <Image
-              width={154}
-              height={32}
-              className="dark:hidden"
-              src="/images/logo/rpk.png"
-              alt="Logo"
-            />
-            <Image
-              width={154}
-              height={32}
-              className="hidden dark:block"
-              src="/images/logo/rpk.png"
-              alt="Logo"
-            />
-          </Link>
+          <div className="flex items-center">
+            <Link href="/admin" className="flex items-center lg:hidden">
+              <div className="flex items-center">
+                <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 bg-clip-text text-transparent">
+                  RepayKaro
+                </span>
+              </div>
+            </Link>
+          </div>
 
           <button
             onClick={toggleApplicationMenu}

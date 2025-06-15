@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Outfit } from 'next/font/google';
 import './globals.css';
 import { Toaster } from 'react-hot-toast';
+import { LoadingProvider } from "@/context/LoadingContext";
+import LoadingScreen from "@/components/common/LoadingScreen";
 
 import { SidebarProvider } from '@/context/SidebarContext';
 import { ThemeProvider } from '@/context/ThemeContext';
@@ -12,8 +14,8 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: 'RepayKarot Dashboard',
-  description: 'RepayKarot user dashboard for loan management',
+  title: 'RepayKaro Dashboard',
+  description: 'RepayKaro user dashboard for loan management',
 };
 
 export default function RootLayout({
@@ -26,7 +28,12 @@ export default function RootLayout({
       <body className={`${outfit.className} dark:bg-gray-900`}>
         <AuthProvider>
           <ThemeProvider>
-            <SidebarProvider>{children}</SidebarProvider>
+            <SidebarProvider>
+              <LoadingProvider>
+                <LoadingScreen />
+                {children}
+              </LoadingProvider>
+            </SidebarProvider>
           </ThemeProvider>
         </AuthProvider>
         <Toaster

@@ -127,7 +127,19 @@ export async function GET(req: NextRequest) {
       'token' // name of the cookie to clear if invalid
     );
 
-    if (nextResponse) return nextResponse;
+    if (nextResponse) {
+      // Clear token cookie if unauthorized
+      if (nextResponse.status != 200) {
+        nextResponse.cookies.set('token', '', { 
+          maxAge: 0,
+          path: '/',
+          httpOnly: true,
+          secure: false,
+          sameSite: 'lax'
+        });
+      }
+      return nextResponse;
+    }
 
     return NextResponse.json({
       success: true,

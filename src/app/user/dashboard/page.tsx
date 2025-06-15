@@ -3,8 +3,8 @@
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import WelcomeHeader from '@/components/dashboard/WelcomeHeader';
 import PaymentBreakdown from '@/components/dashboard/PaymentBreakdown';
-import Header from '@/components/home/Header';
-import Footer from '@/components/home/Footer';
+// import Header from '@/components/home/Header';
+// import Footer from '@/components/home/Footer';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { formatDistanceToNow } from 'date-fns';
@@ -24,9 +24,8 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <DashboardLayout>
-        <Header />
-        <main className="flex-1 overflow-y-auto pt-16">
-          <div className="container mx-auto px-4 py-8 space-y-6 animate-pulse">
+        <main className="flex-1 flex flex-col">
+          <div className="p-4 md:p-8 space-y-6 animate-pulse">
             {/* Simulate WelcomeHeader */}
             <div className="h-8 w-1/3 bg-gray-200 dark:bg-gray-700 rounded" />
             <div className="h-6 w-1/4 bg-gray-200 dark:bg-gray-700 rounded" />
@@ -42,7 +41,6 @@ export default function DashboardPage() {
             <div className="h-4 w-1/2 bg-gray-200 dark:bg-gray-700 rounded mt-6" />
           </div>
         </main>
-        <Footer />
       </DashboardLayout>
     );
   }
@@ -50,32 +48,17 @@ export default function DashboardPage() {
 
   return (
     <DashboardLayout>
-      <Header />
-      <main className="flex-1 overflow-y-auto pt-16">
-        <div className="container mx-auto px-4 py-8">
-          <WelcomeHeader
-            name={String(user?.customer || '')}
-            loanAmount={Number(user?.fore_closure) || 0}
-          />
-          <PaymentBreakdown user={user} loading={loading} />
-
-          {/* Footer Info */}
-          <div className="mt-8 text-sm text-gray-600 dark:text-gray-400">
-            {relativeLogin && (
-              <p>
-                Last logged in:{' '}
-                <span className="font-medium text-gray-800 dark:text-gray-200">
-                  {relativeLogin}
-                </span>
-              </p>
-            )}
-            <p className="mt-2 text-red-500">
-              Note: Take a screenshot for upload after payment.
-            </p>
-          </div>
+      <main className="flex-1 flex flex-col">
+        <WelcomeHeader
+          name={typeof user?.customer === 'string' ? user.customer : user?.phone || 'User'}
+          loanAmount={Number(user?.fore_closure?.$numberDecimal || user?.fore_closure || 0)}
+        />
+        <PaymentBreakdown user={user} loading={loading} />
+        <div className="mt-6 text-sm text-gray-500 dark:text-gray-400 text-center p-4 md:p-8">
+          <p>Please upload a screenshot of your pending loan to get started.</p>
+          <p className="mt-6">Click 'Upload Screenshot' in the sidebar to upload.</p>
         </div>
       </main>
-      <Footer />
     </DashboardLayout>
   );
 }

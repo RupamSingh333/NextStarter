@@ -171,7 +171,7 @@ export default function SignInForm() {
           <motion.p 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
+            transition={{ delay: 3 }}
             className="text-base text-gray-500 dark:text-gray-400 mb-6 sm:mb-8"
           >
             {isOtpSent ? `Enter the OTP sent to ${mobileNumber}` : "Enter your mobile number to receive OTP"}
@@ -200,7 +200,7 @@ export default function SignInForm() {
                   <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.4 }}
+                    transition={{ delay: 0.6, duration: 0.8 }}
                   >
                     <Label>
                       Mobile Number <span className="text-red-500">*</span>
@@ -221,7 +221,7 @@ export default function SignInForm() {
                   <motion.div
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.4 }}
+                    transition={{ delay: 0.8, duration: 0.8 }}
                   >
                     <Label>
                       Enter OTP <span className="text-red-500">*</span>
@@ -230,7 +230,7 @@ export default function SignInForm() {
                       <motion.div
                         initial={{ scale: 0.95 }}
                         animate={{ scale: 1 }}
-                        transition={{ duration: 0.2 }}
+                        transition={{ duration: 0.8, delay: 0.9 }}
                       >
                         <OTPInput
                           length={4}
@@ -316,13 +316,13 @@ export default function SignInForm() {
             <p className="text-purple-100 text-lg mb-8 opacity-90">
               Your ultimate solution for effortless loan repayment tracking and financial peace of mind.
             </p>
-            <Button
+            {/* <Button
               variant="primary"
               className="bg-white text-purple-600 hover:bg-purple-100 dark:bg-purple-950 dark:text-purple-300 dark:hover:bg-purple-900 transition-all duration-300 rounded-xl py-3 px-8 shadow-lg"
               onClick={() => router.push('/about')} // Example link, change as needed
             >
               Learn More
-            </Button>
+            </Button> */}
           </motion.div>
         </div>
       </motion.div>

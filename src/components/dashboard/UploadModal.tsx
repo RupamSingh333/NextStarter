@@ -308,16 +308,18 @@ const UploadModal = ({
                         }}
                         unoptimized={true}
                       />
-                      <button
-                        onClick={() => {
-                          console.log('Delete button clicked for screenshot:', screenshot);
-                          handleDeleteClick(screenshot._id);
-                        }}
-                        className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-70 hover:opacity-100 transition-opacity duration-200 hover:bg-red-600 z-10 shadow-lg"
-                        title="Delete screenshot"
-                      >
-                        <TrashIcon className="h-4 w-4" />
-                      </button>
+                      {screenshot.isActive && (
+                        <button
+                          onClick={() => {
+                            console.log('Delete button clicked for screenshot:', screenshot);
+                            handleDeleteClick(screenshot._id);
+                          }}
+                          className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-70 hover:opacity-100 transition-opacity duration-200 hover:bg-red-600 z-10 shadow-lg"
+                          title="Delete screenshot"
+                        >
+                          <TrashIcon className="h-4 w-4" />
+                        </button>
+                      )}
                       <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-2 z-10">
                         {new Date(screenshot.createdAt).toLocaleDateString()}
                       </div>

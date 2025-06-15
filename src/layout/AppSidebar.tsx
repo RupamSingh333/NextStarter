@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
 // import { useAuth } from "@/context/AuthContext";
@@ -305,33 +304,17 @@ const AppSidebar: React.FC = () => {
       >
         <Link href="/admin" className="flex items-center">
           {isExpanded || isHovered || isMobileOpen ? (
-            <>
-              <Image
-                className="dark:hidden w-auto h-8 sm:h-10"
-                src="/images/logo/rpk.png"
-                alt="Logo"
-                width={150}
-                height={40}
-                priority
-              />
-              <Image
-                className="hidden dark:block w-auto h-8 sm:h-10"
-                src="/images/logo/rpk.png"
-                alt="Logo"
-                width={150}
-                height={40}
-                priority
-              />
-            </>
+            <div className="flex items-center">
+              <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-400 bg-clip-text text-transparent">
+                RepayKaro
+              </span>
+            </div>
           ) : (
-            <Image
-              src="/images/logo/rpk.png"
-              alt="Logo"
-              width={32}
-              height={32}
-              className="w-8 h-8 sm:w-10 sm:h-10"
-              priority
-            />
+            <div className="flex items-center">
+              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                RK
+              </span>
+            </div>
           )}
         </Link>
       </div>

@@ -57,28 +57,15 @@ const Header = () => {
 
   // Loading state UI
   const LoadingHeader = () => (
-    <header className={`fixed top-0 left-0 w-full transition-all duration-300 z-50 ${
-      isScrolled ? 'bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg shadow-lg' : 'bg-transparent'
-    }`}>
+    <header className={`fixed top-0 left-0 w-full transition-all duration-300 z-50 ${'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-xl rounded-b-2xl'}`}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <div className="flex-shrink-0 relative w-[120px] md:w-[150px] h-[40px] transform hover:scale-105 transition-transform">
-            <Link href="/" className="block w-full h-full">
-              <Image
-                src="/images/logo/rpk.png"
-                alt="RepayKarot"
-                fill
-                className="object-contain dark:hidden"
-                priority
-              />
-              <Image
-                src="/images/logo/rpk.png"
-                alt="RepayKarot"
-                fill
-                className="object-contain hidden dark:block"
-                priority
-              />
+          <div className="flex-shrink-0 transform hover:scale-105 transition-transform duration-300">
+            <Link href="/" className="block p-2 rounded-2xl">
+              <span className="font-bold text-xl sm:text-2xl lg:text-3xl text-purple-600 dark:text-purple-400 transition-colors duration-300">
+                RepayKaro
+              </span>
             </Link>
           </div>
 
@@ -109,48 +96,47 @@ const Header = () => {
   // Early return if no user to prevent type errors
   if (!user) {
     return (
-      <header className={`fixed top-0 left-0 w-full transition-all duration-300 z-50 ${
-        isScrolled ? 'bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg shadow-lg' : 'bg-transparent'
-      }`}>
+      <header className={`fixed top-0 left-0 w-full transition-all duration-300 z-50 ${'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-xl rounded-b-2xl'}`}>
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
-            <div className="flex-shrink-0 relative w-[120px] md:w-[150px] h-[40px] transform hover:scale-105 transition-transform">
-              <Link href="/" className="block w-full h-full">
-                <Image
-                  src="/images/logo/rpk.png"
-                  alt="RepayKarot"
-                  fill
-                  className="object-contain dark:hidden"
-                  priority
-                />
-                <Image
-                  src="/images/logo/rpk.png"
-                  alt="RepayKarot"
-                  fill
-                  className="object-contain hidden dark:block"
-                  priority
-                />
+            <div className="flex-shrink-0 transform hover:scale-105 transition-transform duration-300">
+              <Link href="/" className="block p-2 rounded-2xl">
+                <span className="font-bold text-xl sm:text-2xl lg:text-3xl text-purple-600 dark:text-purple-400 transition-colors duration-300">
+                  RepayKaro
+                </span>
               </Link>
             </div>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-6">
+            <div className="hidden md:flex items-center space-x-4">
               <ThemeToggleButton />
               <Link
+                href="tel:+918178953143"
+                className="inline-flex items-center px-4 py-2.5 border border-purple-600 text-sm font-medium rounded-full text-purple-600 hover:bg-purple-50 dark:border-purple-400 dark:text-purple-400 dark:hover:bg-purple-900 transition-all duration-300 transform hover:scale-105 hover:shadow-lg rounded-2xl"
+              >
+                +91 8178953143
+              </Link>
+              <Link
                 href="/signin"
-                className="inline-flex items-center px-6 py-2.5 border border-transparent text-sm font-medium rounded-full text-white bg-purple-600 hover:bg-purple-700 transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+                className="inline-flex items-center px-6 py-2.5 border border-transparent text-sm font-medium rounded-full text-white bg-purple-600 hover:bg-purple-700 transition-all duration-300 transform hover:scale-105 hover:shadow-lg rounded-2xl"
               >
                 Sign In
               </Link>
             </div>
 
             {/* Mobile Menu Button */}
-            <div className="md:hidden flex items-center space-x-4">
+            <div className="md:hidden flex items-center space-x-3">
               <ThemeToggleButton />
               <Link
+                href="tel:+918178953143"
+                className="inline-flex items-center px-4 py-2 border border-purple-600 text-sm font-medium rounded-full text-purple-600 hover:bg-purple-50 dark:border-purple-400 dark:text-purple-400 dark:hover:bg-purple-900 transition-all duration-300 rounded-2xl"
+              >
+                Call Us
+              </Link>
+              <Link
                 href="/signin"
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-purple-600 hover:bg-purple-700 transition-all duration-300"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-purple-600 hover:bg-purple-700 transition-all duration-300 rounded-2xl"
               >
                 Sign In
               </Link>
@@ -163,27 +149,17 @@ const Header = () => {
 
   return (
     <header className={`fixed top-0 left-0 w-full transition-all duration-300 z-50 ${
-      isScrolled ? 'bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg shadow-lg' : 'bg-transparent'
-    }`}>
+      isScrolled ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-xl rounded-b-2xl' : 'bg-transparent'
+      }
+      }`}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <div className="flex-shrink-0 relative w-[120px] md:w-[150px] h-[40px] transform hover:scale-105 transition-transform">
-            <Link href="/" className="block w-full h-full">
-              <Image
-                src="/images/logo/rpk.png"
-                alt="RepayKarot"
-                fill
-                className="object-contain dark:hidden"
-                priority
-              />
-              <Image
-                src="/images/logo/rpk.png"
-                alt="RepayKarot"
-                fill
-                className="object-contain hidden dark:block"
-                priority
-              />
+          <div className="flex-shrink-0 transform hover:scale-105 transition-transform duration-300">
+            <Link href="/" className="block p-2 rounded-2xl">
+              <span className="font-bold text-xl sm:text-2xl lg:text-3xl text-purple-600 dark:text-purple-400 transition-colors duration-300">
+                RepayKaro
+              </span>
             </Link>
           </div>
 
@@ -191,8 +167,8 @@ const Header = () => {
           <div className="hidden md:flex items-center space-x-6">
             <ThemeToggleButton />
             <div className="relative group">
-              <button className="flex items-center space-x-3 text-gray-700 dark:text-gray-200 hover:text-purple-600 dark:hover:text-purple-400 focus:outline-none transition-colors duration-300">
-                <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white transform group-hover:scale-110 transition-transform duration-300">
+              <button className="flex items-center space-x-3 text-gray-700 dark:text-gray-200 hover:text-purple-600 dark:hover:text-purple-400 focus:outline-none transition-colors duration-300 p-2 rounded-full">
+                <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center text-white transform group-hover:scale-110 transition-transform duration-300 shadow-lg">
                   {typeof user.customer === 'string' ? user.customer[0] : user.phone[0]}
                 </div>
                 <span className="font-medium">{user.phone}</span>
@@ -207,30 +183,30 @@ const Header = () => {
               </button>
 
               {/* Dropdown Menu */}
-              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-xl py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top scale-95 group-hover:scale-100">
+              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-2xl shadow-xl py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top scale-95 group-hover:scale-100 border border-gray-200 dark:border-gray-700">
                 <div className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
                   {user.phone}
                 </div>
                 <Link
                   href="/user/dashboard"
-                  className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200"
+                  className="block px-4 py-2 text-sm text-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 dark:hover:text-purple-400 rounded-lg transition-colors duration-200"
                 >
                   Dashboard
                 </Link>
                 <Link
                   href="/user/rewards"
-                  className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200"
+                  className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 dark:hover:text-purple-400 rounded-lg transition-colors duration-200"
                 >
                   Rewards
                 </Link>
 
-                <button onClick={() => setIsUploadModalOpen(true)} className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200 border-t border-gray-200 dark:border-gray-700">
+                <button onClick={() => setIsUploadModalOpen(true)} className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 dark:hover:text-purple-400 rounded-lg transition-colors duration-200 border-t border-gray-200 dark:border-gray-700">
                   Upload Screenshot
                 </button>
 
                 <button
                   onClick={handleLogout}
-                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 dark:hover:text-purple-400 transition-colors duration-200 border-t border-gray-200 dark:border-gray-700"
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 dark:hover:text-purple-400 rounded-lg transition-colors duration-200 border-t border-gray-200 dark:border-gray-700"
                 >
                   Logout
                 </button>
@@ -261,11 +237,11 @@ const Header = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 dark:border-gray-700 bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg">
+          <div className="md:hidden border-t border-gray-200 dark:border-gray-700 bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg rounded-b-2xl shadow-xl">
             <div className="px-2 pt-2 pb-3 space-y-1">
               <div className="px-4 py-3">
                 <div className="flex items-center space-x-3">
-                  <div className="w-12 h-12 rounded-full bg-purple-600 flex items-center justify-center text-white text-lg transform hover:scale-110 transition-transform duration-300">
+                  <div className="w-12 h-12 rounded-full bg-purple-600 flex items-center justify-center text-white text-lg transform hover:scale-110 transition-transform duration-300 shadow-lg">
                     {user.phone[0]}
                   </div>
                   <div>
@@ -287,7 +263,7 @@ const Header = () => {
                 Rewards
               </Link>
 
-              <button onClick={() => setIsUploadModalOpen(true)} className="block w-full text-left px-4 py-2 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 dark:hover:text-purple-400 rounded-lg transition-colors duration-200">
+              <button onClick={() => setIsUploadModalOpen(true)} className="block w-full text-left px-4 py-2 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 dark:hover:text-purple-400 rounded-lg transition-colors duration-200 border-t border-gray-200 dark:border-gray-700">
                 Upload Screenshot
               </button>
 

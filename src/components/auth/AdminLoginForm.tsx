@@ -125,7 +125,7 @@ export default function AdminLoginForm() {
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.4 }}
+                  transition={{ delay: 0.6, duration: 0.8 }}
                 >
                   <Label>
                     Email <span className="text-red-500">*</span>
@@ -143,7 +143,7 @@ export default function AdminLoginForm() {
                 <motion.div
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.4 }}
+                  transition={{ delay: 0.8, duration: 0.8 }}
                 >
                   <Label>
                     Password <span className="text-red-500">*</span>

@@ -74,6 +74,8 @@ export default function BasicTableOne() {
 
   const pageSizeOptions = getPageSizeOptions();
 
+  const [excelFile, setExcelFile] = useState<File | null>(null);
+  const [isUploadingExcel, setIsUploadingExcel] = useState(false);
 
   const fetchCustomers = async (page: number, size: number, status: number) => {
     setLoading(true);
@@ -99,58 +101,106 @@ export default function BasicTableOne() {
     fetchCustomers(currentPage, pageSize, selectedStatus);
   }, [currentPage, pageSize, selectedStatus]);
 
-
-
   const { isOpen, openModal, closeModal } = useModal();
   const [statusType, setStatusType] = useState("1");
   const [selectedID, setSelectedId] = useState<string | undefined>();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-const handleSubmit = async () => {
-  closeModal(); // Start loading
+  const handleSubmit = async () => {
+    closeModal(); // Start loading
 
-  const updatePromise: Promise<string> = new Promise(async (resolve, reject) => {
-    try {
-      const response = await fetch("/api/admin/customers/update-payment-type", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          customer_id: selectedID,
-          payment_type: statusType,
-        }),
-      });
+    const updatePromise: Promise<string> = new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetch("/api/admin/customers/update-payment-type", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            customer_id: selectedID,
+            payment_type: statusType,
+          }),
+        });
 
-      const data = await response.json().catch(() => ({})); // handle invalid JSON
-      // console.log("Update response:", data);
-      
-      if (!data.success) {
-        // Always resolve with an error message to be handled by toast
-        return reject(data.message || "Something went wrong while updating payment type.");
+        const data = await response.json().catch(() => ({})); // handle invalid JSON
+        // console.log("Update response:", data);
+        
+        if (!data.success) {
+          // Always resolve with an error message to be handled by toast
+          return reject(data.message || "Something went wrong while updating payment type.");
+        }
+
+        resolve("Payment type updated successfully");
+      } catch {
+        // Catch all network or unexpected errors
+        reject("Unable to connect to the server. Please try again.");
       }
+    });
 
-      resolve("Payment type updated successfully");
-    } catch {
-      // Catch all network or unexpected errors
-      reject("Unable to connect to the server. Please try again.");
+    toast.promise(updatePromise, {
+      loading: "Updating payment type...",
+      success: (msg: string) => msg,
+      error: (err) => err,
+    });
+
+    try {
+      await updatePromise;
+      closeModal(); // Close modal after success
+      fetchCustomers(currentPage, pageSize, selectedStatus); // Refresh list
+    } finally {
+      setIsSubmitting(false); // Stop loading
     }
-  });
+  };
 
-  toast.promise(updatePromise, {
-    loading: "Updating payment type...",
-    success: (msg: string) => msg,
-    error: (err) => err,
-  });
+  const handleExcelFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setExcelFile(event.target.files[0]);
+    } else {
+      setExcelFile(null);
+    }
+  };
 
-  try {
-    await updatePromise;
-    closeModal(); // Close modal after success
-    fetchCustomers(currentPage, pageSize, selectedStatus); // Refresh list
-  } finally {
-    setIsSubmitting(false); // Stop loading
-  }
-};
+  const handleUploadExcel = async () => {
+    if (!excelFile) {
+      toast.error("Please select an Excel file to upload.");
+      return;
+    }
 
+    setIsUploadingExcel(true);
+    const formData = new FormData();
+    formData.append("file", excelFile);
 
+    const uploadPromise: Promise<string> = new Promise(async (resolve, reject) => {
+      try {
+        const response = await fetch("/api/admin/customers/uploadCustomers", {
+          method: "POST",
+          body: formData,
+          credentials: "include",
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          return reject(data.message || "Failed to upload Excel file.");
+        }
+
+        resolve(data.message || "Excel file uploaded successfully.");
+      } catch (error) {
+        console.error("Excel upload error:", error);
+        reject("Network error or unable to connect to server.");
+      }
+    });
+
+    toast.promise(uploadPromise, {
+      loading: "Uploading Excel file...",
+      success: (msg) => {
+        fetchCustomers(currentPage, pageSize, selectedStatus); // Refresh customer list
+        setExcelFile(null); // Clear selected file
+        return msg;
+      },
+      error: (err) => err,
+    }).finally(() => {
+      setIsUploadingExcel(false);
+    });
+  };
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] relative">
@@ -196,6 +246,35 @@ const handleSubmit = async () => {
               </option>
             ))}
           </select>
+        </div>
+        {/* New Excel Upload Section */}
+        <div className="flex items-center gap-2">
+          <input
+            type="file"
+            accept=".xlsx, .xls"
+            onChange={handleExcelFileChange}
+            className="hidden"
+            id="excel-upload-input"
+          />
+          <Button
+            size="sm"
+            variant="primary"
+            onClick={() => document.getElementById('excel-upload-input')?.click()}
+            disabled={isUploadingExcel}
+          >
+            {isUploadingExcel ? "Uploading..." : "Upload Customers (Excel)"}
+          </Button>
+          {excelFile && <span className="text-sm text-gray-600 dark:text-gray-300">{excelFile.name}</span>}
+          {excelFile && !isUploadingExcel && (
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleUploadExcel}
+              disabled={isUploadingExcel}
+            >
+              Confirm Upload
+            </Button>
+          )}
         </div>
       </div>
 

@@ -89,7 +89,22 @@ export async function GET(req: NextRequest) {
 
     // console.log('Raw API Response:', data);
 
-    if (nextResponse) return nextResponse;
+    
+    if (nextResponse) {
+      // Clear token cookie if unauthorized
+      if (nextResponse.status != 200) {
+        nextResponse.cookies.set('token', '', { 
+          maxAge: 0,
+          path: '/',
+          httpOnly: true,
+          secure: false,
+          sameSite: 'lax'
+        });
+      }
+      return nextResponse;
+    }
+
+    // if (nextResponse) return nextResponse;
 
     // Type assertion to handle the actual response structure
     const responseData = data as unknown as ProfileResponse;

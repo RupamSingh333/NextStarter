@@ -2,8 +2,8 @@
 
 import ScratchCards from '@/components/dashboard/ScratchCards';
 import WelcomeHeader from '@/components/dashboard/WelcomeHeader';
-import Header from '@/components/home/Header';
-import Footer from '@/components/home/Footer';
+// import Header from '@/components/home/Header';
+// import Footer from '@/components/home/Footer';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 // import { formatDistanceToNow } from 'date-fns';
 // import { useState, useEffect } from 'react';
@@ -22,9 +22,8 @@ export default function RewardsPage() {
 
   return (
     <DashboardLayout>
-      <Header />
-      <main className="flex-1 overflow-y-auto pt-16">
-        <div className="container mx-auto px-4 py-8">
+      <main className="flex-1 flex flex-col overflow-y-auto min-h-0 p-0">
+      <div className="p-2 md:p-4 lg:p-8">
         <WelcomeHeader
             name={String(user?.customer ?? '')}
             loanAmount={Number(user?.fore_closure) || 0}
@@ -32,7 +31,7 @@ export default function RewardsPage() {
           <ScratchCards />
         </div>
       </main>
-      <Footer />
+      {/* <Footer /> */}
     </DashboardLayout>
   );
 } 
