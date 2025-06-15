@@ -142,9 +142,12 @@ export default function UsersListTable() {
         setIsSubmitting(true);
         closeModal();
 
-        const filteredFormData = Object.fromEntries(
-            Object.entries(formData).filter(([_, value]) => value !== '' && value !== null && value !== undefined)
-        );
+        const filteredFormData = Object.entries(formData).reduce((acc, [key, value]) => {
+            if (value !== '' && value !== null && value !== undefined) {
+                (acc as any)[key] = value;
+            }
+            return acc;
+        }, {} as { [key: string]: any });
 
         const promise = fetch(`/api/admin/users/update/${editUserId}`, {
             method: 'PUT',

@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export async function PUT(request: NextRequest, context: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const adminToken = (await cookies()).get('admin_token')?.value;
 
@@ -15,11 +15,9 @@ export async function PUT(request: NextRequest, context: { params: { id: string 
     }
 
     const body = await request.json();
-    // console.log(body);
-    
-    // const userId = context.params.id;
+    const userId = params.id;
 
-    if (!body.name || !body.email) {
+    if (!body.name || !body.email || !userId) {
       return NextResponse.json(
         { success: false, message: 'Missing required fields: name, email, or user ID.' },
         { status: 400 }
@@ -32,7 +30,10 @@ export async function PUT(request: NextRequest, context: { params: { id: string 
         Authorization: `Bearer ${adminToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify({
+        _id: userId,
+        ...body,
+      }),
     });
 
     const result = await response.json();
