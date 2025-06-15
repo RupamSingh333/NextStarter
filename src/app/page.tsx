@@ -159,7 +159,7 @@ export default function HomePage() {
                                     How <span className="gradient-text animate-gradient">RepayKaro</span> Works
                                 </h2>
                                 <p className="text-lg text-gray-600 dark:text-gray-300 animate-fadeIn" style={{ animationDelay: '0.6s' }}>
-                                    RepayKaro provides a seamless process for both lenders and borrowers. Here's how it works:
+                                    RepayKaro provides a seamless process for both lenders and borrowers. Here&apos;s how it works:
                                 </p>
                             </ScrollAnimation>
                         </div>

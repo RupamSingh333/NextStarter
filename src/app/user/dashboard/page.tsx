@@ -5,20 +5,15 @@ import WelcomeHeader from '@/components/dashboard/WelcomeHeader';
 import PaymentBreakdown from '@/components/dashboard/PaymentBreakdown';
 // import Header from '@/components/home/Header';
 // import Footer from '@/components/home/Footer';
-import { useState, useEffect } from 'react';
+import {  useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { formatDistanceToNow } from 'date-fns';
+// import { formatDistanceToNow } from 'date-fns';
 
 export default function DashboardPage() {
-  const { user, loading , checkAuth} = useAuth();
-  const [relativeLogin, setRelativeLogin] = useState<string | null>(null);
+  const { user, loading, checkAuth } = useAuth();
 
   useEffect(() => {
     checkAuth();
-    if (user?.last_login) {
-      const formatted = formatDistanceToNow(new Date(user.last_login), { addSuffix: true });
-      setRelativeLogin(formatted);
-    }
   }, []);
 
   if (loading) {
@@ -56,7 +51,7 @@ export default function DashboardPage() {
         <PaymentBreakdown user={user} loading={loading} />
         <div className="mt-6 text-sm text-gray-500 dark:text-gray-400 text-center p-4 md:p-8">
           <p>Please upload a screenshot of your pending loan to get started.</p>
-          <p className="mt-6">Click 'Upload Screenshot' in the sidebar to upload.</p>
+          <p className="mt-6">Click &apos;Upload Screenshot&apos; in the sidebar to upload.</p>
         </div>
       </main>
     </DashboardLayout>

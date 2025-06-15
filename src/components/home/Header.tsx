@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+// import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
 import { ThemeToggleButton } from '../common/ThemeToggleButton';
 import UploadModal from '../dashboard/UploadModal';
