@@ -11,8 +11,9 @@ import { useAuth } from "@/context/AuthContext";
 
 
 export default function UserMetaCard() {
-  const { isOpen, openModal, closeModal } = useModal();
-  const [companyName, setCompanyName] = useState(process.env.NEXT_PUBLIC_COMPANY_NAME || '');
+  // const { isOpen, openModal, closeModal } = useModal();
+  const { isOpen, closeModal } = useModal();
+  // const [companyName, setCompanyName] = useState(process.env.NEXT_PUBLIC_COMPANY_NAME || '');
   const { admin } = useAuth();
 
   const handleSave = () => {
