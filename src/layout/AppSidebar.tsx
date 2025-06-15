@@ -299,25 +299,28 @@ const AppSidebar: React.FC = () => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div
-        className={`py-8 flex  ${!isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
-          }`}
+        className={`py-4 px-4 flex items-center ${
+          !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
+        }`}
       >
-        <Link href="/admin">
+        <Link href="/admin" className="flex items-center">
           {isExpanded || isHovered || isMobileOpen ? (
             <>
               <Image
-                className="dark:hidden"
+                className="dark:hidden w-auto h-8 sm:h-10"
                 src="/images/logo/rpk.png"
                 alt="Logo"
                 width={150}
                 height={40}
+                priority
               />
               <Image
-                className="hidden dark:block"
+                className="hidden dark:block w-auto h-8 sm:h-10"
                 src="/images/logo/rpk.png"
                 alt="Logo"
                 width={150}
                 height={40}
+                priority
               />
             </>
           ) : (
@@ -326,10 +329,13 @@ const AppSidebar: React.FC = () => {
               alt="Logo"
               width={32}
               height={32}
+              className="w-8 h-8 sm:w-10 sm:h-10"
+              priority
             />
           )}
         </Link>
       </div>
+      
       <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
         <nav className="mb-6">
           <div className="flex flex-col gap-4">

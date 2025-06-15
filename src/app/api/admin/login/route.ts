@@ -1,7 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { fetchWithAuth } from '@/lib/fetchWithAuth';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+interface ProfileResponse {
+  message: string;
+  success: boolean;
+  user: {
+    _id: string;
+    name: string;
+    email: string;
+    isActive: boolean;
+    __v: number;
+  };
+  responseTime: string;
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -67,19 +80,25 @@ export async function GET(req: NextRequest) {
       }, { status: 401 });
     }
 
-    const { data, nextResponse } = await fetchWithAuth(
+    const { data, nextResponse } = await fetchWithAuth<ProfileResponse>(
       `${API_BASE_URL}/profile/profile`,
       {},
       token,
       'admin_token'
     );
 
+    // console.log('Raw API Response:', data);
+
     if (nextResponse) return nextResponse;
+
+    // Type assertion to handle the actual response structure
+    const responseData = data as unknown as ProfileResponse;
+    const user = responseData?.user;
 
     return NextResponse.json({
       success: true,
-      user: data.user,
-      message: data.message || 'Admin info fetched successfully',
+      user: user,
+      message: responseData?.message || 'Admin info fetched successfully',
     }, { status: 200 });
 
   } catch (error) {

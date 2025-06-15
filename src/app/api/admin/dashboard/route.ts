@@ -29,8 +29,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        message: data.message || 'Dashboard data fetched successfully',
-        data: data.data
+        message: data?.message || 'Dashboard data fetched successfully',
+        data: data?.data
       },
       { status: 200 }
     );

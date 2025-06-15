@@ -1,4 +1,4 @@
-{process.env.COMPANY_NAME} # TailAdmin Next.js - Free Next.js Tailwind Admin Dashboard Template
+{process.env.NEXT_PUBLIC_COMPANY_NAME} # TailAdmin Next.js - Free Next.js Tailwind Admin Dashboard Template
 
 
 ![TailAdmin - Next.js Dashboard Preview](./banner.png)

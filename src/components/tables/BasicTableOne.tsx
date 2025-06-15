@@ -170,10 +170,10 @@ const handleSubmit = async () => {
               setPageSize(Number(e.target.value));
               setCurrentPage(1); // Reset to page 1
             }}
-            className="border border-gray-300 bg-white rounded-md px-2 py-1 text-sm"
+            className="border border-gray-300 bg-white dark:bg-gray-800 rounded-md px-2 py-1 text-sm text-gray-900 dark:text-white"
           >
             {pageSizeOptions.map((size) => (
-              <option key={size} value={size}>
+              <option key={size} value={size} className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
                 {size} / page
               </option>
             ))}
@@ -188,10 +188,10 @@ const handleSubmit = async () => {
               setSelectedStatus(Number(e.target.value));
               setCurrentPage(1); // Reset to page 1
             }}
-            className="border border-gray-300 rounded-md px-2 py-1 text-sm bg-white"
+            className="border border-gray-300 rounded-md px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
           >
             {paymentStatus.map((status) => (
-              <option key={status.id} value={status.id}>
+              <option key={status.id} value={status.id} className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
                 {status.name}
               </option>
             ))}
@@ -334,13 +334,13 @@ const handleSubmit = async () => {
         </h4>
         <Label>Select Payment Type</Label>
         <select
-          className="form-control w-full mt-2 border rounded px-3 py-2 text-sm"
+          className="form-control w-full mt-2 border rounded px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
           value={statusType}
           onChange={(e) => setStatusType(e.target.value)}
         >
-          <option value="1">FORECLOSURE</option>
-          <option value="2">SETTLEMENT</option>
-          <option value="3">PART PAYMENT</option>
+          <option value="1" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">FORECLOSURE</option>
+          <option value="2" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">SETTLEMENT</option>
+          <option value="3" className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">PART PAYMENT</option>
         </select>
 
         <div className="flex justify-end gap-3 mt-4">

@@ -6,8 +6,7 @@ const Footer = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [companyName, setCompanyName] = useState('RepayKaro');
   const companyEmail = process.env.NEXT_PUBLIC_COMPANY_EMAIL || 'hr@repaykaro.com';
-  const companyPhone = process.env.NEXT_PUBLIC_COMPANY_PHONE || '+918178953143';
-
+  const companyPhone = process.env.NEXT_PUBLIC_COMPANY_MOBILE || '+918178953143';
   useEffect(() => {
     // Set company name after component mounts to avoid hydration mismatch
     setCompanyName(process.env.NEXT_PUBLIC_COMPANY_NAME || 'RepayKaro');
@@ -40,7 +39,7 @@ const Footer = () => {
                 {companyPhone}
               </button>
               <a 
-                href="mailto:hr@repaykaro.com"
+                href={`mailto:${companyEmail}`}
                 className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
               >
                 {companyEmail}
@@ -51,7 +50,7 @@ const Footer = () => {
           {/* Company Info */}
           <div className="text-center md:text-right">
             <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
-              RepayKaro
+              {companyName}
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
               © {new Date().getFullYear()} All rights reserved
@@ -113,7 +112,7 @@ const Footer = () => {
           <div className="space-y-4">
             <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-lg p-3">
               <h3 className="font-medium text-base text-indigo-600 dark:text-indigo-400 mb-1">
-                Welcome to RepayKaro
+                Welcome to {companyName}
               </h3>
               <p className="text-xs text-gray-600 dark:text-gray-300">
                 We&apos;re here to help you with any questions or assistance you need.
@@ -145,20 +144,20 @@ const Footer = () => {
                   You can also reach us via email at:
                 </p>
                 <a 
-                  href="mailto:hr@repaykaro.com"
+                  href={`mailto:${companyEmail}`}
                   className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
-                  hr@repaykaro.com
+                  {companyEmail}
                 </a>
               </div>
             </div>
 
             <div className="text-center text-xs text-gray-500 dark:text-gray-400 mt-4">
               <p>Your satisfaction is our priority.</p>
-              <p className="italic mt-1">Thank you for choosing RepayKaro!</p>
+              <p className="italic mt-1">Thank you for choosing {companyName}!</p>
             </div>
           </div>
         </div>

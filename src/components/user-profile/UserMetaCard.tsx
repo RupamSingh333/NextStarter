@@ -1,15 +1,20 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useModal } from "../../hooks/useModal";
 import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
 import Image from "next/image";
+import { useAuth } from "@/context/AuthContext";
+
 
 
 export default function UserMetaCard() {
   const { isOpen, openModal, closeModal } = useModal();
+  const [companyName, setCompanyName] = useState(process.env.NEXT_PUBLIC_COMPANY_NAME || '');
+  const { admin } = useAuth();
+
   const handleSave = () => {
     // Handle save logic here
     // console.log("Saving changes...");
@@ -30,19 +35,20 @@ export default function UserMetaCard() {
             </div>
             <div className="order-3 xl:order-2">
               <h4 className="mb-2 text-lg font-semibold text-center text-gray-800 dark:text-white/90 xl:text-left">
-                {process.env.COMPANY_NAME}
+              {admin?.name}
               </h4>
               <div className="flex flex-col items-center gap-1 text-center xl:flex-row xl:gap-3 xl:text-left">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Team Manager
+                {admin?.email}
                 </p>
-                <div className="hidden h-3.5 w-px bg-gray-300 dark:bg-gray-700 xl:block"></div>
+                {/* <div className="hidden h-3.5 w-px bg-gray-300 dark:bg-gray-700 xl:block"></div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   Arizona, United States
-                </p>
+                </p> */}
               </div>
             </div>
-            <div className="flex items-center order-2 gap-2 grow xl:order-3 xl:justify-end">
+
+            {/* <div className="flex items-center order-2 gap-2 grow xl:order-3 xl:justify-end">
               <a
                 target="_blank"
                 rel="noreferrer" href='https://www.facebook.com/PimjoHQ' className="flex h-11 w-11 items-center justify-center gap-2 rounded-full border border-gray-300 bg-white text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
@@ -111,9 +117,10 @@ export default function UserMetaCard() {
                   />
                 </svg>
               </a>
-            </div>
+            </div> */}
+
           </div>
-          <button
+          {/* <button
             onClick={openModal}
             className="flex w-full items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200 lg:inline-flex lg:w-auto"
           >
@@ -133,9 +140,10 @@ export default function UserMetaCard() {
               />
             </svg>
             Edit
-          </button>
+          </button> */}
         </div>
       </div>
+
       <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px] m-4">
         <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
           <div className="px-2 pr-14">

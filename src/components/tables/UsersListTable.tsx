@@ -190,14 +190,14 @@ export default function UsersListTable() {
 
             <div className="flex justify-between items-center p-4 gap-4 flex-wrap">
                 <div className="flex items-center gap-2">
-                    <label className="text-sm font-medium text-gray-700">Page Size:</label>
+                    <label className="text-sm font-medium text-gray-700 dark:text-white">Page Size:</label>
                     <select
                         value={pageSize}
                         onChange={(e) => {
                             setPageSize(Number(e.target.value));
                             setCurrentPage(1);
                         }}
-                        className="border border-gray-300 rounded-md px-2 py-1 text-sm"
+                        className="border border-gray-300 bg-white rounded-md px-2 py-1 text-sm"
                     >
                         {pageSizeOptions.map((size) => (
                             <option key={size} value={size}>
@@ -267,7 +267,7 @@ export default function UsersListTable() {
                         type="text"
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="border p-2 rounded"
+                        className="border p-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                     />
 
                     <Label>Email</Label>
@@ -275,7 +275,7 @@ export default function UsersListTable() {
                         type="email"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="border p-2 rounded"
+                        className="border p-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                     />
 
                     <Label>Password</Label>
@@ -283,7 +283,7 @@ export default function UsersListTable() {
                         type="password"
                         value={formData.password}
                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                        className="border p-2 rounded"
+                        className="border p-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                     />
 
                     <Label>Status</Label>
@@ -292,7 +292,7 @@ export default function UsersListTable() {
                         onChange={(e) =>
                             setFormData({ ...formData, isActive: e.target.value === 'active' })
                         }
-                        className="border p-2 rounded"
+                        className="border p-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                     >
                         <option value="active">Active</option>
                         <option value="inactive">Inactive</option>
@@ -336,7 +336,7 @@ export default function UsersListTable() {
                         type="text"
                         value={createformData.name}
                         onChange={(e) => setCreateFormData({ ...createformData, name: e.target.value })}
-                        className="border p-2 rounded"
+                        className="border p-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                     />
 
                     <Label>Email</Label>
@@ -344,7 +344,7 @@ export default function UsersListTable() {
                         type="email"
                         value={createformData.email}
                         onChange={(e) => setCreateFormData({ ...createformData, email: e.target.value })}
-                        className="border p-2 rounded"
+                        className="border p-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                     />
 
                     <Label>Password</Label>
@@ -352,7 +352,7 @@ export default function UsersListTable() {
                         type="password"
                         value={createformData.password}
                         onChange={(e) => setCreateFormData({ ...createformData, password: e.target.value })}
-                        className="border p-2 rounded"
+                        className="border p-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                     />
                 </div>
 
