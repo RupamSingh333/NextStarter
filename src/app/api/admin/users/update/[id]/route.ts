@@ -15,9 +15,11 @@ export async function PUT(request: NextRequest, context: { params: { id: string 
     }
 
     const body = await request.json();
-    const userId = context.params.id;
+    // console.log(body);
+    
+    // const userId = context.params.id;
 
-    if (!body.name || !body.email || !userId) {
+    if (!body.name || !body.email) {
       return NextResponse.json(
         { success: false, message: 'Missing required fields: name, email, or user ID.' },
         { status: 400 }

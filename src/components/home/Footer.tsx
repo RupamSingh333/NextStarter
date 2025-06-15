@@ -7,9 +7,15 @@ const Footer = () => {
   const [companyName, setCompanyName] = useState('RepayKaro');
   const companyEmail = process.env.NEXT_PUBLIC_COMPANY_EMAIL || 'hr@repaykaro.com';
   const companyPhone = process.env.NEXT_PUBLIC_COMPANY_MOBILE || '+918178953143';
+  const [isVisible, setIsVisible] = useState(false);
+
   useEffect(() => {
     // Set company name after component mounts to avoid hydration mismatch
     setCompanyName(process.env.NEXT_PUBLIC_COMPANY_NAME || 'RepayKaro');
+    
+    // Add fade-in animation
+    const timer = setTimeout(() => setIsVisible(true), 100);
+    return () => clearTimeout(timer);
   }, []);
 
   const toggleDrawer = () => {
@@ -22,25 +28,25 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 mt-auto">
-      <div className="container mx-auto px-4 py-6">
-        <div className="flex flex-col md:flex-row justify-between items-center">
+    <footer className={`bg-gradient-to-b from-white to-purple-50 dark:from-gray-900 dark:to-gray-800 border-t border-purple-100 dark:border-purple-900/20 mt-auto transition-opacity duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
           {/* Developer Info */}
-          <div className="text-center md:text-left mb-4 md:mb-0">
+          <div className="text-center md:text-left">
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Designed & Developed by{' '}
-              <span className="font-semibold text-gray-800 dark:text-gray-200">{companyName}</span>
+              <span className="font-semibold text-purple-600 dark:text-purple-400">{companyName}</span>
             </p>
-            <div className="flex flex-col md:flex-row gap-2 md:gap-4 mt-1 text-sm text-gray-500 dark:text-gray-500">
+            <div className="flex flex-col md:flex-row gap-2 md:gap-4 mt-2 text-sm">
               <button 
                 onClick={makePhoneCall}
-                className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors cursor-pointer"
+                className="text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-300 transform hover:scale-105"
               >
                 {companyPhone}
               </button>
               <a 
                 href={`mailto:${companyEmail}`}
-                className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                className="text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-300 transform hover:scale-105"
               >
                 {companyEmail}
               </a>
@@ -49,10 +55,10 @@ const Footer = () => {
 
           {/* Company Info */}
           <div className="text-center md:text-right">
-            <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
+            <p className="text-sm font-semibold text-purple-600 dark:text-purple-400">
               {companyName}
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               © {new Date().getFullYear()} All rights reserved
             </p>
           </div>
@@ -63,7 +69,7 @@ const Footer = () => {
       <div className="fixed bottom-4 right-4 z-20">
         <button
           onClick={toggleDrawer}
-          className="flex items-center space-x-2 bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 px-4 py-2 rounded-full shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+          className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
         >
           <svg
             className="w-5 h-5"
@@ -84,48 +90,48 @@ const Footer = () => {
 
       {/* Right Side Drawer */}
       <div
-        className={`fixed right-4 bottom-20 h-[450px] w-[300px] bg-white dark:bg-gray-800 shadow-xl rounded-lg transform transition-all duration-300 ease-in-out z-30 ${
+        className={`fixed right-4 bottom-20 h-[450px] w-[300px] bg-white dark:bg-gray-800 shadow-2xl rounded-2xl transform transition-all duration-300 ease-in-out z-30 ${
           isDrawerOpen ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0 pointer-events-none'
         }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50 rounded-t-lg">
-          <h2 className="text-base font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-            <svg className="w-4 h-4 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-purple-100 dark:border-purple-900/20 bg-purple-50 dark:bg-purple-900/10 rounded-t-2xl">
+          <h2 className="text-base font-semibold text-purple-600 dark:text-purple-400 flex items-center gap-2">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
             </svg>
             Contact Us
           </h2>
           <button
             onClick={toggleDrawer}
-            className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full transition-colors flex items-center justify-center"
+            className="p-2 hover:bg-purple-100 dark:hover:bg-purple-900/20 rounded-full transition-colors duration-300"
             aria-label="Close"
           >
-            <svg className="w-5 h-5 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
         {/* Drawer Content */}
-        <div className="p-4 h-[calc(100%-44px)] overflow-y-auto">
-          <div className="space-y-4">
-            <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-lg p-3">
-              <h3 className="font-medium text-base text-indigo-600 dark:text-indigo-400 mb-1">
+        <div className="p-6 h-[calc(100%-72px)] overflow-y-auto">
+          <div className="space-y-6">
+            <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-4">
+              <h3 className="font-medium text-base text-purple-600 dark:text-purple-400 mb-2">
                 Welcome to {companyName}
               </h3>
-              <p className="text-xs text-gray-600 dark:text-gray-300">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 We&apos;re here to help you with any questions or assistance you need.
               </p>
             </div>
             
-            <div className="space-y-3">
+            <div className="space-y-4">
               <button
                 onClick={makePhoneCall}
-                className="flex items-center justify-between w-full px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors text-sm"
+                className="flex items-center justify-between w-full px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-medium transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
               >
                 <span className="flex items-center gap-2">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                   </svg>
                   Call Now
@@ -133,21 +139,21 @@ const Footer = () => {
                 <span>8178953143</span>
               </button>
 
-              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 text-xs">
-                <p className="font-medium text-gray-900 dark:text-white mb-1">Working Hours</p>
-                <p className="text-gray-600 dark:text-gray-300">Monday to Friday</p>
-                <p className="text-gray-600 dark:text-gray-300">9 AM to 6 PM</p>
+              <div className="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-4">
+                <p className="font-medium text-purple-600 dark:text-purple-400 mb-2">Working Hours</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">Monday to Friday</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300">9 AM to 6 PM</p>
               </div>
 
-              <div className="text-xs">
+              <div className="text-sm">
                 <p className="text-gray-600 dark:text-gray-300 mb-2">
                   You can also reach us via email at:
                 </p>
                 <a 
                   href={`mailto:${companyEmail}`}
-                  className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium"
+                  className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300 font-medium transition-colors duration-300"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                   {companyEmail}
@@ -155,9 +161,9 @@ const Footer = () => {
               </div>
             </div>
 
-            <div className="text-center text-xs text-gray-500 dark:text-gray-400 mt-4">
+            <div className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
               <p>Your satisfaction is our priority.</p>
-              <p className="italic mt-1">Thank you for choosing {companyName}!</p>
+              <p className="italic mt-1 text-purple-600 dark:text-purple-400">Thank you for choosing {companyName}!</p>
             </div>
           </div>
         </div>

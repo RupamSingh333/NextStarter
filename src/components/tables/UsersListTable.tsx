@@ -142,6 +142,10 @@ export default function UsersListTable() {
         setIsSubmitting(true);
         closeModal();
 
+        const filteredFormData = Object.fromEntries(
+            Object.entries(formData).filter(([_, value]) => value !== '' && value !== null && value !== undefined)
+        );
+
         const promise = fetch(`/api/admin/users/update/${editUserId}`, {
             method: 'PUT',
             headers: {
@@ -149,7 +153,7 @@ export default function UsersListTable() {
             },
             body: JSON.stringify({
                 _id: editUserId,
-                ...formData,
+                ...filteredFormData,
             }),
         }).then(async (res) => {
             const result = await res.json();
