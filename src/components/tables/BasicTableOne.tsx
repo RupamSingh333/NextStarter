@@ -210,70 +210,90 @@ export default function BasicTableOne() {
         </div>
       )}
 
-      {/* Filter Controls */}
-      <div className="flex justify-between items-center p-4 gap-4 flex-wrap">
-        <div className="flex items-center gap-2">
-          <label className="text-sm font-medium text-gray-700 dark:text-white ">Page Size:</label>
-          <select
-            value={pageSize}
-            onChange={(e) => {
-              setPageSize(Number(e.target.value));
-              setCurrentPage(1); // Reset to page 1
-            }}
-            className="border border-gray-300 bg-white dark:bg-gray-800 rounded-md px-2 py-1 text-sm text-gray-900 dark:text-white"
-          >
-            {pageSizeOptions.map((size) => (
-              <option key={size} value={size} className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
-                {size} / page
-              </option>
-            ))}
-          </select>
+      {/* Improved Header Section */}
+      <div className="p-4 space-y-4 md:space-y-0 md:flex md:items-center md:justify-between md:gap-4 border-b border-gray-200 dark:border-white/[0.05]">
+        {/* Left Section - Filters */}
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+          {/* Page Size Selector */}
+          <div className="flex items-center gap-2 min-w-[150px]">
+            <label className="text-sm font-medium text-gray-700 dark:text-white whitespace-nowrap">Page Size:</label>
+            <select
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+              className="w-full border border-gray-300 bg-white dark:bg-gray-800 rounded-md px-2 py-1.5 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+            >
+              {pageSizeOptions.map((size) => (
+                <option key={size} value={size} className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+                  {size} / page
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Payment Status Selector */}
+          <div className="flex items-center gap-2 min-w-[180px]">
+            <label className="text-sm font-medium text-gray-700 dark:text-white whitespace-nowrap">Payment Status:</label>
+            <select
+              value={selectedStatus}
+              onChange={(e) => {
+                setSelectedStatus(Number(e.target.value));
+                setCurrentPage(1);
+              }}
+              className="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+            >
+              {paymentStatus.map((status) => (
+                <option key={status.id} value={status.id} className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+                  {status.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <label className="text-sm font-medium text-gray-700 dark:text-white">Payment Status:</label>
-          <select
-            value={selectedStatus}
-            onChange={(e) => {
-              setSelectedStatus(Number(e.target.value));
-              setCurrentPage(1); // Reset to page 1
-            }}
-            className="border border-gray-300 rounded-md px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-          >
-            {paymentStatus.map((status) => (
-              <option key={status.id} value={status.id} className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
-                {status.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        {/* New Excel Upload Section */}
-        <div className="flex items-center gap-2">
-          <input
-            type="file"
-            accept=".xlsx, .xls"
-            onChange={handleExcelFileChange}
-            className="hidden"
-            id="excel-upload-input"
-          />
-          <Button
-            size="sm"
-            variant="primary"
-            onClick={() => document.getElementById('excel-upload-input')?.click()}
-            disabled={isUploadingExcel}
-          >
-            {isUploadingExcel ? "Uploading..." : "Upload Customers (Excel)"}
-          </Button>
-          {excelFile && <span className="text-sm text-gray-600 dark:text-gray-300">{excelFile.name}</span>}
-          {excelFile && !isUploadingExcel && (
+        {/* Right Section - Excel Upload */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg">
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <input
+              type="file"
+              accept=".xlsx, .xls"
+              onChange={handleExcelFileChange}
+              className="hidden"
+              id="excel-upload-input"
+            />
             <Button
               size="sm"
-              variant="outline"
-              onClick={handleUploadExcel}
+              variant="primary"
+              onClick={() => document.getElementById('excel-upload-input')?.click()}
               disabled={isUploadingExcel}
+              className="w-full sm:w-auto flex items-center justify-center gap-2"
             >
-              Confirm Upload
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+              </svg>
+              {isUploadingExcel ? "Uploading..." : "Upload Customers"}
             </Button>
+          </div>
+          
+          {excelFile && (
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <span className="text-sm text-gray-600 dark:text-gray-300 truncate max-w-[200px]">
+                {excelFile.name}
+              </span>
+              {!isUploadingExcel && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleUploadExcel}
+                  disabled={isUploadingExcel}
+                  className="whitespace-nowrap"
+                >
+                  Confirm Upload
+                </Button>
+              )}
+            </div>
           )}
         </div>
       </div>
