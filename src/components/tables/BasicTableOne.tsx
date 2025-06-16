@@ -87,11 +87,13 @@ export default function BasicTableOne() {
       const data = await response.json();
       if (data.success) {
         setCustomerList(data.data);
-        setTotalRecords(data.totalRecords);
-        setTotalPages(Math.ceil(data.totalRecords / size));
+        setTotalRecords(data.totalRecords || data.data.length);
+        const calculatedTotalPages = Math.ceil((data.totalRecords || data.data.length) / size);
+        setTotalPages(calculatedTotalPages);
       }
     } catch (error) {
       console.error('Error fetching customers:', error);
+      toast.error('Failed to fetch customers');
     } finally {
       setLoading(false);
     }
@@ -220,8 +222,10 @@ export default function BasicTableOne() {
             <select
               value={pageSize}
               onChange={(e) => {
-                setPageSize(Number(e.target.value));
-                setCurrentPage(1);
+                const newSize = Number(e.target.value);
+                setPageSize(newSize);
+                setCurrentPage(1); // Reset to first page when changing page size
+                fetchCustomers(1, newSize, selectedStatus); // Fetch with new page size
               }}
               className="w-full border border-gray-300 bg-white dark:bg-gray-800 rounded-md px-2 py-1.5 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
             >
@@ -239,8 +243,10 @@ export default function BasicTableOne() {
             <select
               value={selectedStatus}
               onChange={(e) => {
-                setSelectedStatus(Number(e.target.value));
-                setCurrentPage(1);
+                const newStatus = Number(e.target.value);
+                setSelectedStatus(newStatus);
+                setCurrentPage(1); // Reset to first page when changing status
+                fetchCustomers(1, pageSize, newStatus); // Fetch with new status
               }}
               className="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
             >
@@ -423,7 +429,10 @@ export default function BasicTableOne() {
           currentPage={currentPage}
           totalPages={totalPages}
           totalItems={totalRecords}
-          onPageChange={(page) => setCurrentPage(page)}
+          onPageChange={(page) => {
+            setCurrentPage(page);
+            fetchCustomers(page, pageSize, selectedStatus);
+          }}
         />
       </div>
 
