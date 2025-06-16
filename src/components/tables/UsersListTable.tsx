@@ -17,6 +17,7 @@ import { Modal } from "@/components/ui/modal";
 import Label from "@/components/form/Label";
 import { toast } from 'react-hot-toast';
 import { useModal } from "@/hooks/useModal";
+import { PencilSquareIcon } from '@heroicons/react/24/outline';
 
 interface User {
     _id: string;
@@ -249,7 +250,13 @@ export default function UsersListTable() {
                                         </Badge>
                                     </TableCell>
                                     <TableCell className="px-5 py-4 text-start text-theme-sm text-gray-600 dark:text-gray-400">
-                                        <Button size="sm" onClick={() => handleEditClick(user)}>Edit</Button>
+                                        <button 
+                                            onClick={() => handleEditClick(user)}
+                                            className="p-2 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-all"
+                                            title="Edit user"
+                                        >
+                                            <PencilSquareIcon className="w-5 h-5" />
+                                        </button>
                                     </TableCell>
                                 </TableRow>
                             ))}
