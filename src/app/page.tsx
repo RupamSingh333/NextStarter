@@ -39,7 +39,7 @@ export default function HomePage() {
                             <ScrollAnimation animation="slideLeft" className="space-y-8" delay={300}>
                                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight animate-fadeIn">
                                     Simplify Your{' '}
-                                    <span className="gradient-text animate-gradient">Loan Repayment</span>
+                                    <span className="gradient-text animate-gradient">Loan Repayment-test</span>
                                     <br />
                                     <span className="inline-block animate-bounce-subtle">with RepayKaro</span>
                                 </h1>
