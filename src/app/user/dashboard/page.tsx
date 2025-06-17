@@ -11,6 +11,7 @@ import { useAuth } from '@/context/AuthContext';
 
 export default function DashboardPage() {
   const { user, loading, checkAuth } = useAuth();
+  console.log(user)
 
   useEffect(() => {
     checkAuth();
@@ -45,8 +46,7 @@ export default function DashboardPage() {
     <DashboardLayout>
       <main className="flex-1 flex flex-col">
         <WelcomeHeader
-          name={typeof user?.customer === 'string' ? user.customer : user?.phone || 'User'}
-          loanAmount={Number(user?.fore_closure?.$numberDecimal || user?.fore_closure || 0)}
+          user={user}
         />
         <PaymentBreakdown user={user} loading={loading} />
         <div className="mt-6 text-sm text-gray-500 dark:text-gray-400 text-center p-4 md:p-8">

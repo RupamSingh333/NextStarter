@@ -153,7 +153,7 @@ export default function SignInForm() {
           >
             <Link
               href="/"
-              className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-purple-600 dark:text-gray-400 dark:hover:text-purple-400"
+              className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-purple-600 dark:text-gray-400 dark:hover:gradient-text"
             >
               <ChevronLeftIcon />
               Back to dashboard
@@ -251,7 +251,7 @@ export default function SignInForm() {
                         className={`text-sm transition-colors ${
                           timer > 0
                             ? "text-gray-400 cursor-not-allowed"
-                            : "text-purple-600 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300"
+                            : "gradient-text hover:gradient-text dark:gradient-text dark:hover:gradient-text"
                         }`}
                       >
                         Resend OTP {timer > 0 && `(${timer}s)`}
@@ -263,7 +263,7 @@ export default function SignInForm() {
                           setOtp("");
                           setError(null);
                         }}
-                        className="text-sm text-gray-500 hover:text-purple-600 dark:text-gray-400 dark:hover:text-purple-400 transition-colors"
+                        className="text-sm text-gray-500 hover:gradient-text dark:text-gray-400 dark:hover:gradient-text transition-colors"
                       >
                         Change Mobile Number
                       </button>
@@ -277,7 +277,7 @@ export default function SignInForm() {
                 >
                   <Button
                     disabled={loading}
-                    className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-xl py-3 transition-all duration-300 shadow-lg hover:shadow-xl"
+                    className="w-full gradient-bg hover:gradient-bg text-white rounded-xl py-3 transition-all duration-300 shadow-lg hover:shadow-xl"
                     variant="primary"
                   >
                     {loading ? (
@@ -296,7 +296,7 @@ export default function SignInForm() {
         </div>
         
         {/* Right Panel: Welcome/Illustration Section */}
-        <div className="hidden lg:flex w-1/2 p-6 sm:p-10 bg-gradient-to-br from-purple-500 to-purple-800 dark:from-purple-700 dark:to-purple-900 text-white flex-col items-center justify-center text-center">
+        <div className="hidden lg:flex w-1/2 p-6 sm:p-10 gradient-bg from-purple-500 gradient-bg dark:gradient-bg dark:gradient-bg text-white flex-col items-center justify-center text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -304,11 +304,11 @@ export default function SignInForm() {
           >
             {/* You can replace this with an actual illustration */}
             <Image
-              src="/images/placeholder_welcome.svg" // Placeholder image, replace with your own
+              src="/images/brand/brand-01.svg" // Placeholder image, replace with your own
               alt="Welcome Illustration"
               width={200}
               height={200}
-              className="mb-6 opacity-90"
+              className="mb-6 opacity-90 ml-16"
             />
             <h2 className="font-bold text-3xl sm:text-4xl mb-4 leading-tight">
               Manage Your Finances with Ease!

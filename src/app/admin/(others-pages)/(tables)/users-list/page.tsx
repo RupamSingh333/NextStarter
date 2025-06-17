@@ -1,4 +1,3 @@
-import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import UsersListTable from "@/components/tables/UsersListTable";
 import { Metadata } from "next";
@@ -16,9 +15,7 @@ export default function BasicTables() {
     <div>
       <PageBreadcrumb pageTitle="Users List" />
       <div className="space-y-6">
-        <ComponentCard title="Users List">
-          <UsersListTable />
-        </ComponentCard>
+        <UsersListTable />
       </div>
     </div>
   );

@@ -79,7 +79,7 @@ export default function AdminLoginForm() {
           >
             <Link
               href="/"
-              className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-purple-600 dark:text-gray-400 dark:hover:text-purple-400"
+              className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-purple-600 dark:text-gray-400 dark:hover:gradient-text"
             >
               <ChevronLeftIcon />
               Back to home
@@ -92,7 +92,7 @@ export default function AdminLoginForm() {
             transition={{ duration: 0.3, delay: 0.2 }}
             className="mb-1.5 font-semibold text-gray-800 text-3xl sm:text-4xl lg:text-5xl dark:text-white/90"
           >
-            Admin Portal
+            Admin Panel
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0 }}
@@ -128,7 +128,7 @@ export default function AdminLoginForm() {
                   transition={{ delay: 0.6, duration: 0.8 }}
                 >
                   <Label>
-                    Email <span className="text-red-500">*</span>
+                    Email <span className="text-red-500"> &nbsp; *</span>
                   </Label>
                   <motion.div whileFocus={{ scale: 1.01 }}>
                     <Input
@@ -146,7 +146,7 @@ export default function AdminLoginForm() {
                   transition={{ delay: 0.8, duration: 0.8 }}
                 >
                   <Label>
-                    Password <span className="text-red-500">*</span>
+                    Password <span className="text-red-500"> &nbsp;*</span>
                   </Label>
                   <motion.div whileFocus={{ scale: 1.01 }}>
                     <Input
@@ -165,7 +165,7 @@ export default function AdminLoginForm() {
                 >
                   <Button
                     disabled={loading || (email === '' || password === '')}
-                    className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-xl py-3 transition-all duration-300 shadow-lg hover:shadow-xl"
+                    className="w-full gradient-bg hover:bg-purple-700 text-white rounded-xl py-3 transition-all duration-300 shadow-lg hover:shadow-xl"
                     variant="primary"
                   >
                     {loading ? (
@@ -184,7 +184,7 @@ export default function AdminLoginForm() {
         </div>
         
         {/* Right Panel: Admin Welcome/Illustration Section */}
-        <div className="hidden lg:flex w-1/2 p-6 sm:p-10 bg-gradient-to-br from-purple-500 to-purple-800 dark:from-purple-700 dark:to-purple-900 text-white flex-col items-center justify-center text-center">
+        <div className="hidden lg:flex w-1/2 p-6 sm:p-10 gradient-bg from-purple-500 to-purple-800 dark:from-purple-700 dark:to-purple-900 text-white flex-col items-center justify-center text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -192,11 +192,11 @@ export default function AdminLoginForm() {
           >
             {/* You can replace this with an actual admin illustration */}
             <Image
-              src="/images/placeholder_admin_welcome.svg" // Placeholder image, replace with your own
+              src="/images/brand/brand-01.svg" // Placeholder image, replace with your own
               alt="Admin Welcome Illustration"
               width={200}
               height={200}
-              className="mb-6 opacity-90"
+              className="mb-6 opacity-90 ml-16"
             />
             <h2 className="font-bold text-3xl sm:text-4xl mb-4 leading-tight">
               Admin Dashboard Access

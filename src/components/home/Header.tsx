@@ -63,7 +63,7 @@ const Header = () => {
           {/* Logo */}
           <div className="flex-shrink-0 transform hover:scale-105 transition-transform duration-300">
             <Link href="/" className="block p-2 rounded-2xl">
-              <span className="font-bold text-xl sm:text-2xl lg:text-3xl text-purple-600 dark:text-purple-400 transition-colors duration-300">
+              <span className="font-bold text-xl sm:text-2xl lg:text-3xl gradient-text dark:gradient-text transition-colors duration-300">
                 RepayKaro
               </span>
             </Link>
@@ -102,7 +102,7 @@ const Header = () => {
             {/* Logo */}
             <div className="flex-shrink-0 transform hover:scale-105 transition-transform duration-300">
               <Link href="/" className="block p-2 rounded-2xl">
-                <span className="font-bold text-xl sm:text-2xl lg:text-3xl text-purple-600 dark:text-purple-400 transition-colors duration-300">
+                <span className="font-bold text-xl sm:text-2xl lg:text-3xl gradient-text dark:gradient-text transition-colors duration-300">
                   RepayKaro
                 </span>
               </Link>
@@ -119,7 +119,7 @@ const Header = () => {
               </Link>
               <Link
                 href="/signin"
-                className="inline-flex items-center px-6 py-2.5 border border-transparent text-sm font-medium rounded-full text-white bg-purple-600 hover:bg-purple-700 transition-all duration-300 transform hover:scale-105 hover:shadow-lg rounded-2xl"
+                className="inline-flex items-center px-6 py-2.5 border border-transparent text-sm font-medium rounded-full text-white gradient-bg hover:bg-purple-700 transition-all duration-300 transform hover:scale-105 hover:shadow-lg rounded-2xl"
               >
                 Sign In
               </Link>
@@ -157,8 +157,8 @@ const Header = () => {
           {/* Logo */}
           <div className="flex-shrink-0 transform hover:scale-105 transition-transform duration-300">
             <Link href="/" className="block p-2 rounded-2xl">
-              <span className="font-bold text-xl sm:text-2xl lg:text-3xl text-purple-600 dark:text-purple-400 transition-colors duration-300">
-                RepayKaro
+              <span className="font-bold text-xl sm:text-2xl lg:text-3xl gradient-text dark:gradient-text transition-colors duration-300">
+                RepayKaro1
               </span>
             </Link>
           </div>

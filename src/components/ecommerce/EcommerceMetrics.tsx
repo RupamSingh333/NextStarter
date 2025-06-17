@@ -33,10 +33,13 @@ interface DashboardData {
     paidPartialSum: string;
   };
 }
+const colors = ["blue-light", "success", "warning"];
 
 export const EcommerceMetrics = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<DashboardData | null>(null);
+
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -205,7 +208,8 @@ const MetricCard = ({
             {icon}
           </div>
           <div>
-            <span className="text-xs font-medium text-gray-500 dark:text-gray-400 animate-slideIn">{title}</span>
+
+            <span className="text-xl font-medium text-gray-500 dark:text-gray-400 animate-slideIn">{title}</span>
             <h4 className="font-bold text-gray-800 text-base dark:text-white/90 animate-slideIn">
               {prefix}
               {typeof value === "number" ? value.toLocaleString() : value}
@@ -215,22 +219,32 @@ const MetricCard = ({
       </div>
 
       {subValues.length > 0 && (
-        <div className="mt-3 grid grid-cols-2 gap-2 text-xs animate-fadeIn">
+        <div className="mt-3 grid grid-cols-2 gap-2 text-xl animate-fadeIn">
           {subValues.map((sub, index) => (
-            <div 
-              key={sub.label} 
+            <div
+              key={sub.label}
               className="flex justify-between items-center transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-md px-2 py-1"
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <span className="text-gray-500 dark:text-gray-400">{sub.label}</span>
+              {(() => {
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                return (
+                  <span
+                    className={`inline-flex items-center px-2.5 py-0.5 justify-center gap-1 rounded-full font-medium text-sm bg-${randomColor}-50 text-${randomColor}-500 dark:bg-${randomColor}-500/15 dark:text-${randomColor}-500`}
+                  >
+                    {sub.label}
+                  </span>
+                );
+              })()}
+
+
               <span
-                className={`font-medium ${
-                  sub.color === "green"
-                    ? "text-green-600"
-                    : sub.color === "red"
+                className={`font-medium ${sub.color === "green"
+                  ? "text-green-600"
+                  : sub.color === "red"
                     ? "text-red-500"
                     : "text-gray-800 dark:text-white"
-                }`}
+                  }`}
               >
                 {typeof sub.value === "number" ? sub.value.toLocaleString() : sub.value}
               </span>

@@ -20,7 +20,7 @@ const Footer = () => {
           {/* Column 1: RepayKaro Info */}
           <div className="min-h-[150px]">
             <Link href="/" className="inline-block mb-4">
-              <span className="font-bold text-3xl text-purple-600 dark:text-purple-400 transition-colors duration-300">
+              <span className="font-bold text-3xl gradient-text dark:gradient-text transition-colors duration-300">
                 RepayKaro
               </span>
             </Link>

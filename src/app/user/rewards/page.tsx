@@ -25,9 +25,8 @@ export default function RewardsPage() {
       <main className="flex-1 flex flex-col overflow-y-auto min-h-0 p-0">
       <div className="p-2 md:p-4 lg:p-8">
         <WelcomeHeader
-            name={String(user?.customer ?? '')}
-            loanAmount={Number(user?.fore_closure) || 0}
-          />
+          user={user}
+        />
           <ScratchCards />
         </div>
       </main>
