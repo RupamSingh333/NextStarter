@@ -18,6 +18,8 @@ import Pagination from '../tables/Pagination';
 import PageLoader from '../ui/loading/PageLoader';
 import { toast } from 'react-hot-toast';
 import { useModal } from "@/hooks/useModal";
+import { PhoneIcon, UserCircleIcon } from '@heroicons/react/24/outline';
+
 
 
 interface Customer {
@@ -124,7 +126,7 @@ export default function BasicTableOne() {
 
         const data = await response.json().catch(() => ({})); // handle invalid JSON
         // console.log("Update response:", data);
-        
+
         if (!data.success) {
           // Always resolve with an error message to be handled by toast
           return reject(data.message || "Something went wrong while updating payment type.");
@@ -227,11 +229,11 @@ export default function BasicTableOne() {
                 setCurrentPage(1); // Reset to first page when changing page size
                 fetchCustomers(1, newSize, selectedStatus); // Fetch with new page size
               }}
-              className="w-full border border-gray-300 bg-white dark:bg-gray-800 rounded-md px-2 py-1.5 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              className="w-full py-2 pl-3 pr-8 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg appearance-none dark:bg-dark-900 h-9 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
             >
               {pageSizeOptions.map((size) => (
                 <option key={size} value={size} className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
-                  {size} / page
+                  {size}
                 </option>
               ))}
             </select>
@@ -248,7 +250,7 @@ export default function BasicTableOne() {
                 setCurrentPage(1); // Reset to first page when changing status
                 fetchCustomers(1, pageSize, newStatus); // Fetch with new status
               }}
-              className="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              className="w-full py-2 pl-3 pr-8 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg appearance-none dark:bg-dark-900 h-9 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
             >
               {paymentStatus.map((status) => (
                 <option key={status.id} value={status.id} className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
@@ -260,7 +262,7 @@ export default function BasicTableOne() {
         </div>
 
         {/* Right Section - Excel Upload */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 bg-gray-50 dark:bg-gray-800/50  rounded-lg">
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <input
               type="file"
@@ -269,20 +271,17 @@ export default function BasicTableOne() {
               className="hidden"
               id="excel-upload-input"
             />
-            <Button
-              size="sm"
-              variant="primary"
+            <span
               onClick={() => document.getElementById('excel-upload-input')?.click()}
               disabled={isUploadingExcel}
-              className="w-full sm:w-auto flex items-center justify-center gap-2"
+              className="inline-flex items-center px-2.5 py-2 justify-center gap-1 rounded-full font-medium text-sm bg-brand-50 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400 cursor-pointer"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-              </svg>
-              {isUploadingExcel ? "Uploading..." : "Upload Customers"}
-            </Button>
+              {isUploadingExcel ? "Uploading..." : "Upload Customers"}<svg className="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M9.2502 4.99951C9.2502 4.5853 9.58599 4.24951 10.0002 4.24951C10.4144 4.24951 10.7502 4.5853 10.7502 4.99951V9.24971H15.0006C15.4148 9.24971 15.7506 9.5855 15.7506 9.99971C15.7506 10.4139 15.4148 10.7497 15.0006 10.7497H10.7502V15.0001C10.7502 15.4143 10.4144 15.7501 10.0002 15.7501C9.58599 15.7501 9.2502 15.4143 9.2502 15.0001V10.7497H5C4.58579 10.7497 4.25 10.4139 4.25 9.99971C4.25 9.5855 4.58579 9.24971 5 9.24971H9.2502V4.99951Z" fill=""></path></svg>
+            </span>
+
+
           </div>
-          
+
           {excelFile && (
             <div className="flex items-center gap-3 w-full sm:w-auto">
               <span className="text-sm text-gray-600 dark:text-gray-300 truncate max-w-[200px]">
@@ -317,9 +316,7 @@ export default function BasicTableOne() {
                 <TableCell isHeader className="px-5 py-3 font-medium text-start text-theme-xs text-gray-500">
                   Customer
                 </TableCell>
-                <TableCell isHeader className="px-5 py-3 font-medium text-start text-theme-xs text-gray-500">
-                  Phone
-                </TableCell>
+
                 <TableCell isHeader className="px-5 py-3 font-medium text-start text-theme-xs text-gray-500">
                   Foreclosure
                 </TableCell>
@@ -329,9 +326,7 @@ export default function BasicTableOne() {
                 <TableCell isHeader className="px-5 py-3 font-medium text-start text-theme-xs text-gray-500">
                   Min. Part Payment
                 </TableCell>
-                <TableCell isHeader className="px-5 py-3 font-medium text-start text-theme-xs text-gray-500">
-                  Rewards
-                </TableCell>
+
                 <TableCell isHeader className="px-5 py-3 font-medium text-start text-theme-xs text-gray-500">
                   Status
                 </TableCell>
@@ -352,27 +347,37 @@ export default function BasicTableOne() {
                     {(currentPage - 1) * pageSize + index + 1}
                   </TableCell>
                   <TableCell className="px-5 py-4 text-start text-theme-sm text-gray-800 dark:text-white/90">
-                    {cust.customer}
+                  <span className="inline-flex items-center gap-1 mt-1">
+                      <UserCircleIcon className="w-5 h-5" /> &nbsp;
+                     {cust.customer}
+                    </span>
+                    
+                    <br />
+                    <span className="inline-flex items-center gap-1 mt-1">
+                      <PhoneIcon className="w-4 h-4" /> &nbsp;
+                      {cust.phone}
+                    </span>
                   </TableCell>
-                  <TableCell className="px-5 py-4 text-start text-theme-sm text-gray-600 dark:text-gray-400">
-                    {cust.phone}
-                  </TableCell>
+
+
                   <TableCell className="px-5 py-4 text-start text-theme-sm text-gray-600 dark:text-gray-400">
                     ₹{cust.fore_closure}
+                    <br></br><Badge size="sm" color='success'>
+                      ₹{cust.foreclosure_reward.$numberDecimal}
+                    </Badge>
                   </TableCell>
                   <TableCell className="px-5 py-4 text-start text-theme-sm text-gray-600 dark:text-gray-400">
                     ₹{cust.settlement.$numberDecimal}
+                    <br></br><Badge size="sm" color='success'>
+                      ₹{cust.settlement_reward.$numberDecimal}
+                    </Badge>
                   </TableCell>
                   <TableCell className="px-5 py-4 text-start text-theme-sm text-gray-600 dark:text-gray-400">
-                    ₹{cust.minimum_part_payment.$numberDecimal}
+                    ₹{cust.minimum_part_payment.$numberDecimal}<br></br><Badge size="sm" color='success'>
+                      ₹{cust.minimum_part_payment_reward.$numberDecimal}
+                    </Badge>
                   </TableCell>
-                  <TableCell className="px-5 py-4 text-start text-theme-xs text-gray-600 dark:text-gray-400">
-                    <div className="space-y-1">
-                      <div>Foreclosure: ₹{cust.foreclosure_reward.$numberDecimal}</div>
-                      <div>Settlement: ₹{cust.settlement_reward.$numberDecimal}</div>
-                      <div>Min Part: ₹{cust.minimum_part_payment_reward.$numberDecimal}</div>
-                    </div>
-                  </TableCell>
+
                   <TableCell className="px-5 py-4 text-start text-theme-sm">
                     <Badge size="sm" color={cust.isPaid ? 'success' : 'warning'}>
                       {cust.isPaid ? 'Paid' : 'Pending'}
@@ -442,7 +447,7 @@ export default function BasicTableOne() {
         </h4>
         <Label>Select Payment Type</Label>
         <select
-          className="form-control w-full mt-2 border rounded px-3 py-2 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+          className="w-full py-2 pl-3 pr-8 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg appearance-none dark:bg-dark-900 h-9 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
           value={statusType}
           onChange={(e) => setStatusType(e.target.value)}
         >

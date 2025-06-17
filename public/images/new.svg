@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="225" height="50" viewBox="0 0 225 50">
+    <defs>
+        <circle id="a" cx="25" cy="25" r="25"/>
+    </defs>
+    <g fill="none" fill-rule="evenodd">
+        <use fill="#4CAF50" xlink:href="#a"/>
+        <path fill="#FFF" d="M35.282 25.07c0-2.774 2.208-5.057 4.996-5.268-2.209-5.865-8.001-10.08-14.807-10.08-8.69 0-15.749 6.849-15.749 15.278 0 8.43 7.06 15.278 15.749 15.278 6.77 0 12.526-4.145 14.77-9.975-2.787-.21-4.96-2.493-4.96-5.233zm-1.376 7.095c-2.064 2.283-5.068 3.723-8.472 3.723-6.19 0-11.223-4.882-11.223-10.888s5.033-10.888 11.223-10.888c3.367 0 6.408 1.44 8.472 3.723-1.991 1.756-3.258 4.32-3.258 7.13 0 2.81 1.267 5.409 3.258 7.2z"/>
+        <text fill="#666" font-family="Futura-Medium, Futura" font-size="24" font-weight="400">
+            <tspan x="60" y="28">OkCredit</tspan>
+        </text>
+        <text fill="#999" font-family="Helvetica-Light, Helvetica" font-size="14" font-weight="300">
+            <tspan x="61" y="45">Simple. Paperless. Secure</tspan>
+        </text>
+    </g>
+</svg>

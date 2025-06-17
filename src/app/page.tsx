@@ -23,7 +23,7 @@ export default function HomePage() {
 
             <main className="flex-grow">
                 {/* Hero Section */}
-                <section className="relative min-h-screen flex items-center pt-20 pb-12 md:pt-32 md:pb-20 bg-gradient-to-b from-white to-purple-50 dark:from-gray-900 dark:to-gray-800 overflow-hidden rounded-b-3xl shadow-lg">
+                <section className="relative min-h-screen flex items-center pt-20 pb-12 md:pt-32 md:pb-20 bg-gradient-to-b from-white to-purple-50 dark:from-gray-900 dark:to-gray-800 overflow-hidden  shadow-lg">
                     {/* Animated Background Elements */}
                     <div className="absolute inset-0 overflow-hidden">
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-purple-400 via-transparent to-transparent animate-pulse"></div>
@@ -49,7 +49,7 @@ export default function HomePage() {
                                 <div className="flex flex-col sm:flex-row gap-4 animate-fadeIn" style={{ animationDelay: '0.7s' }}>
                                     <Link
                                         href="/signin"
-                                        className="hover-button inline-flex justify-center items-center px-8 py-4 border border-transparent text-base font-medium rounded-2xl text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transform hover:scale-105 transition-all duration-500 shadow-xl hover:shadow-2xl animate-pulse-subtle"
+                                        className="hover-button inline-flex justify-center items-center px-8 py-4 border border-transparent text-base font-medium rounded-2xl text-white gradient-bg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transform hover:scale-105 transition-all duration-500 shadow-xl hover:shadow-2xl animate-pulse-subtle"
                                     >
                                         Get Started
                                     </Link>
@@ -79,7 +79,7 @@ export default function HomePage() {
                 </section>
 
                 {/* RepayKaro Overview */}
-                <section className="py-20 bg-gray-50 dark:bg-gray-800 rounded-3xl shadow-inner-top">
+                <section className="py-20 bg-gray-50 dark:bg-gray-800  shadow-inner-top">
                     <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-4xl">
                         <ScrollAnimation animation="fade" delay={400}>
                             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 animate-fadeIn">
@@ -93,7 +93,7 @@ export default function HomePage() {
                 </section>
 
                 {/* Lender & Customer Platform */}
-                <section className="py-20 bg-white dark:bg-gray-900 rounded-3xl shadow-inner-top">
+                <section className="py-20 bg-white dark:bg-gray-900  shadow-inner-top">
                     <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                             <ScrollAnimation animation="slideLeft" className="space-y-6" delay={500}>
@@ -123,7 +123,7 @@ export default function HomePage() {
                 </section>
 
                 {/* Additional Features */}
-                <section className="py-20 bg-gray-50 dark:bg-gray-800 rounded-3xl shadow-inner-top">
+                <section className="py-20 bg-gray-50 dark:bg-gray-800  shadow-inner-top">
                     <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                             <ScrollAnimation animation="slideLeft" className="relative h-64 md:h-96 bg-purple-100 dark:bg-purple-900/20 rounded-3xl flex items-center justify-center hover-card overflow-hidden shadow-xl" delay={500}>
@@ -151,7 +151,7 @@ export default function HomePage() {
                 </section>
 
                 {/* How RepayKaro Works */}
-                <section className="py-20 bg-gray-50 dark:bg-gray-800 rounded-3xl shadow-inner-top">
+                <section className="py-20 bg-gray-50 dark:bg-gray-800  shadow-inner-top">
                     <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="text-center max-w-4xl mx-auto mb-16">
                             <ScrollAnimation animation="fade" delay={400}>
@@ -211,7 +211,7 @@ export default function HomePage() {
                 </section>
 
                 {/* Incentives and Rewards Section */}
-                <section className="py-20 bg-gray-50 dark:bg-gray-800 rounded-3xl shadow-inner-top">
+                <section className="py-20 bg-gray-50 dark:bg-gray-800 shadow-inner-top">
                     <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-4xl">
                         <ScrollAnimation animation="fade" delay={400}>
                             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 animate-fadeIn">
@@ -223,7 +223,7 @@ export default function HomePage() {
                             <div className="mt-8 animate-fadeIn" style={{ animationDelay: '0.8s' }}>
                                 <Link
                                     href="#get-started"
-                                    className="inline-flex justify-center items-center px-8 py-4 border border-transparent text-base font-medium rounded-2xl text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transform hover:scale-105 transition-all duration-500 shadow-xl hover:shadow-2xl animate-pulse-subtle"
+                                    className="inline-flex justify-center items-center px-8 py-4 border border-transparent text-base font-medium rounded-2xl text-white gradient-bg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transform hover:scale-105 transition-all duration-500 shadow-xl hover:shadow-2xl animate-pulse-subtle"
                                 >
                                     Get started
                                 </Link>
@@ -233,7 +233,7 @@ export default function HomePage() {
                 </section>
 
                 {/* Get Started / Contact Form */}
-                <section id="get-started" className="py-20 bg-white dark:bg-gray-900 rounded-3xl shadow-inner-top">
+                <section id="get-started" className="py-20 bg-white dark:bg-gray-900  shadow-inner-top">
                     <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
                         <ScrollAnimation animation="fade" className="text-center mb-12" delay={400}>
                             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 animate-fadeIn">
@@ -278,7 +278,7 @@ export default function HomePage() {
                                     </div>
                                     <button
                                         type="submit"
-                                        className={`hover-button inline-flex justify-center items-center px-10 py-4 border border-transparent text-base font-medium rounded-2xl text-white bg-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transform transition-all duration-500 shadow-xl hover:shadow-2xl ${!acceptedTerms ? 'opacity-50 cursor-not-allowed' : 'hover:bg-purple-700 hover:scale-105 animate-pulse-subtle'}`}
+                                        className={`hover-button inline-flex justify-center items-center px-10 py-4 border border-transparent text-base font-medium rounded-2xl text-white gradient-bg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transform transition-all duration-500 shadow-xl hover:shadow-2xl ${!acceptedTerms ? 'opacity-50 cursor-not-allowed' : 'hover:bg-purple-700 hover:scale-105 animate-pulse-subtle'}`}
                                         disabled={!acceptedTerms}
                                     >
                                         Start Your Project

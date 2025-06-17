@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useAuth } from '@/context/AuthContext';
 // import Badge from "../ui/badge/Badge";
 import {
   // ArrowDownIcon,
@@ -33,10 +34,19 @@ interface DashboardData {
     paidPartialSum: string;
   };
 }
+const colors = ["blue-light", "success", "warning"];
 
 export const EcommerceMetrics = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<DashboardData | null>(null);
+  const { admin } = useAuth();
+  const permissions = admin?.permissions;
+  const hasPermission = (module: string, action: string) => {
+    return permissions?.some(
+      (perm) => perm.module === module && perm.actions.includes(action)
+    ) || false;
+  };
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -76,103 +86,109 @@ export const EcommerceMetrics = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 p-4">
       {/* Merged Users */}
-      <MetricCard
-        title="Users"
-        value={users.userCount}
-        icon={<GroupIcon className="text-blue-600 size-6 dark:text-blue-300" />}
-        subValues={[
-          { label: "Active", value: users.activeUserCount, color: "green" },
-          { label: "Inactive", value: users.inActiveUserCount, color: "red" },
-        ]}
-      />
+      {hasPermission('User', 'read') && (
+        <MetricCard
+          title="Users"
+          value={users.userCount}
+          icon={<GroupIcon className="text-blue-600 size-6 dark:text-blue-300" />}
+          subValues={[
+            { label: "Active", value: users.activeUserCount, color: "green" },
+            { label: "Inactive", value: users.inActiveUserCount, color: "red" },
+          ]}
+        />
+      )}
+      {hasPermission('Customer', 'read') && (
+        <>
+          {/* Customers */}
+          <MetricCard
+            title="Customers"
+            value={customers.customerCount}
+            icon={<GroupIcon className="text-gray-800 size-6 dark:text-white/90" />}
+            subValues={[
+              { label: "Paid", value: customers.piadCustomerCount, color: "green" },
+              { label: "Unpaid", value: customers.unPaidCustomerCount, color: "red" },
+            ]}
+          />
 
-      {/* Customers */}
-      <MetricCard
-        title="Customers"
-        value={customers.customerCount}
-        icon={<GroupIcon className="text-gray-800 size-6 dark:text-white/90" />}
-        subValues={[
-          { label: "Paid", value: customers.piadCustomerCount, color: "green" },
-          { label: "Unpaid", value: customers.unPaidCustomerCount, color: "red" },
-        ]}
-      />
+          {/* Total Paid Amount */}
+          <MetricCard
+            title="Total Paid"
+            value={
+              parseFloat(payments.paidForeClosureSum) +
+              parseFloat(payments.paidSettlementSum) +
+              parseFloat(payments.paidPartialSum)
+            }
+            prefix="₹"
+            icon={<BoxIconLine className="text-yellow-600 size-6 dark:text-yellow-400" />}
+            subValues={[
+              { label: "Foreclosure", value: parseFloat(payments.paidForeClosureSum) },
+              { label: "Settlement", value: parseFloat(payments.paidSettlementSum) },
+              { label: "Partial", value: parseFloat(payments.paidPartialSum) },
+            ]}
+          />
 
-      {/* Total Paid Amount */}
-      <MetricCard
-        title="Total Paid"
-        value={
-          parseFloat(payments.paidForeClosureSum) +
-          parseFloat(payments.paidSettlementSum) +
-          parseFloat(payments.paidPartialSum)
-        }
-        prefix="₹"
-        icon={<BoxIconLine className="text-yellow-600 size-6 dark:text-yellow-400" />}
-        subValues={[
-          { label: "Foreclosure", value: parseFloat(payments.paidForeClosureSum) },
-          { label: "Settlement", value: parseFloat(payments.paidSettlementSum) },
-          { label: "Partial", value: parseFloat(payments.paidPartialSum) },
-        ]}
-      />
+          {/* Foreclosure Payment */}
+          <MetricCard
+            title="Foreclosure Payment"
+            value={parseFloat(payments.foreClosureSum)}
+            prefix="₹"
+            icon={<BoxIconLine className="text-purple-600 size-6 dark:text-purple-400" />}
+            subValues={[
+              {
+                label: "Paid",
+                value: parseFloat(payments.paidForeClosureSum),
+                color: "green",
+              },
+              {
+                label: "Pending",
+                value: parseFloat(payments.foreClosureSum) - parseFloat(payments.paidForeClosureSum),
+                color: "red",
+              },
+            ]}
+          />
 
-      {/* Foreclosure Payment */}
-      <MetricCard
-        title="Foreclosure Payment"
-        value={parseFloat(payments.foreClosureSum)}
-        prefix="₹"
-        icon={<BoxIconLine className="text-purple-600 size-6 dark:text-purple-400" />}
-        subValues={[
-          {
-            label: "Paid",
-            value: parseFloat(payments.paidForeClosureSum),
-            color: "green",
-          },
-          {
-            label: "Pending",
-            value: parseFloat(payments.foreClosureSum) - parseFloat(payments.paidForeClosureSum),
-            color: "red",
-          },
-        ]}
-      />
+          {/* Settlement Payment */}
+          <MetricCard
+            title="Settlement Payment"
+            value={parseFloat(payments.settlementSum)}
+            prefix="₹"
+            icon={<BoxIconLine className="text-cyan-600 size-6 dark:text-cyan-400" />}
+            subValues={[
+              {
+                label: "Paid",
+                value: parseFloat(payments.paidSettlementSum),
+                color: "green",
+              },
+              {
+                label: "Pending",
+                value: parseFloat(payments.settlementSum) - parseFloat(payments.paidSettlementSum),
+                color: "red",
+              },
+            ]}
+          />
 
-      {/* Settlement Payment */}
-      <MetricCard
-        title="Settlement Payment"
-        value={parseFloat(payments.settlementSum)}
-        prefix="₹"
-        icon={<BoxIconLine className="text-cyan-600 size-6 dark:text-cyan-400" />}
-        subValues={[
-          {
-            label: "Paid",
-            value: parseFloat(payments.paidSettlementSum),
-            color: "green",
-          },
-          {
-            label: "Pending",
-            value: parseFloat(payments.settlementSum) - parseFloat(payments.paidSettlementSum),
-            color: "red",
-          },
-        ]}
-      />
+          {/* Partial Payment */}
+          <MetricCard
+            title="Partial Payment"
+            value={parseFloat(payments.partialSum)}
+            prefix="₹"
+            icon={<BoxIconLine className="text-orange-600 size-6 dark:text-orange-400" />}
+            subValues={[
+              {
+                label: "Paid",
+                value: parseFloat(payments.paidPartialSum),
+                color: "green",
+              },
+              {
+                label: "Pending",
+                value: parseFloat(payments.partialSum) - parseFloat(payments.paidPartialSum),
+                color: "red",
+              },
+            ]}
+          />
+        </>
+      )}
 
-      {/* Partial Payment */}
-      <MetricCard
-        title="Partial Payment"
-        value={parseFloat(payments.partialSum)}
-        prefix="₹"
-        icon={<BoxIconLine className="text-orange-600 size-6 dark:text-orange-400" />}
-        subValues={[
-          {
-            label: "Paid",
-            value: parseFloat(payments.paidPartialSum),
-            color: "green",
-          },
-          {
-            label: "Pending",
-            value: parseFloat(payments.partialSum) - parseFloat(payments.paidPartialSum),
-            color: "red",
-          },
-        ]}
-      />
 
     </div>
   );
@@ -205,7 +221,8 @@ const MetricCard = ({
             {icon}
           </div>
           <div>
-            <span className="text-xs font-medium text-gray-500 dark:text-gray-400 animate-slideIn">{title}</span>
+
+            <span className="text-xl font-medium text-gray-500 dark:text-gray-400 animate-slideIn">{title}</span>
             <h4 className="font-bold text-gray-800 text-base dark:text-white/90 animate-slideIn">
               {prefix}
               {typeof value === "number" ? value.toLocaleString() : value}
@@ -215,22 +232,32 @@ const MetricCard = ({
       </div>
 
       {subValues.length > 0 && (
-        <div className="mt-3 grid grid-cols-2 gap-2 text-xs animate-fadeIn">
+        <div className="mt-3 grid grid-cols-2 gap-2 text-xl animate-fadeIn">
           {subValues.map((sub, index) => (
-            <div 
-              key={sub.label} 
+            <div
+              key={sub.label}
               className="flex justify-between items-center transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-md px-2 py-1"
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <span className="text-gray-500 dark:text-gray-400">{sub.label}</span>
+              {(() => {
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                return (
+                  <span
+                    className={`inline-flex items-center px-2.5 py-0.5 justify-center gap-1 rounded-full font-medium text-sm bg-${randomColor}-50 text-${randomColor}-500 dark:bg-${randomColor}-500/15 dark:text-${randomColor}-500`}
+                  >
+                    {sub.label}
+                  </span>
+                );
+              })()}
+
+
               <span
-                className={`font-medium ${
-                  sub.color === "green"
-                    ? "text-green-600"
-                    : sub.color === "red"
+                className={`font-medium ${sub.color === "green"
+                  ? "text-green-600"
+                  : sub.color === "red"
                     ? "text-red-500"
                     : "text-gray-800 dark:text-white"
-                }`}
+                  }`}
               >
                 {typeof sub.value === "number" ? sub.value.toLocaleString() : sub.value}
               </span>

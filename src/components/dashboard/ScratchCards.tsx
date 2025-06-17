@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { ScratchCard } from 'next-scratchcard';
 import { toast } from 'react-hot-toast';
 
+
 interface ScratchCardAmount {
   $numberDecimal: string;
 }
@@ -26,27 +27,28 @@ export default function ScratchCards() {
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const hasFetched = useRef(false);
 
+  const fetchCards = async () => {
+    try {
+      const response = await fetch('/api/scratch-cards', {
+        credentials: 'include'
+      });
+      const data = await response.json();
+
+      if (data.success) {
+        setCards(data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching scratch cards:', error);
+    } finally {
+      setLoading(false);
+      hasFetched.current = true;
+    }
+  };
+
   // Fetch scratch cards data
   useEffect(() => {
     if (hasFetched.current) return;
 
-    const fetchCards = async () => {
-      try {
-        const response = await fetch('/api/scratch-cards', {
-          credentials: 'include'
-        });
-        const data = await response.json();
-
-        if (data.success) {
-          setCards(data.data);
-        }
-      } catch (error) {
-        console.error('Error fetching scratch cards:', error);
-      } finally {
-        setLoading(false);
-        hasFetched.current = true;
-      }
-    };
 
     fetchCards();
   }, []);
@@ -107,7 +109,7 @@ export default function ScratchCards() {
   return (
     <div className="p-4 relative z-0">
       <h2 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-200">
-        Your Scratch Cards
+        Your Rewards
       </h2>
 
       {cards.length > 0 ? (
@@ -120,22 +122,29 @@ export default function ScratchCards() {
               {card.scratched === 0 ? (
                 <div className="p-4 relative z-10">
                   <ScratchCard
-                    width={280}
-                    height={180}
+                    key={`${card._id}`}
+                    width={340}
+                    height={220}
                     image="/images/scratch-cover.svg"
-                    finishPercent={70}
-                    onComplete={() => {
-                      // Update card as scratched in backend
-                      fetch(`/api/scratch-cards/${card._id}/scratch`, {
-                        method: 'POST',
-                        credentials: 'include'
-                      });
-                      // Update local state
-                      setCards(cards.map(c =>
-                        c._id === card._id ? { ...c, scratched: 1 } : c
-                      ));
-                    }}
+                    finishPercent={15}
                     brushSize={30}
+                    onComplete={async () => {
+                      try {
+                         setLoading(true);
+                        const response = await fetch(`/api/scratch-cards/${card._id}/scratch`, {
+                          method: 'POST',
+                          credentials: 'include',
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                          fetchCards(); 
+                        }
+                      } catch (err) {
+                        console.error('Failed to mark card scratched:', err);
+                      }
+                    }}
                   >
                     <div className="flex flex-col items-center justify-center h-full bg-gradient-to-r from-brand-100 to-brand-50 dark:from-brand-900 dark:to-brand-800">
                       <div className="text-4xl font-bold text-brand-600 dark:text-brand-400 mb-2">
@@ -146,6 +155,7 @@ export default function ScratchCards() {
                       </div>
                     </div>
                   </ScratchCard>
+
                 </div>
               ) : (
                 <div className="p-6">
@@ -155,11 +165,10 @@ export default function ScratchCards() {
                     </div>
 
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold tracking-wide ${
-                        card.redeemed === 1
+                      className={`px-3 py-1 rounded-full text-xs font-semibold tracking-wide ${card.redeemed === 1
                           ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100'
                           : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100'
-                      }`}
+                        }`}
                     >
                       {card.redeemed === 1 ? 'Redeemed' : 'Ready to Redeem'}
                     </span>
@@ -169,7 +178,7 @@ export default function ScratchCards() {
                         onClick={() => handleRedeem(card._id)}
                         className="flex items-center space-x-1 px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-sm font-medium transition-colors"
                       >
-                        <span>₹</span>
+                       
                         <span>Redeem Now</span>
                       </button>
                     )}

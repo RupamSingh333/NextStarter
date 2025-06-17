@@ -100,7 +100,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between h-16 px-6 mb-4">
             <Link href="/" className="inline-block">
-              <span className="font-bold text-3xl text-purple-600 dark:text-purple-400 transition-colors duration-300">
+              <span className="font-bold text-3xl gradient-text text-purple-600 dark:text-purple-400 transition-colors duration-300">
                 RepayKaro
               </span>
             </Link>

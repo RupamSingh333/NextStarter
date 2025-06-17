@@ -1,4 +1,3 @@
-import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import BasicTableOne from "@/components/tables/BasicTableOne";
 import { Metadata } from "next";
@@ -16,9 +15,7 @@ export default function BasicTables() {
     <div>
       <PageBreadcrumb pageTitle="Customers List" />
       <div className="space-y-6">
-        <ComponentCard title="Customers List">
-          <BasicTableOne />
-        </ComponentCard>
+         <BasicTableOne />
       </div>
     </div>
   );

@@ -22,6 +22,7 @@ interface User {
   minimum_part_payment_reward: DecimalValue;
   isPaid: boolean;
   payment_url?: string;
+  payment_type: number;
 }
 
 // Helper function to safely parse decimal values
@@ -35,7 +36,7 @@ const parseDecimalValue = (value: DecimalValue): number => {
   return 0;
 };
 
-const PaymentBreakdown = ({user, loading}: {user: User | null, loading: boolean}) => {
+const PaymentBreakdown = ({ user, loading }: { user: User | null, loading: boolean }) => {
 
   if (loading) {
     return <div className="animate-pulse">Loading...</div>;
@@ -80,6 +81,156 @@ const PaymentBreakdown = ({user, loading}: {user: User | null, loading: boolean}
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 p-2 md:p-4">
+      {/* Right side - Payment Cards */}
+      <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+        {/* Foreclosure Amount Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+          className="bg-[rgb(147,171,255)] rounded-3xl p-4 md:p-6 text-white shadow-xl flex flex-col justify-between hover:scale-105 transition-transform duration-300 transform-gpu"
+        >
+          <div>
+            <h3 className="text-base md:text-lg font-medium mb-3 md:mb-4">
+              Foreclosure Amount
+            </h3>
+
+            {/* Updated this block */}
+            <div className="flex justify-between items-center text-2xl md:text-3xl font-bold mb-2">
+              <span>₹{foreclosureAmount.toFixed(2)}</span>
+              <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
+              </svg>
+              </span>
+            </div>
+
+            <div className="text-xs md:text-sm opacity-90">
+              {foreclosureReward.toFixed(2)} reward
+            </div>
+          </div>
+
+          {user.payment_url && !user.isPaid && (
+            <div className="mt-3 md:mt-4 flex justify-end">
+              <a
+                href={user.payment_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-[160px] md:w-auto bg-white text-[rgb(147,171,255)] rounded-full px-4 md:px-6 py-2 md:py-3 font-medium text-center hover:bg-gray-100 transition-colors duration-300 shadow-md text-sm md:text-base"
+              >
+                <span className="md:inline">Proceed to Payment</span>
+              </a>
+            </div>
+          )}
+        </motion.div>
+        {/* Settlement Amount Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+          className="bg-[rgb(147,171,255)] rounded-3xl p-4 md:p-6 text-white shadow-xl flex flex-col justify-between hover:scale-105 transition-transform duration-300 transform-gpu"
+        >
+          <div>
+            <h3 className="text-base md:text-lg font-medium mb-3 md:mb-4">
+              Settlement Amount
+            </h3>
+
+            {/* Updated this block */}
+            <div className="flex justify-between items-center text-2xl md:text-3xl font-bold mb-2">
+              <span>₹{settlementAmount.toFixed(2)}</span>
+              <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
+              </svg>
+              </span>
+            </div>
+
+            <div className="text-xs md:text-sm opacity-90">
+              {settlementReward.toFixed(2)} reward
+            </div>
+          </div>
+
+          {user.payment_url && !user.isPaid && (
+            <div className="mt-3 md:mt-4 flex justify-end">
+              <a
+                href={user.payment_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-[160px] md:w-auto bg-white text-[rgb(147,171,255)] rounded-full px-4 md:px-6 py-2 md:py-3 font-medium text-center hover:bg-gray-100 transition-colors duration-300 shadow-md text-sm md:text-base"
+              >
+                <span className="md:inline">Proceed to Payment</span>
+              </a>
+            </div>
+          )}
+        </motion.div>
+        {/* Minimum Payment Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+          className="bg-[rgb(147,171,255)] rounded-3xl p-4 md:p-6 text-white shadow-xl flex flex-col justify-between hover:scale-105 transition-transform duration-300 transform-gpu"
+        >
+          <div>
+            <h3 className="text-base md:text-lg font-medium mb-3 md:mb-4">
+              Minimum Payment Amount
+            </h3>
+
+            {/* Updated this block */}
+            <div className="flex justify-between items-center text-2xl md:text-3xl font-bold mb-2">
+              <span>₹{minimumPaymentAmount.toFixed(2)}</span>
+              <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
+              </svg>
+              </span>
+            </div>
+
+            <div className="text-xs md:text-sm opacity-90">
+              {minimumPaymentReward.toFixed(2)} reward
+            </div>
+          </div>
+
+          {user.payment_url && !user.isPaid && (
+            <div className="mt-3 md:mt-4 flex justify-end">
+              <a
+                href={user.payment_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-[160px] md:w-auto bg-white text-[rgb(147,171,255)] rounded-full px-4 md:px-6 py-2 md:py-3 font-medium text-center hover:bg-gray-100 transition-colors duration-300 shadow-md text-sm md:text-base"
+              >
+                <span className="md:inline">Proceed to Payment</span>
+              </a>
+            </div>
+          )}
+        </motion.div>
+        {/* Payment Status Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
+          className={`rounded-3xl p-4 md:p-6 shadow-xl flex flex-col justify-between ${user.isPaid ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}`}
+        >
+          <div>
+            <h3 className="text-base md:text-lg font-medium mb-3 md:mb-4">Payment Status</h3>
+            <div className={`text-2xl md:text-3xl font-bold mb-2 ${user.isPaid ? 'text-green-600' : 'text-orange-600'}`}>
+              {user.isPaid ? 'Completed ' : 'Pending'}
+            </div>
+            <div className={`text-xs md:text-sm ${user.isPaid ? 'text-green-700' : 'text-orange-700'}`}>
+              {user.isPaid ? 'Paid' : 'Not Paid'} {user.isPaid ? (user.payment_type == 3 ? '( Part payment )' : (user.payment_type == 2 ? "( Settlement payment )" : (user.payment_type == 1 ? "( Full Payment )" : ""))) : ''}
+
+            </div>
+          </div>
+          {!user.isPaid && user.payment_url && (
+            <a
+              href={user.payment_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 md:mt-4 bg-white text-orange-600 rounded-full px-4 md:px-6 py-2 md:py-3 font-medium text-center hover:bg-gray-100 transition-colors duration-300 shadow-md text-sm md:text-base"
+            >
+              Complete Payment
+
+            </a>
+
+          )}
+        </motion.div>
+      </div>
       {/* Left side - Chart */}
       <motion.div
         initial={{ opacity: 0, y: 50 }}
@@ -112,108 +263,7 @@ const PaymentBreakdown = ({user, loading}: {user: User | null, loading: boolean}
         </div>
       </motion.div>
 
-      {/* Right side - Payment Cards */}
-      <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
-        {/* Foreclosure Amount Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-          className="bg-[rgb(147,171,255)] rounded-3xl p-4 md:p-6 text-white shadow-xl flex flex-col justify-between hover:scale-105 transition-transform duration-300 transform-gpu"
-        >
-          <div>
-            <h3 className="text-base md:text-lg font-medium mb-3 md:mb-4">Foreclosure Amount</h3>
-            <div className="text-2xl md:text-3xl font-bold mb-2">₹{foreclosureAmount.toFixed(2)}</div>
-            <div className="text-xs md:text-sm opacity-90">{foreclosureReward.toFixed(2)} reward</div>
-          </div>
-          {user.payment_url && (
-            <a
-              href={user.payment_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 md:mt-4 bg-white text-[rgb(147,171,255)] rounded-full px-4 md:px-6 py-2 md:py-3 font-medium text-center hover:bg-gray-100 transition-colors duration-300 shadow-md text-sm md:text-base"
-            >
-              Proceed to Payment
-            </a>
-          )}
-        </motion.div>
 
-        {/* Settlement Amount Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-          className="bg-[rgb(63,66,150)] rounded-3xl p-4 md:p-6 text-white shadow-xl flex flex-col justify-between hover:scale-105 transition-transform duration-300 transform-gpu"
-        >
-          <div>
-            <h3 className="text-base md:text-lg font-medium mb-3 md:mb-4">Settlement Amount</h3>
-            <div className="text-2xl md:text-3xl font-bold mb-2">₹{settlementAmount.toFixed(2)}</div>
-            <div className="text-xs md:text-sm opacity-90">{settlementReward.toFixed(2)} reward</div>
-          </div>
-          {user.payment_url && (
-            <a
-              href={user.payment_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 md:mt-4 bg-white text-[rgb(63,66,150)] rounded-full px-4 md:px-6 py-2 md:py-3 font-medium text-center hover:bg-gray-100 transition-colors duration-300 shadow-md text-sm md:text-base"
-            >
-              Proceed to Payment
-            </a>
-          )}
-        </motion.div>
-
-        {/* Minimum Payment Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-          className="bg-[rgb(147,171,255)] rounded-3xl p-4 md:p-6 text-white shadow-xl flex flex-col justify-between hover:scale-105 transition-transform duration-300 transform-gpu"
-        >
-          <div>
-            <h3 className="text-base md:text-lg font-medium mb-3 md:mb-4">Minimum Payment</h3>
-            <div className="text-2xl md:text-3xl font-bold mb-2">₹{minimumPaymentAmount.toFixed(2)}</div>
-            <div className="text-xs md:text-sm opacity-90">{minimumPaymentReward.toFixed(2)} reward</div>
-          </div>
-          {user.payment_url && (
-            <a
-              href={user.payment_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 md:mt-4 bg-white text-[rgb(147,171,255)] rounded-full px-4 md:px-6 py-2 md:py-3 font-medium text-center hover:bg-gray-100 transition-colors duration-300 shadow-md text-sm md:text-base"
-            >
-              Proceed to Payment
-            </a>
-          )}
-        </motion.div>
-
-        {/* Payment Status Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
-          className={`rounded-3xl p-4 md:p-6 shadow-xl flex flex-col justify-between ${user.isPaid ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}`}
-        >
-          <div>
-            <h3 className="text-base md:text-lg font-medium mb-3 md:mb-4">Payment Status</h3>
-            <div className={`text-2xl md:text-3xl font-bold mb-2 ${user.isPaid ? 'text-green-600' : 'text-orange-600'}`}>
-              {user.isPaid ? 'Completed' : 'Pending'}
-            </div>
-            <div className={`text-xs md:text-sm ${user.isPaid ? 'text-green-700' : 'text-orange-700'}`}>
-              {user.isPaid ? 'Paid' : 'Not Paid'}
-            </div>
-          </div>
-          {!user.isPaid && user.payment_url && (
-            <a
-              href={user.payment_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 md:mt-4 bg-white text-orange-600 rounded-full px-4 md:px-6 py-2 md:py-3 font-medium text-center hover:bg-gray-100 transition-colors duration-300 shadow-md text-sm md:text-base"
-            >
-              Complete Payment
-            </a>
-          )}
-        </motion.div>
-      </div>
     </div>
   );
 };

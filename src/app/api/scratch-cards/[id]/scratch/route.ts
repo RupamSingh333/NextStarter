@@ -15,20 +15,20 @@ export async function POST(
     }
 
     const { id } = params;
+    console.log("id from scratch card:",id)
 
-    const response = await fetch(`${API_BASE_URL}/clients/coupon-scratch`, {
+    const response = await fetch(`${API_BASE_URL}/coupons/coupon-scratch`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        _id: id
+        coupon_id: id
       })
     });
 
     const data = await response.json();
-    console.log('Scratch response:', data);
 
     if (!data.success) {
       return NextResponse.json({ 
