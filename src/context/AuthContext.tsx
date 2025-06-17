@@ -7,6 +7,11 @@ interface DecimalValue {
   $numberDecimal: string;
 }
 
+interface Permission {
+  module: string;
+  actions: string[];
+}
+
 interface User {
   _id: string;
   phone: string;
@@ -24,11 +29,13 @@ interface User {
   last_login: string;
   createdAt: string;
   updatedAt: string;
+  permissions: Permission[]; // Added permissions field
 }
 
 interface Admin {
   email: string;
   name: string;
+  permissions: Permission[]; // Added permissions field
 }
 
 type LoginData = {
@@ -61,14 +68,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = (data: Partial<LoginData[keyof LoginData]>, type: 'user' | 'admin') => {
     if (type === 'user') {
-      setUser(data as User);
-      localStorage.setItem('user', JSON.stringify(data));
+      const userData = data as User;
+      setUser(userData);
+      localStorage.setItem('user', JSON.stringify(userData));
       setIsAuthenticatedUser(true);
       router.push('/');
     } else {
-      const { email, name } = data as Admin;
-      setAdmin({ email, name });
-      localStorage.setItem('admin', JSON.stringify({ email, name }));
+      const adminData = data as Admin;
+      const { email, name, permissions } = adminData;
+      setAdmin({ email, name, permissions });
+      localStorage.setItem('admin', JSON.stringify({ email, name, permissions }));
       setIsAuthenticatedAdmin(true);
       router.push('/admin');
     }
@@ -161,7 +170,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         credentials: 'include',
       });
       const userData = await userResponse.json();
-      if (userResponse.ok && userData.success) {
+      if (userResponse.ok && userData.success && userData.user) {
         setUser(userData.user);
         setIsAuthenticatedUser(true);
       } else {
@@ -174,8 +183,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
       const adminData = await adminResponse.json();
       if (adminResponse.ok && adminData.success && adminData.user) {
-        const { email, name } = adminData.user;
-        setAdmin({ email, name });
+        const { email, name, permissions } = adminData.user;
+        setAdmin({ email, name, permissions });
         setIsAuthenticatedAdmin(true);
       } else {
         clearAuthData('admin');
@@ -198,11 +207,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const storedUser = localStorage.getItem('user');
     const storedAdmin = localStorage.getItem('admin');
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
       setIsAuthenticatedUser(true);
     }
     if (storedAdmin) {
-      setAdmin(JSON.parse(storedAdmin));
+      const parsedAdmin = JSON.parse(storedAdmin);
+      setAdmin(parsedAdmin);
       setIsAuthenticatedAdmin(true);
     }
   }, []);

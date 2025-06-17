@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useAuth } from '@/context/AuthContext';
 // import Badge from "../ui/badge/Badge";
 import {
   // ArrowDownIcon,
@@ -38,7 +39,13 @@ const colors = ["blue-light", "success", "warning"];
 export const EcommerceMetrics = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<DashboardData | null>(null);
-
+  const { admin } = useAuth();
+  const permissions = admin?.permissions;
+  const hasPermission = (module: string, action: string) => {
+    return permissions?.some(
+      (perm) => perm.module === module && perm.actions.includes(action)
+    ) || false;
+  };
 
 
   useEffect(() => {
@@ -79,103 +86,109 @@ export const EcommerceMetrics = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 p-4">
       {/* Merged Users */}
-      <MetricCard
-        title="Users"
-        value={users.userCount}
-        icon={<GroupIcon className="text-blue-600 size-6 dark:text-blue-300" />}
-        subValues={[
-          { label: "Active", value: users.activeUserCount, color: "green" },
-          { label: "Inactive", value: users.inActiveUserCount, color: "red" },
-        ]}
-      />
+      {hasPermission('User', 'read') && (
+        <MetricCard
+          title="Users"
+          value={users.userCount}
+          icon={<GroupIcon className="text-blue-600 size-6 dark:text-blue-300" />}
+          subValues={[
+            { label: "Active", value: users.activeUserCount, color: "green" },
+            { label: "Inactive", value: users.inActiveUserCount, color: "red" },
+          ]}
+        />
+      )}
+      {hasPermission('Customer', 'read') && (
+        <>
+          {/* Customers */}
+          <MetricCard
+            title="Customers"
+            value={customers.customerCount}
+            icon={<GroupIcon className="text-gray-800 size-6 dark:text-white/90" />}
+            subValues={[
+              { label: "Paid", value: customers.piadCustomerCount, color: "green" },
+              { label: "Unpaid", value: customers.unPaidCustomerCount, color: "red" },
+            ]}
+          />
 
-      {/* Customers */}
-      <MetricCard
-        title="Customers"
-        value={customers.customerCount}
-        icon={<GroupIcon className="text-gray-800 size-6 dark:text-white/90" />}
-        subValues={[
-          { label: "Paid", value: customers.piadCustomerCount, color: "green" },
-          { label: "Unpaid", value: customers.unPaidCustomerCount, color: "red" },
-        ]}
-      />
+          {/* Total Paid Amount */}
+          <MetricCard
+            title="Total Paid"
+            value={
+              parseFloat(payments.paidForeClosureSum) +
+              parseFloat(payments.paidSettlementSum) +
+              parseFloat(payments.paidPartialSum)
+            }
+            prefix="₹"
+            icon={<BoxIconLine className="text-yellow-600 size-6 dark:text-yellow-400" />}
+            subValues={[
+              { label: "Foreclosure", value: parseFloat(payments.paidForeClosureSum) },
+              { label: "Settlement", value: parseFloat(payments.paidSettlementSum) },
+              { label: "Partial", value: parseFloat(payments.paidPartialSum) },
+            ]}
+          />
 
-      {/* Total Paid Amount */}
-      <MetricCard
-        title="Total Paid"
-        value={
-          parseFloat(payments.paidForeClosureSum) +
-          parseFloat(payments.paidSettlementSum) +
-          parseFloat(payments.paidPartialSum)
-        }
-        prefix="₹"
-        icon={<BoxIconLine className="text-yellow-600 size-6 dark:text-yellow-400" />}
-        subValues={[
-          { label: "Foreclosure", value: parseFloat(payments.paidForeClosureSum) },
-          { label: "Settlement", value: parseFloat(payments.paidSettlementSum) },
-          { label: "Partial", value: parseFloat(payments.paidPartialSum) },
-        ]}
-      />
+          {/* Foreclosure Payment */}
+          <MetricCard
+            title="Foreclosure Payment"
+            value={parseFloat(payments.foreClosureSum)}
+            prefix="₹"
+            icon={<BoxIconLine className="text-purple-600 size-6 dark:text-purple-400" />}
+            subValues={[
+              {
+                label: "Paid",
+                value: parseFloat(payments.paidForeClosureSum),
+                color: "green",
+              },
+              {
+                label: "Pending",
+                value: parseFloat(payments.foreClosureSum) - parseFloat(payments.paidForeClosureSum),
+                color: "red",
+              },
+            ]}
+          />
 
-      {/* Foreclosure Payment */}
-      <MetricCard
-        title="Foreclosure Payment"
-        value={parseFloat(payments.foreClosureSum)}
-        prefix="₹"
-        icon={<BoxIconLine className="text-purple-600 size-6 dark:text-purple-400" />}
-        subValues={[
-          {
-            label: "Paid",
-            value: parseFloat(payments.paidForeClosureSum),
-            color: "green",
-          },
-          {
-            label: "Pending",
-            value: parseFloat(payments.foreClosureSum) - parseFloat(payments.paidForeClosureSum),
-            color: "red",
-          },
-        ]}
-      />
+          {/* Settlement Payment */}
+          <MetricCard
+            title="Settlement Payment"
+            value={parseFloat(payments.settlementSum)}
+            prefix="₹"
+            icon={<BoxIconLine className="text-cyan-600 size-6 dark:text-cyan-400" />}
+            subValues={[
+              {
+                label: "Paid",
+                value: parseFloat(payments.paidSettlementSum),
+                color: "green",
+              },
+              {
+                label: "Pending",
+                value: parseFloat(payments.settlementSum) - parseFloat(payments.paidSettlementSum),
+                color: "red",
+              },
+            ]}
+          />
 
-      {/* Settlement Payment */}
-      <MetricCard
-        title="Settlement Payment"
-        value={parseFloat(payments.settlementSum)}
-        prefix="₹"
-        icon={<BoxIconLine className="text-cyan-600 size-6 dark:text-cyan-400" />}
-        subValues={[
-          {
-            label: "Paid",
-            value: parseFloat(payments.paidSettlementSum),
-            color: "green",
-          },
-          {
-            label: "Pending",
-            value: parseFloat(payments.settlementSum) - parseFloat(payments.paidSettlementSum),
-            color: "red",
-          },
-        ]}
-      />
+          {/* Partial Payment */}
+          <MetricCard
+            title="Partial Payment"
+            value={parseFloat(payments.partialSum)}
+            prefix="₹"
+            icon={<BoxIconLine className="text-orange-600 size-6 dark:text-orange-400" />}
+            subValues={[
+              {
+                label: "Paid",
+                value: parseFloat(payments.paidPartialSum),
+                color: "green",
+              },
+              {
+                label: "Pending",
+                value: parseFloat(payments.partialSum) - parseFloat(payments.paidPartialSum),
+                color: "red",
+              },
+            ]}
+          />
+        </>
+      )}
 
-      {/* Partial Payment */}
-      <MetricCard
-        title="Partial Payment"
-        value={parseFloat(payments.partialSum)}
-        prefix="₹"
-        icon={<BoxIconLine className="text-orange-600 size-6 dark:text-orange-400" />}
-        subValues={[
-          {
-            label: "Paid",
-            value: parseFloat(payments.paidPartialSum),
-            color: "green",
-          },
-          {
-            label: "Pending",
-            value: parseFloat(payments.partialSum) - parseFloat(payments.paidPartialSum),
-            color: "red",
-          },
-        ]}
-      />
 
     </div>
   );
