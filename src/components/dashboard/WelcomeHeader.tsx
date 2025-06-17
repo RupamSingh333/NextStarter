@@ -1,6 +1,13 @@
 import React from 'react';
+
+interface User {
+  customer: string;
+  isPaid: boolean;
+  fore_closure: number;
+}
+
 interface WelcomeHeaderProps {
-user: any;
+  user: User;
 }
 
 const WelcomeHeader = ({ user }: WelcomeHeaderProps) => {
@@ -10,10 +17,10 @@ const WelcomeHeader = ({ user }: WelcomeHeaderProps) => {
         Welcome (Namaste) {user?.customer}!
       </h1>
       <p className="text-gray-600 dark:text-gray-300 mt-2">
-        Your RepayKaro loan outstanding {user?.isPaid?"was":"is"} ₹{user?.fore_closure}
+        Your RepayKaro loan outstanding {user?.isPaid ? "was" : "is"} ₹{user?.fore_closure}
       </p>
     </div>
   );
 };
 
-export default WelcomeHeader; 
+export default WelcomeHeader;
