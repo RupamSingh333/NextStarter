@@ -1,16 +1,16 @@
-import BarChartOne from "@/components/charts/bar/BarChartOne";
-import ComponentCard from "@/components/common/ComponentCard";
+'use client';
+
+import dynamic from 'next/dynamic';
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import { Metadata } from "next";
-import React from "react";
+import ComponentCard from "@/components/common/ComponentCard";
 
-export const metadata: Metadata = {
-  title: "Next.js Bar Chart | RepayKaro - Next.js Dashboard Template",
-  description:
-    "This is Next.js Bar Chart page for RepayKaro - Next.js Tailwind CSS Admin Dashboard Template",
-};
+// Dynamically import the chart component with no SSR
+const BarChartOne = dynamic(
+  () => import("@/components/charts/bar/BarChartOne"),
+  { ssr: false }
+);
 
-export default function page() {
+export default function BarChartPage() {
   return (
     <div>
       <PageBreadcrumb pageTitle="Bar Chart" />
