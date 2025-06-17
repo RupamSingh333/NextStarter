@@ -202,30 +202,30 @@ export default function UsersListTable() {
 
             <div className="flex justify-between items-center p-4 gap-4 flex-wrap">
                 <div className="flex items-center gap-2">
-                    <label className="text-sm font-medium text-gray-700 dark:text-white">Page Size:</label>
+                    <label className="text-sm font-medium text-gray-700 dark:text-white whitespace-nowrap">Page Size:</label>
                     <select
                         value={pageSize}
                         onChange={(e) => {
                             setPageSize(Number(e.target.value));
                             setCurrentPage(1);
                         }}
-                        className="border border-gray-300 bg-white rounded-md px-2 py-1 text-sm"
+                        className="w-full py-2 pl-3 pr-8 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg appearance-none dark:bg-dark-900 h-9 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                     >
                         {pageSizeOptions.map((size) => (
                             <option key={size} value={size}>
-                                {size} / page
+                                {size}
                             </option>
                         ))}
                     </select>
                 </div>
 
-                <Button
-                    className="px-3 py-1.5 text-sm h-8 flex items-center space-x-1"
+
+                <span
                     onClick={handleCreateClick}
+                    className="  inline-flex items-center px-2.5 py-2 justify-center gap-1 rounded-full font-medium text-sm bg-brand-50 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400 cursor-pointer p-8"
                 >
-                    <UserPlusIcon className="w-4 h-4" />
-                    <span>Add User</span>
-                </Button>
+                  <UserPlusIcon className="w-4 h-4" />  Add User 
+                </span>
 
             </div>
 
@@ -313,7 +313,7 @@ export default function UsersListTable() {
                         onChange={(e) =>
                             setFormData({ ...formData, isActive: e.target.value === 'active' })
                         }
-                        className="border p-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                        className="w-full py-2 pl-3 pr-8 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg appearance-none dark:bg-dark-900 h-9 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                     >
                         <option value="active">Active</option>
                         <option value="inactive">Inactive</option>

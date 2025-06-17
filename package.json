@@ -39,11 +39,13 @@
     "react": "^19.0.0",
     "react-apexcharts": "^1.7.0",
     "react-chartjs-2": "^5.3.0",
+    "react-data-table-component": "^7.7.0",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^19.0.0",
     "react-dropzone": "^14.3.5",
     "react-hot-toast": "^2.5.2",
+    "styled-components": "^6.1.19",
     "swiper": "^11.2.0",
     "tailwind-merge": "^2.6.0",
     "xlsx": "^0.18.5"
