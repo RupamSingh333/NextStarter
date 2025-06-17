@@ -113,13 +113,13 @@ const Header = () => {
               <ThemeToggleButton />
               <Link
                 href="tel:+918178953143"
-                className="inline-flex items-center px-4 py-2.5 border border-purple-600 text-sm font-medium rounded-full text-purple-600 hover:bg-purple-50 dark:border-purple-400 dark:text-purple-400 dark:hover:bg-purple-900 transition-all duration-300 transform hover:scale-105 hover:shadow-lg rounded-2xl"
+                className="inline-flex items-center px-4 py-2.5 border border-purple-600 text-sm font-medium rounded-full text-purple-600 hover:bg-purple-50 dark:border-purple-400 dark:text-purple-400 dark:hover:bg-purple-900 transition-all duration-300 transform hover:scale-105 hover:shadow-lg rounded-2xl active:scale-95 active:shadow-inner"
               >
                 +91 8178953143
               </Link>
               <Link
                 href="/signin"
-                className="inline-flex items-center px-6 py-2.5 border border-transparent text-sm font-medium rounded-full text-white bg-purple-600 hover:bg-purple-700 transition-all duration-300 transform hover:scale-105 hover:shadow-lg rounded-2xl"
+                className="inline-flex items-center px-6 py-2.5 border border-transparent text-sm font-medium rounded-full text-white bg-purple-600 hover:bg-purple-700 transition-all duration-300 transform hover:scale-105 hover:shadow-lg rounded-2xl active:scale-95 active:shadow-inner"
               >
                 Sign In
               </Link>
@@ -130,13 +130,13 @@ const Header = () => {
               <ThemeToggleButton />
               <Link
                 href="tel:+918178953143"
-                className="inline-flex items-center px-4 py-2 border border-purple-600 text-sm font-medium rounded-full text-purple-600 hover:bg-purple-50 dark:border-purple-400 dark:text-purple-400 dark:hover:bg-purple-900 transition-all duration-300 rounded-2xl"
+                className="inline-flex items-center px-4 py-2 border border-purple-600 text-sm font-medium rounded-full text-purple-600 hover:bg-purple-50 dark:border-purple-400 dark:text-purple-400 dark:hover:bg-purple-900 transition-all duration-300 rounded-2xl transform hover:scale-105 hover:shadow-lg active:scale-95 active:shadow-inner"
               >
                 Call Us
               </Link>
               <Link
                 href="/signin"
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-purple-600 hover:bg-purple-700 transition-all duration-300 rounded-2xl"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-purple-600 hover:bg-purple-700 transition-all duration-300 rounded-2xl transform hover:scale-105 hover:shadow-lg active:scale-95 active:shadow-inner"
               >
                 Sign In
               </Link>
