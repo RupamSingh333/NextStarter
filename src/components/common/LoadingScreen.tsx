@@ -16,7 +16,7 @@ const LoadingScreen = () => {
             setTimeout(() => {
                 setShowLoading(false);
                 document.body.style.overflow = 'unset';
-            }, 1000);
+            }, 600);
         }
     }, [isLoading]);
 

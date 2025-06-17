@@ -42,6 +42,9 @@ export default function AdminLoginForm() {
       if (!response.ok) {
         throw new Error(data.message || 'Failed to login');
       }
+
+      console.log('>>>>>>>>>>>>',data);
+      
       if (data.success) {
         login(data.user, 'admin');
         localStorage.setItem('adminToken', data.token || '');

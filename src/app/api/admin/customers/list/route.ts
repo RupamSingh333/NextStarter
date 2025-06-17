@@ -35,11 +35,19 @@ export async function GET(request: NextRequest) {
       }
     );
 
+    
+    const data = await response.json();
+    
+    // console.log('response',data);
+
+    if (data && !data.isAuthorized) {
+      return NextResponse.json(data);
+    }
+
     if (!response.ok) {
       throw new Error('Failed to fetch customers');
     }
     
-    const data = await response.json();
     // console.log('>Response status:', data);  
 
     return NextResponse.json(data);

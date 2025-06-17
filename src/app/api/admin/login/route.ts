@@ -46,6 +46,7 @@ export async function POST(req: NextRequest) {
         email: loginData.email,
         name: loginData.name,
         adminToken: token,
+        permissions:loginData.permissions
       },
     })
 
@@ -87,7 +88,7 @@ export async function GET(req: NextRequest) {
       'admin_token'
     );
 
-    // console.log('Raw API Response:', data);
+    // console.log('Raw API Response:', data?.user.permissions);
 
     
     if (nextResponse) {

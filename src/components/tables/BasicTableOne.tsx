@@ -19,8 +19,8 @@ import PageLoader from '../ui/loading/PageLoader';
 import { toast } from 'react-hot-toast';
 import { useModal } from "@/hooks/useModal";
 import { PhoneIcon, UserCircleIcon } from '@heroicons/react/24/outline';
-
-
+import { UserPermissionGuard } from '@/components/common/PermissionGuard';
+import UnauthorizedComponent from '@/components/common/UnauthorizedComponent';
 
 interface Customer {
   _id: string;
@@ -78,6 +78,7 @@ export default function BasicTableOne() {
 
   const [excelFile, setExcelFile] = useState<File | null>(null);
   const [isUploadingExcel, setIsUploadingExcel] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState(true);
 
   const fetchCustomers = async (page: number, size: number, status: number) => {
     setLoading(true);
@@ -92,6 +93,9 @@ export default function BasicTableOne() {
         setTotalRecords(data.totalRecords || data.data.length);
         const calculatedTotalPages = Math.ceil((data.totalRecords || data.data.length) / size);
         setTotalPages(calculatedTotalPages);
+        setIsAuthorized(true);
+      } else if (data.isAuthorized === false) {
+        setIsAuthorized(false);
       }
     } catch (error) {
       console.error('Error fetching customers:', error);
@@ -206,6 +210,10 @@ export default function BasicTableOne() {
     });
   };
 
+  if (!isAuthorized) {
+    return <UnauthorizedComponent />;
+  }
+
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] relative">
       {loading && (
@@ -261,46 +269,50 @@ export default function BasicTableOne() {
           </div>
         </div>
 
-        {/* Right Section - Excel Upload */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 bg-gray-50 dark:bg-gray-800/50  rounded-lg">
-          <div className="flex items-center gap-3 w-full sm:w-auto">
-            <input
-              type="file"
-              accept=".xlsx, .xls"
-              onChange={handleExcelFileChange}
-              className="hidden"
-              id="excel-upload-input"
-            />
-            <span
-              onClick={() => document.getElementById('excel-upload-input')?.click()}
-              disabled={isUploadingExcel}
-              className="inline-flex items-center px-2.5 py-2 justify-center gap-1 rounded-full font-medium text-sm bg-brand-50 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400 cursor-pointer"
-            >
-              {isUploadingExcel ? "Uploading..." : "Upload Customers"}<svg className="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M9.2502 4.99951C9.2502 4.5853 9.58599 4.24951 10.0002 4.24951C10.4144 4.24951 10.7502 4.5853 10.7502 4.99951V9.24971H15.0006C15.4148 9.24971 15.7506 9.5855 15.7506 9.99971C15.7506 10.4139 15.4148 10.7497 15.0006 10.7497H10.7502V15.0001C10.7502 15.4143 10.4144 15.7501 10.0002 15.7501C9.58599 15.7501 9.2502 15.4143 9.2502 15.0001V10.7497H5C4.58579 10.7497 4.25 10.4139 4.25 9.99971C4.25 9.5855 4.58579 9.24971 5 9.24971H9.2502V4.99951Z" fill=""></path></svg>
-            </span>
 
-
-          </div>
-
-          {excelFile && (
+        <UserPermissionGuard action="update">
+          {/* Right Section - Excel Upload */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 bg-gray-50 dark:bg-gray-800/50  rounded-lg">
             <div className="flex items-center gap-3 w-full sm:w-auto">
-              <span className="text-sm text-gray-600 dark:text-gray-300 truncate max-w-[200px]">
-                {excelFile.name}
-              </span>
-              {!isUploadingExcel && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={handleUploadExcel}
-                  disabled={isUploadingExcel}
-                  className="whitespace-nowrap"
-                >
-                  Confirm Upload
-                </Button>
-              )}
+              <input
+                type="file"
+                accept=".xlsx, .xls"
+                onChange={handleExcelFileChange}
+                className="hidden"
+                id="excel-upload-input"
+              />
+              <button
+                onClick={() => document.getElementById('excel-upload-input')?.click()}
+                disabled={isUploadingExcel}
+                className="inline-flex items-center px-2.5 py-2 justify-center gap-1 rounded-full font-medium text-sm bg-brand-50 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400 cursor-pointer"
+              >
+                {isUploadingExcel ? "Uploading..." : "Upload Customers"}<svg className="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M9.2502 4.99951C9.2502 4.5853 9.58599 4.24951 10.0002 4.24951C10.4144 4.24951 10.7502 4.5853 10.7502 4.99951V9.24971H15.0006C15.4148 9.24971 15.7506 9.5855 15.7506 9.99971C15.7506 10.4139 15.4148 10.7497 15.0006 10.7497H10.7502V15.0001C10.7502 15.4143 10.4144 15.7501 10.0002 15.7501C9.58599 15.7501 9.2502 15.4143 9.2502 15.0001V10.7497H5C4.58579 10.7497 4.25 10.4139 4.25 9.99971C4.25 9.5855 4.58579 9.24971 5 9.24971H9.2502V4.99951Z" fill=""></path></svg>
+              </button>
+
+
             </div>
-          )}
-        </div>
+
+            {excelFile && (
+              <div className="flex items-center gap-3 w-full sm:w-auto">
+                <span className="text-sm text-gray-600 dark:text-gray-300 truncate max-w-[200px]">
+                  {excelFile.name}
+                </span>
+                {!isUploadingExcel && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleUploadExcel}
+                    disabled={isUploadingExcel}
+                    className="whitespace-nowrap"
+                  >
+                    Confirm Upload
+                  </Button>
+                )}
+              </div>
+            )}
+          </div>
+        </UserPermissionGuard>
+        
       </div>
 
       <div className="max-w-full overflow-x-auto">
@@ -347,11 +359,11 @@ export default function BasicTableOne() {
                     {(currentPage - 1) * pageSize + index + 1}
                   </TableCell>
                   <TableCell className="px-5 py-4 text-start text-theme-sm text-gray-800 dark:text-white/90">
-                  <span className="inline-flex items-center gap-1 mt-1">
+                    <span className="inline-flex items-center gap-1 mt-1">
                       <UserCircleIcon className="w-5 h-5" /> &nbsp;
-                     {cust.customer}
+                      {cust.customer}
                     </span>
-                    
+
                     <br />
                     <span className="inline-flex items-center gap-1 mt-1">
                       <PhoneIcon className="w-4 h-4" /> &nbsp;
@@ -403,23 +415,26 @@ export default function BasicTableOne() {
                       ))}
                     </div>
                   </TableCell>
-                  {/* Action cell: keep Edit and Delete buttons, replace Activate/Deactivate button with label */}
-                  <TableCell className="px-5 py-4 text-start space-x-2 flex items-center gap-2">
-                    {(cust.isPaid === false && cust.payments.length > 0) && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSelectedId(cust._id); // Set customer ID
-                          openModal(); // Open modal
-                        }}
-                        className="focus:outline-none"
-                      >
-                        <Badge size="sm" color={cust.isActive ? 'success' : 'error'}>
-                          {cust.isActive ? 'Active' : 'Inactive'}
-                        </Badge>
-                      </button>
-                    )}
-                  </TableCell>
+
+                  <UserPermissionGuard action="update">
+                    {/* Action cell: keep Edit and Delete buttons, replace Activate/Deactivate button with label */}
+                    <TableCell className="px-5 py-4 text-start space-x-2 flex items-center gap-2">
+                      {(cust.isPaid === false && cust.payments.length > 0) && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedId(cust._id); // Set customer ID
+                            openModal(); // Open modal
+                          }}
+                          className="focus:outline-none"
+                        >
+                          <Badge size="sm" color={cust.isActive ? 'success' : 'error'}>
+                            {cust.isActive ? 'Active' : 'Inactive'}
+                          </Badge>
+                        </button>
+                      )}
+                    </TableCell>
+                  </UserPermissionGuard>
 
                 </TableRow>
               ))}

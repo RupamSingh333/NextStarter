@@ -10,6 +10,7 @@ import {
   GroupIcon,
 } from "@/icons";
 
+import { formatNumber } from "@/hooks/useNumberFormate";
 
 interface DashboardData {
   users: {
@@ -41,11 +42,15 @@ export const EcommerceMetrics = () => {
   const [data, setData] = useState<DashboardData | null>(null);
   const { admin } = useAuth();
   const permissions = admin?.permissions;
+  // console.log(permissions);
+  
   const hasPermission = (module: string, action: string) => {
     return permissions?.some(
       (perm) => perm.module === module && perm.actions.includes(action)
     ) || false;
   };
+
+
 
 
   useEffect(() => {
@@ -97,51 +102,55 @@ export const EcommerceMetrics = () => {
           ]}
         />
       )}
+
+
       {hasPermission('Customer', 'read') && (
         <>
           {/* Customers */}
           <MetricCard
             title="Customers"
-            value={customers.customerCount}
+            value={formatNumber(customers.customerCount)}
             icon={<GroupIcon className="text-gray-800 size-6 dark:text-white/90" />}
             subValues={[
-              { label: "Paid", value: customers.piadCustomerCount, color: "green" },
-              { label: "Unpaid", value: customers.unPaidCustomerCount, color: "red" },
+              { label: "Paid", value: formatNumber(customers.piadCustomerCount), color: "green" },
+              { label: "Unpaid", value: formatNumber(customers.unPaidCustomerCount), color: "red" },
             ]}
           />
 
           {/* Total Paid Amount */}
           <MetricCard
             title="Total Paid"
-            value={
+            value={formatNumber(
               parseFloat(payments.paidForeClosureSum) +
               parseFloat(payments.paidSettlementSum) +
               parseFloat(payments.paidPartialSum)
-            }
+            )}
             prefix="₹"
             icon={<BoxIconLine className="text-yellow-600 size-6 dark:text-yellow-400" />}
             subValues={[
-              { label: "Foreclosure", value: parseFloat(payments.paidForeClosureSum) },
-              { label: "Settlement", value: parseFloat(payments.paidSettlementSum) },
-              { label: "Partial", value: parseFloat(payments.paidPartialSum) },
+              { label: "Foreclosure", value: formatNumber(parseFloat(payments.paidForeClosureSum)) },
+              { label: "Settlement", value: formatNumber(parseFloat(payments.paidSettlementSum)) },
+              { label: "Partial", value: formatNumber(parseFloat(payments.paidPartialSum)) },
             ]}
           />
 
           {/* Foreclosure Payment */}
           <MetricCard
             title="Foreclosure Payment"
-            value={parseFloat(payments.foreClosureSum)}
+            value={formatNumber(parseFloat(payments.foreClosureSum))}
             prefix="₹"
             icon={<BoxIconLine className="text-purple-600 size-6 dark:text-purple-400" />}
             subValues={[
               {
                 label: "Paid",
-                value: parseFloat(payments.paidForeClosureSum),
+                value: formatNumber(parseFloat(payments.paidForeClosureSum)),
                 color: "green",
               },
               {
                 label: "Pending",
-                value: parseFloat(payments.foreClosureSum) - parseFloat(payments.paidForeClosureSum),
+                value: formatNumber(
+                  parseFloat(payments.foreClosureSum) - parseFloat(payments.paidForeClosureSum)
+                ),
                 color: "red",
               },
             ]}
@@ -150,18 +159,20 @@ export const EcommerceMetrics = () => {
           {/* Settlement Payment */}
           <MetricCard
             title="Settlement Payment"
-            value={parseFloat(payments.settlementSum)}
+            value={formatNumber(parseFloat(payments.settlementSum))}
             prefix="₹"
             icon={<BoxIconLine className="text-cyan-600 size-6 dark:text-cyan-400" />}
             subValues={[
               {
                 label: "Paid",
-                value: parseFloat(payments.paidSettlementSum),
+                value: formatNumber(parseFloat(payments.paidSettlementSum)),
                 color: "green",
               },
               {
                 label: "Pending",
-                value: parseFloat(payments.settlementSum) - parseFloat(payments.paidSettlementSum),
+                value: formatNumber(
+                  parseFloat(payments.settlementSum) - parseFloat(payments.paidSettlementSum)
+                ),
                 color: "red",
               },
             ]}
@@ -170,18 +181,20 @@ export const EcommerceMetrics = () => {
           {/* Partial Payment */}
           <MetricCard
             title="Partial Payment"
-            value={parseFloat(payments.partialSum)}
+            value={formatNumber(parseFloat(payments.partialSum))}
             prefix="₹"
             icon={<BoxIconLine className="text-orange-600 size-6 dark:text-orange-400" />}
             subValues={[
               {
                 label: "Paid",
-                value: parseFloat(payments.paidPartialSum),
+                value: formatNumber(parseFloat(payments.paidPartialSum)),
                 color: "green",
               },
               {
                 label: "Pending",
-                value: parseFloat(payments.partialSum) - parseFloat(payments.paidPartialSum),
+                value: formatNumber(
+                  parseFloat(payments.partialSum) - parseFloat(payments.paidPartialSum)
+                ),
                 color: "red",
               },
             ]}
@@ -201,7 +214,7 @@ interface MetricCardProps {
   icon: React.ReactNode;
   subValues?: {
     label: string;
-    value: number;
+    value: number | string;
     color?: string;
   }[];
 }

@@ -8,6 +8,7 @@ import React, { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import Loading from "@/components/ui/loading/PageLoader"; // ✅ Import your loading component
+import LoadingScreen from "@/components/common/LoadingScreen";
 
 export default function AdminLayout({
   children,
@@ -29,7 +30,7 @@ export default function AdminLayout({
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loading /> {/* ✅ Use your custom loading component */}
+        <LoadingScreen /> {/* ✅ Use your custom loading component */}
       </div>
     );
   }

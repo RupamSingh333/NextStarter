@@ -18,6 +18,8 @@ import Label from "@/components/form/Label";
 import { toast } from 'react-hot-toast';
 import { useModal } from "@/hooks/useModal";
 import { PencilSquareIcon, UserPlusIcon } from '@heroicons/react/24/outline';
+import { UserPermissionGuard } from '@/components/common/PermissionGuard';
+import UnauthorizedComponent from '@/components/common/UnauthorizedComponent';
 
 
 interface User {
@@ -38,6 +40,7 @@ export default function UsersListTable() {
     const [pageSize, setPageSize] = useState(10);
     const [editUserId, setEditUserId] = useState<string | null>(null);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isAuthorized, setIsAuthorized] = useState(true);
 
     const [formData, setFormData] = useState({ name: '', email: '', password: '', isActive: true });
     const [createformData, setCreateFormData] = useState({ name: '', email: '', password: '' });
@@ -68,6 +71,9 @@ export default function UsersListTable() {
                 setUserList(data.data);
                 setTotalRecords(data.totalRecords);
                 setTotalPages(Math.ceil(data.totalRecords / size));
+                setIsAuthorized(true);
+            } else if (data.isAuthorized === false) {
+                setIsAuthorized(false);
             } else {
                 toast.error(data.message || 'Failed to load users');
             }
@@ -192,6 +198,10 @@ export default function UsersListTable() {
         fetchUsers(currentPage, pageSize);
     }, [currentPage, pageSize]);
 
+    if (!isAuthorized) {
+        return <UnauthorizedComponent />;
+    }
+
     return (
         <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] relative">
             {loading && (
@@ -200,35 +210,37 @@ export default function UsersListTable() {
                 </div>
             )}
 
-            <div className="flex justify-between items-center p-4 gap-4 flex-wrap">
-                <div className="flex items-center gap-2">
-                    <label className="text-sm font-medium text-gray-700 dark:text-white whitespace-nowrap">Page Size:</label>
-                    <select
-                        value={pageSize}
-                        onChange={(e) => {
-                            setPageSize(Number(e.target.value));
-                            setCurrentPage(1);
-                        }}
-                        className="w-full py-2 pl-3 pr-8 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg appearance-none dark:bg-dark-900 h-9 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+            <UserPermissionGuard action="add">
+                <div className="flex justify-between items-center p-4 gap-4 flex-wrap">
+                    <div className="flex items-center gap-2">
+                        <label className="text-sm font-medium text-gray-700 dark:text-white whitespace-nowrap">Page Size:</label>
+                        <select
+                            value={pageSize}
+                            onChange={(e) => {
+                                setPageSize(Number(e.target.value));
+                                setCurrentPage(1);
+                            }}
+                            className="w-full py-2 pl-3 pr-8 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg appearance-none dark:bg-dark-900 h-9 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                        >
+                            {pageSizeOptions.map((size) => (
+                                <option key={size} value={size}>
+                                    {size}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+
+                    <span
+                        onClick={handleCreateClick}
+                        className="  inline-flex items-center px-2.5 py-2 justify-center gap-1 rounded-full font-medium text-sm bg-brand-50 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400 cursor-pointer p-8"
                     >
-                        {pageSizeOptions.map((size) => (
-                            <option key={size} value={size}>
-                                {size}
-                            </option>
-                        ))}
-                    </select>
+                        <UserPlusIcon className="w-4 h-4" />  Add User
+                    </span>
+
                 </div>
-
-
-                <span
-                    onClick={handleCreateClick}
-                    className="  inline-flex items-center px-2.5 py-2 justify-center gap-1 rounded-full font-medium text-sm bg-brand-50 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400 cursor-pointer p-8"
-                >
-                  <UserPlusIcon className="w-4 h-4" />  Add User 
-                </span>
-
-            </div>
-
+            </UserPermissionGuard>
+            
             <div className="max-w-full overflow-x-auto">
                 <div className="min-w-[700px] md:min-w-[900px]">
                     <Table>
@@ -253,15 +265,19 @@ export default function UsersListTable() {
                                             {user.isActive ? 'Active' : 'Inactive'}
                                         </Badge>
                                     </TableCell>
+
                                     <TableCell className="px-5 py-4 text-start text-theme-sm text-gray-600 dark:text-gray-400">
-                                        <button
-                                            onClick={() => handleEditClick(user)}
-                                            className="p-2 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-all"
-                                            title="Edit user"
-                                        >
-                                            <PencilSquareIcon className="w-5 h-5" />
-                                        </button>
+                                        <UserPermissionGuard action="update">
+                                            <button
+                                                onClick={() => handleEditClick(user)}
+                                                className="p-2 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-all"
+                                                title="Edit user"
+                                            >
+                                                <PencilSquareIcon className="w-5 h-5" />
+                                            </button>
+                                        </UserPermissionGuard>
                                     </TableCell>
+
                                 </TableRow>
                             ))}
                         </TableBody>

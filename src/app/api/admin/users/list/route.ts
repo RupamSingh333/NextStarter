@@ -34,12 +34,17 @@ export async function GET(request: NextRequest) {
         cache: 'no-store',
       }
     );
+    
+    const data = await response.json();
+
+    if (data && !data.isAuthorized) {
+      return NextResponse.json(data);
+    }
 
     if (!response.ok) {
       throw new Error('Failed to fetch users list');
     }
     
-    const data = await response.json();
     // console.log('>Response status:', data);  
 
     return NextResponse.json(data);

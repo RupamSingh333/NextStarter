@@ -76,6 +76,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } else {
       const adminData = data as Admin;
       const { email, name, permissions } = adminData;
+      console.log(adminData);
+      
       setAdmin({ email, name, permissions });
       localStorage.setItem('admin', JSON.stringify({ email, name, permissions }));
       setIsAuthenticatedAdmin(true);
