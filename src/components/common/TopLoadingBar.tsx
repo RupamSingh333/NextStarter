@@ -1,19 +1,20 @@
 'use client';
 
-import LoadingBar from 'react-top-loading-bar';
+import LoadingBar, { LoadingBarRef } from 'react-top-loading-bar';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
 export default function TopLoadingBar() {
-  const loadingBarRef = useRef<any>(null);
+  const loadingBarRef = useRef<LoadingBarRef>(null);
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (loadingBarRef.current) {
-      loadingBarRef.current.continuousStart();
+    const currentRef = loadingBarRef.current;
+    if (currentRef) {
+      currentRef.continuousStart();
       setTimeout(() => {
-        loadingBarRef.current.complete();
+        currentRef.complete();
       }, 500);
     }
   }, [pathname, searchParams]);

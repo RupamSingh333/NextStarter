@@ -42,7 +42,7 @@ export default function UnauthorizedComponent() {
           transition={{ delay: 0.6 }}
           className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 mb-8 max-w-xl mx-auto"
         >
-          You don't have permission to access this page. Please contact your administrator for assistance.
+          You don&apos;t have permission to access this page. Please contact your administrator for assistance.
         </motion.p>
 
         <motion.div

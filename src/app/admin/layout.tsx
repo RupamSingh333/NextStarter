@@ -7,7 +7,7 @@ import Backdrop from "@/layout/Backdrop";
 import React, { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-import Loading from "@/components/ui/loading/PageLoader"; // ✅ Import your loading component
+// import Loading from "@/components/ui/loading/PageLoader"; // ✅ Import your loading component
 import LoadingScreen from "@/components/common/LoadingScreen";
 
 export default function AdminLayout({
