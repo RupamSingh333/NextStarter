@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, email, password } = body;
+    const { name, email, password ,permissions} = body;
 
     if (!name || !email || !password) {
       return NextResponse.json(
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
         Authorization: `Bearer ${adminToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ name, email, password,permissions }),
     });
 
     const result = await response.json();

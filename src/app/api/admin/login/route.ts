@@ -19,6 +19,7 @@ interface ProfileResponse {
 export async function POST(req: NextRequest) {
   try {
     const { email, password } = await req.json()
+    console.log(`${API_BASE_URL}/auth/login`)
 
     const loginRes = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',

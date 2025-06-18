@@ -21,6 +21,11 @@ import { PencilSquareIcon, UserPlusIcon } from '@heroicons/react/24/outline';
 import { UserPermissionGuard } from '@/components/common/PermissionGuard';
 import UnauthorizedComponent from '@/components/common/UnauthorizedComponent';
 
+interface Permission {
+    module: string;
+    actions: string[];
+    _id?: string;
+}
 
 interface User {
     _id: string;
@@ -28,8 +33,130 @@ interface User {
     email: string;
     password: string;
     isActive: boolean;
+    permissions: Permission[];
     __v: number;
 }
+
+const PermissionToggle = ({
+    module,
+    permissions,
+    setPermissions
+}: {
+    module: string;
+    permissions: Permission[];
+    setPermissions: (permissions: Permission[]) => void;
+}) => {
+    const availableActions = ['create', 'read', 'update', 'delete'];
+    const modulePermissions = permissions.find(p => p.module === module) || { module, actions: [] };
+
+    const toggleAction = (action: string) => {
+        const newPermissions = permissions.map(perm =>
+            perm.module === module
+                ? {
+                    module,
+                    actions: perm.actions.includes(action)
+                        ? perm.actions.filter(a => a !== action)
+                        : [...perm.actions, action]
+                }
+                : perm
+        );
+        setPermissions(newPermissions);
+    };
+
+    const toggleSelectAll = (checked: boolean) => {
+        const newPermissions = checked
+            ? [
+                ...permissions.filter(p => p.module !== module),
+                { module, actions: [...availableActions] }
+            ]
+            : [
+                ...permissions.filter(p => p.module !== module),
+                { module, actions: [] }
+            ];
+        setPermissions(newPermissions);
+    };
+
+    const allSelected = availableActions.every(action =>
+        modulePermissions.actions.includes(action)
+    );
+
+    return (
+        <div className="border p-4 rounded-lg mb-4">
+            <div className="flex items-center justify-between mb-3">
+                <h4 className="font-medium">{module}</h4>
+                <div className="flex items-center space-x-2">
+                    <label className="inline-flex items-center cursor-pointer">
+                        <input
+                            type="checkbox"
+                            className="sr-only peer"
+                            checked={allSelected}
+                            onChange={(e) => toggleSelectAll(e.target.checked)}
+                        />
+                        <div className="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-purple-300 dark:peer-focus:ring-purple-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-purple-600 dark:peer-checked:bg-purple-600">
+                        </div>
+                        <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                            All
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <div className="flex flex-row gap-2">
+                {availableActions.map(action => (
+                    <div key={action} className="flex items-center gap-2">
+                        <label className="inline-flex items-center cursor-pointer">
+                            <input
+                                type="checkbox"
+                                className="sr-only peer"
+                                checked={modulePermissions.actions.includes(action)}
+                                onChange={() => toggleAction(action)}
+                            />
+                            <div className="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-purple-300 dark:peer-focus:ring-purple-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-purple-600 dark:peer-checked:bg-purple-600">
+                            </div>
+                            <span className="ms-3 text-xs font-medium text-gray-900 dark:text-gray-300 capitalize">
+                                {action}
+                            </span>
+                        </label>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+const PermissionManager = ({
+    permissions,
+    setPermissions
+}: {
+    permissions: Permission[];
+    setPermissions: (permissions: Permission[]) => void;
+}) => {
+    const availableModules = ['User', 'Customer', 'Coupon'];
+
+    // Initialize permissions if empty
+    useEffect(() => {
+        if (permissions.length === 0) {
+            setPermissions(
+                availableModules.map(module => ({
+                    module,
+                    actions: []
+                }))
+            );
+        }
+    }, []);
+
+    return (
+        <div className="space-y-4">
+            {availableModules.map(module => (
+                <PermissionToggle
+                    key={module}
+                    module={module}
+                    permissions={permissions}
+                    setPermissions={setPermissions}
+                />
+            ))}
+        </div>
+    );
+};
 
 export default function UsersListTable() {
     const [userList, setUserList] = useState<User[]>([]);
@@ -42,10 +169,29 @@ export default function UsersListTable() {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isAuthorized, setIsAuthorized] = useState(true);
 
-    const [formData, setFormData] = useState({ name: '', email: '', password: '', isActive: true });
-    const [createformData, setCreateFormData] = useState({ name: '', email: '', password: '' });
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        password: '',
+        isActive: true,
+        permissions: [] as Permission[]
+    });
+
+    const [createformData, setCreateFormData] = useState({
+        name: '',
+        email: '',
+        password: '',
+        permissions: [] as Permission[]
+    });
+
     const { isOpen, openModal, closeModal } = useModal();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [activeTab, setActiveTab] = useState('basicDetails');
+
+    const tabs = [
+        { id: 'basicDetails', label: 'Basic Details' },
+        { id: 'permissions', label: 'Permissions' },
+    ];
 
     const basePageSizes = [10, 25, 50, 100, 500];
 
@@ -87,17 +233,27 @@ export default function UsersListTable() {
 
     const handleEditClick = (user: User) => {
         setEditUserId(user._id);
-        setFormData({ name: user.name, email: user.email, password: '', isActive: user.isActive });
+        setFormData({
+            name: user.name,
+            email: user.email,
+            password: '',
+            isActive: user.isActive,
+            permissions: user.permissions || []
+        });
         openModal();
     };
 
     const handleCreateClick = () => {
-        setFormData({ name: '', email: '', password: '', isActive: true });
+        setCreateFormData({
+            name: '',
+            email: '',
+            password: '',
+            permissions: []
+        });
         setIsCreateModalOpen(true);
     };
 
     const handleCreateSubmit = async () => {
-        setIsCreateModalOpen(false);
         if (!createformData.name || !createformData.email || !createformData.password) {
             toast.error('Please fill in all fields');
             return;
@@ -112,32 +268,35 @@ export default function UsersListTable() {
             body: JSON.stringify({
                 ...createformData,
                 isActive: true,
+                permissions: createformData.permissions
             }),
         }).then(async (res) => {
             const result = await res.json();
-            if (!res.ok || !result.success) throw new Error(result.message || 'Create failed');
+            if (!res.ok || !result.success) {
+                toast.error(result.message);
+            }
             return result;
         });
 
         toast.promise(promise, {
             loading: 'Creating user...',
-            success: 'User created successfully',
-            error: (err) => err.message || 'Create failed',
+            success: (res) => res?.success ? 'User created successfully!' : null,
+            error: (err) => err.message || 'Creation failed',
         });
 
         try {
-            await promise;
-            fetchUsers(currentPage, pageSize);
-            setCreateFormData({ name: '', email: '', password: '' });
-            setIsCreateModalOpen(false);
+            const result = await promise;
+            if (result.success) {
+                fetchUsers(currentPage, pageSize);
+                setCreateFormData({ name: '', email: '', password: '', permissions: [] });
+                setIsCreateModalOpen(false);
+            }
         } catch (error) {
             console.error('Create error:', error);
-            // error already handled in toast
         } finally {
             setIsSubmitting(false);
         }
     };
-
 
     const handleUpdate = async () => {
         if (!editUserId) return;
@@ -148,51 +307,51 @@ export default function UsersListTable() {
         }
 
         setIsSubmitting(true);
-        closeModal();
 
-        const filteredFormData = Object.entries(formData).reduce(
-            (acc: Record<string, string | number | boolean>, [key, value]) => {
-                if (value !== '' && value !== null && value !== undefined) {
-                    acc[key] = value as string | number | boolean;
-                }
-                return acc;
-            },
-            {} as Record<string, string | number | boolean>
-        );
+        // Create update data without _id in permissions
+        const updateData = {
+            name: formData.name,
+            email: formData.email,
+            isActive: formData.isActive,
+            permissions: formData.permissions.map(({ _id, ...rest }) => rest) // Remove _id from each permission
+        };
+
+        if (formData.password?.trim()) {
+            updateData.password = formData.password.trim();
+        }
 
         const promise = fetch(`/api/admin/users/update/${editUserId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                _id: editUserId,
-                ...filteredFormData,
-            }),
+            body: JSON.stringify(updateData),
         }).then(async (res) => {
             const result = await res.json();
-            if (!res.ok || !result.success) throw new Error(result.message || 'Update failed');
+            if (!res.ok || !result.success) {
+                toast.error(result.message);
+            }
             return result;
         });
 
         toast.promise(promise, {
             loading: 'Updating user...',
-            success: 'User updated successfully',
+            success: (res) => res?.success ? 'User updated successfully!' : null,
             error: (err) => err.message || 'Update failed',
         });
 
         try {
-            await promise;
-            fetchUsers(currentPage, pageSize);
-            closeModal();
+            const result = await promise;
+            if (result.success) {
+                fetchUsers(currentPage, pageSize);
+                closeModal();
+            }
         } catch (error) {
             console.error('Update error:', error);
-            // error already handled in toast
         } finally {
             setIsSubmitting(false);
         }
     };
-
 
     useEffect(() => {
         fetchUsers(currentPage, pageSize);
@@ -230,17 +389,15 @@ export default function UsersListTable() {
                         </select>
                     </div>
 
-
                     <span
                         onClick={handleCreateClick}
-                        className="  inline-flex items-center px-2.5 py-2 justify-center gap-1 rounded-full font-medium text-sm bg-brand-50 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400 cursor-pointer p-8"
+                        className="inline-flex items-center px-2.5 py-2 justify-center gap-1 rounded-full font-medium text-sm bg-brand-50 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400 cursor-pointer p-8"
                     >
                         <UserPlusIcon className="w-4 h-4" />  Add User
                     </span>
-
                 </div>
             </UserPermissionGuard>
-            
+
             <div className="max-w-full overflow-x-auto">
                 <div className="min-w-[700px] md:min-w-[900px]">
                     <Table>
@@ -277,7 +434,6 @@ export default function UsersListTable() {
                                             </button>
                                         </UserPermissionGuard>
                                     </TableCell>
-
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -294,46 +450,80 @@ export default function UsersListTable() {
                 />
             </div>
 
-            <Modal isOpen={isOpen} onClose={() => { setEditUserId(null); closeModal(); }} className="max-w-[400px] p-5 lg:p-8">
+            {/* Edit User Modal */}
+            <Modal isOpen={isOpen} onClose={() => { setEditUserId(null); closeModal(); }} className="p-5 lg:p-8">
                 <h4 className="mb-4 text-base font-semibold text-gray-800 dark:text-white">
                     Update User: {formData.name}
                 </h4>
-                <div className="flex flex-col gap-3">
-                    <Label>Name</Label>
-                    <input
-                        type="text"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="border p-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-                    />
 
-                    <Label>Email</Label>
-                    <input
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="border p-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-                    />
+                <div className="max-w-4xl mx-auto mt-10">
+                    <div className="flex rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-theme-xs">
+                        {/* Tab Buttons */}
+                        <div className="w-1/4 border-r border-gray-300 dark:border-gray-700 p-2">
+                            {tabs.map((tab) => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setActiveTab(tab.id)}
+                                    className={`w-full mt-4 py-1 pl-3 pr-8 text-sm rounded-lg text-left appearance-none h-10 shadow-theme-xs focus:outline-hidden focus:ring-3 bg-none transition-all ${activeTab === tab.id ? 'bg-brand-100 text-brand-600 dark:bg-brand-900 dark:text-brand-200 border border-brand-300 dark:border-brand-800' : 'text-gray-800 bg-transparent border border-transparent dark:text-white/90 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+                                >
+                                    {tab.label}
+                                </button>
+                            ))}
+                        </div>
 
-                    <Label>Password</Label>
-                    <input
-                        type="password"
-                        value={formData.password}
-                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                        className="border p-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-                    />
+                        {/* Tab Content */}
+                        <div className="w-3/4 p-4 text-sm text-gray-700 dark:text-white/90">
+                            {activeTab === 'basicDetails' && (
+                                <div className="flex flex-col gap-3">
+                                    <Label>Name</Label>
+                                    <input
+                                        type="text"
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                        className="border p-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                                    />
 
-                    <Label>Status</Label>
-                    <select
-                        value={formData.isActive ? 'active' : 'inactive'}
-                        onChange={(e) =>
-                            setFormData({ ...formData, isActive: e.target.value === 'active' })
-                        }
-                        className="w-full py-2 pl-3 pr-8 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg appearance-none dark:bg-dark-900 h-9 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                    >
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                    </select>
+                                    <Label>Email</Label>
+                                    <input
+                                        type="email"
+                                        value={formData.email}
+                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                        className="border p-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                                    />
+
+                                    <Label>Password</Label>
+                                    <input
+                                        type="password"
+                                        value={formData.password}
+                                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                        className="border p-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                                        placeholder="Leave blank to keep current password"
+                                    />
+
+                                    <Label>Status</Label>
+                                    <select
+                                        value={formData.isActive ? 'active' : 'inactive'}
+                                        onChange={(e) =>
+                                            setFormData({ ...formData, isActive: e.target.value === 'active' })
+                                        }
+                                        className="w-full py-2 pl-3 pr-8 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg appearance-none dark:bg-dark-900 h-9 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                                    >
+                                        <option value="active">Active</option>
+                                        <option value="inactive">Inactive</option>
+                                    </select>
+                                </div>
+                            )}
+                            {activeTab === 'permissions' && (
+                                <div className="space-y-4">
+
+                                    <PermissionManager
+                                        permissions={formData.permissions}
+                                        setPermissions={(perms) => setFormData({ ...formData, permissions: perms })}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
 
                 <div className="flex justify-end gap-3 mt-6">
@@ -362,35 +552,66 @@ export default function UsersListTable() {
             <Modal
                 isOpen={isCreateModalOpen}
                 onClose={() => setIsCreateModalOpen(false)}
-                className="max-w-[400px] p-5 lg:p-8"
+                className="p-5 lg:p-8"
             >
                 <h4 className="mb-4 text-base font-semibold text-gray-800 dark:text-white">
                     Create New User
                 </h4>
-                <div className="flex flex-col gap-3">
-                    <Label>Name</Label>
-                    <input
-                        type="text"
-                        value={createformData.name}
-                        onChange={(e) => setCreateFormData({ ...createformData, name: e.target.value })}
-                        className="border p-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-                    />
+                <div className="max-w-4xl mx-auto mt-10">
+                    <div className="flex rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-theme-xs">
+                        {/* Tab Buttons */}
+                        <div className="w-1/4 border-r border-gray-300 dark:border-gray-700 p-2">
+                            {tabs.map((tab) => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setActiveTab(tab.id)}
+                                    className={`w-full mt-4 py-1 pl-3 pr-8 text-sm rounded-lg text-left appearance-none h-10 shadow-theme-xs focus:outline-hidden focus:ring-3 bg-none transition-all ${activeTab === tab.id ? 'bg-brand-100 text-brand-600 dark:bg-brand-900 dark:text-brand-200 border border-brand-300 dark:border-brand-800' : 'text-gray-800 bg-transparent border border-transparent dark:text-white/90 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+                                >
+                                    {tab.label}
+                                </button>
+                            ))}
+                        </div>
 
-                    <Label>Email</Label>
-                    <input
-                        type="email"
-                        value={createformData.email}
-                        onChange={(e) => setCreateFormData({ ...createformData, email: e.target.value })}
-                        className="border p-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-                    />
+                        {/* Tab Content */}
+                        <div className="w-3/4 p-4 text-sm text-gray-700 dark:text-white/90">
+                            {activeTab === 'basicDetails' && (
+                                <div className="flex flex-col gap-3">
+                                    <Label>Name</Label>
+                                    <input
+                                        type="text"
+                                        value={createformData.name}
+                                        onChange={(e) => setCreateFormData({ ...createformData, name: e.target.value })}
+                                        className="border p-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                                    />
 
-                    <Label>Password</Label>
-                    <input
-                        type="password"
-                        value={createformData.password}
-                        onChange={(e) => setCreateFormData({ ...createformData, password: e.target.value })}
-                        className="border p-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-                    />
+                                    <Label>Email</Label>
+                                    <input
+                                        type="email"
+                                        value={createformData.email}
+                                        onChange={(e) => setCreateFormData({ ...createformData, email: e.target.value })}
+                                        className="border p-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                                    />
+
+                                    <Label>Password</Label>
+                                    <input
+                                        type="password"
+                                        value={createformData.password}
+                                        onChange={(e) => setCreateFormData({ ...createformData, password: e.target.value })}
+                                        className="border p-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                                    />
+                                </div>
+                            )}
+                            {activeTab === 'permissions' && (
+                                <div className="space-y-4">
+
+                                    <PermissionManager
+                                        permissions={createformData.permissions}
+                                        setPermissions={(perms) => setCreateFormData({ ...createformData, permissions: perms })}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
 
                 <div className="flex justify-end gap-3 mt-6">
@@ -402,13 +623,15 @@ export default function UsersListTable() {
                     >
                         Cancel
                     </Button>
-                    <Button size="sm" onClick={handleCreateSubmit} disabled={isSubmitting}>
+                    <Button
+                        size="sm"
+                        onClick={handleCreateSubmit}
+                        disabled={isSubmitting}
+                    >
                         {isSubmitting ? 'Creating...' : 'Create'}
                     </Button>
                 </div>
             </Modal>
-
-
         </div>
     );
 }
