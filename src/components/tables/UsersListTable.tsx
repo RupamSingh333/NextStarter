@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import React from 'react';
 import {
     Table,
@@ -123,6 +123,7 @@ const PermissionToggle = ({
         </div>
     );
 };
+
 const PermissionManager = ({
     permissions,
     setPermissions
@@ -130,23 +131,23 @@ const PermissionManager = ({
     permissions: Permission[];
     setPermissions: (permissions: Permission[]) => void;
 }) => {
-    const availableModules = ['User', 'Customer', 'Coupon'];
+    const availableModules = useCallback(() => ['User', 'Customer', 'Coupon'], []);
 
     // Initialize permissions if empty
     useEffect(() => {
         if (permissions.length === 0) {
             setPermissions(
-                availableModules.map(module => ({
+                availableModules().map(module => ({
                     module,
                     actions: []
                 }))
             );
         }
-    }, []);
+    }, [availableModules, permissions.length, setPermissions]);
 
     return (
         <div className="space-y-4">
-            {availableModules.map(module => (
+            {availableModules().map(module => (
                 <PermissionToggle
                     key={module}
                     module={module}
@@ -313,7 +314,7 @@ export default function UsersListTable() {
             name: formData.name,
             email: formData.email,
             isActive: formData.isActive,
-            permissions: formData.permissions.map(({ _id, ...rest }) => rest) // Remove _id from each permission
+            permissions: formData.permissions.map(({ _id, ...rest }) => rest)
         };
 
         if (formData.password?.trim()) {
@@ -515,7 +516,6 @@ export default function UsersListTable() {
                             )}
                             {activeTab === 'permissions' && (
                                 <div className="space-y-4">
-
                                     <PermissionManager
                                         permissions={formData.permissions}
                                         setPermissions={(perms) => setFormData({ ...formData, permissions: perms })}
@@ -603,7 +603,6 @@ export default function UsersListTable() {
                             )}
                             {activeTab === 'permissions' && (
                                 <div className="space-y-4">
-
                                     <PermissionManager
                                         permissions={createformData.permissions}
                                         setPermissions={(perms) => setCreateFormData({ ...createformData, permissions: perms })}
