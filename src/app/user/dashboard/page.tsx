@@ -45,9 +45,7 @@ export default function DashboardPage() {
   return (
     <DashboardLayout>
       <main className="flex-1 flex flex-col">
-        <WelcomeHeader
-          user={user}
-        />
+        {user && <WelcomeHeader user={user} />}
         <PaymentBreakdown user={user} loading={loading} />
         <div className="mt-6 text-sm text-gray-500 dark:text-gray-400 text-center p-4 md:p-8">
           <p>Please upload a screenshot of your pending loan to get started.</p>
