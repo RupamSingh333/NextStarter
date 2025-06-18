@@ -26,6 +26,13 @@ interface Permission {
     actions: string[];
     _id?: string;
 }
+interface UpdateUserData {
+    name: string;
+    email: string;
+    isActive: boolean;
+    permissions: Omit<Permission, '_id'>[];
+    password?: string;
+}
 
 interface User {
     _id: string;
@@ -310,11 +317,11 @@ export default function UsersListTable() {
         setIsSubmitting(true);
 
         // Create update data without _id in permissions
-        const updateData = {
+        const updateData: UpdateUserData ={
             name: formData.name,
             email: formData.email,
             isActive: formData.isActive,
-            permissions: formData.permissions.map(({ _id, ...rest }) => rest)
+            permissions: formData.permissions.map(({ ...rest }) => rest)
         };
 
         if (formData.password?.trim()) {
