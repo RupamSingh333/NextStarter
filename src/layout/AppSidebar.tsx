@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
-// import { useAuth } from "@/context/AuthContext";
 import {
   // BoxCubeIcon,
   // CalenderIcon,
@@ -19,6 +18,7 @@ import {
 import SidebarWidget from "./SidebarWidget";
 import { usePermissions } from '@/hooks/usePermissions';
 
+
 type NavItem = {
   name: string;
   icon: React.ReactNode;
@@ -26,86 +26,64 @@ type NavItem = {
   subItems?: { name: string; path: string; pro?: boolean; new?: boolean }[];
 };
 
-const navItems: NavItem[] = [
-  {
-    icon: <GridIcon />,
-    name: "Dashboard",
-    path: "/admin",
-    // subItems: [{ name: "Ecommerce", path: "/admin", pro: false }],
-  },
-  {
-    icon: <UserCircleIcon />,
-    name: "Customers",
-    path: "/admin/customers-list",
-    // subItems: [{ name: "Customers List", path: "/admin/basic-tables", pro: false }]
-  },
-  {
-    name: "Users",
-    icon: <UserCircleIcon />,
-    path: "/admin/users-list",
-  },
-  // {
-  //   icon: <CalenderIcon />,
-  //   name: "Calendar",
-  //   path: "/admin/calendar",
-  // },
-
-  // {
-  //   name: "Forms",
-  //   icon: <ListIcon />,
-  //   subItems: [{ name: "Form Elements", path: "/admin/form-elements", pro: false }],
-  // },
-  // {
-  //   name: "Tables",
-  //   icon: <TableIcon />,
-  //   subItems: [{ name: "Basic Tables", path: "/admin/basic-tables", pro: false }],
-  // },
-  // {
-  //   name: "Pages",
-  //   icon: <PageIcon />,
-  //   subItems: [
-  //     { name: "Blank Page", path: "/admin/blank", pro: false },
-  //     { name: "404 Error", path: "/error-404", pro: false },
-  //   ],
-  // },
-];
-
-const othersItems: NavItem[] = [
-  // {
-  //   icon: <PieChartIcon />,
-  //   name: "Charts",
-  //   subItems: [
-  //     { name: "Line Chart", path: "/admin/line-chart", pro: false },
-  //     { name: "Bar Chart", path: "/admin/bar-chart", pro: false },
-  //   ],
-  // },
-  // {
-  //   icon: <BoxCubeIcon />,
-  //   name: "UI Elements",
-  //   subItems: [
-  //     { name: "Alerts", path: "/admin/alerts", pro: false },
-  //     { name: "Avatar", path: "/admin/avatars", pro: false },
-  //     { name: "Badge", path: "/admin/badge", pro: false },
-  //     { name: "Buttons", path: "/admin/buttons", pro: false },
-  //     { name: "Images", path: "/admin/images", pro: false },
-  //     { name: "Videos", path: "/admin/videos", pro: false },
-  //   ],
-  // },
-  // {
-  //   icon: <PlugInIcon />,
-  //   name: "Authentication",
-  //   subItems: [
-  //     { name: "Sign In", path: "/signin", pro: false },
-  //     { name: "Sign Up", path: "/signup", pro: false },
-  //   ],
-  // },
-];
-
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const pathname = usePathname();
   const { canAccess, isLoading } = usePermissions();
-  
+
+  // Move navItems inside so canAccess is available
+  const navItems: NavItem[] = [
+    {
+      icon: <GridIcon />,
+      name: "Dashboard",
+      path: "/admin",
+    },
+    {
+      icon: <UserCircleIcon />,
+      name: "Customers",
+      path: "/admin/customers-list",
+      subItems: [
+        { name: "Customers List", path: "/admin/customers-list", pro: false },
+        { name: "Upload Customers", path: "/admin/upload-customers", pro: false },
+      ]
+    },
+    {
+      name: "Users",
+      icon: <UserCircleIcon />,
+      path: "/admin/users-list",
+    },
+  ];
+
+  const othersItems: NavItem[] = [
+    // {
+    //   icon: <PieChartIcon />,
+    //   name: "Charts",
+    //   subItems: [
+    //     { name: "Line Chart", path: "/admin/line-chart", pro: false },
+    //     { name: "Bar Chart", path: "/admin/bar-chart", pro: false },
+    //   ],
+    // },
+    // {
+    //   icon: <BoxCubeIcon />,
+    //   name: "UI Elements",
+    //   subItems: [
+    //     { name: "Alerts", path: "/admin/alerts", pro: false },
+    //     { name: "Avatar", path: "/admin/avatars", pro: false },
+    //     { name: "Badge", path: "/admin/badge", pro: false },
+    //     { name: "Buttons", path: "/admin/buttons", pro: false },
+    //     { name: "Images", path: "/admin/images", pro: false },
+    //     { name: "Videos", path: "/admin/videos", pro: false },
+    //   ],
+    // },
+    // {
+    //   icon: <PlugInIcon />,
+    //   name: "Authentication",
+    //   subItems: [
+    //     { name: "Sign In", path: "/signin", pro: false },
+    //     { name: "Sign Up", path: "/signup", pro: false },
+    //   ],
+    // },
+  ];
 
   const renderMenuItems = (
     navItems: NavItem[],
@@ -130,9 +108,18 @@ const AppSidebar: React.FC = () => {
           if (nav.name === "Users" && !canAccess("User", "read")) return null;
           if (nav.name === "Customers" && !canAccess("Customer", "read")) return null;
 
+          // Filter subItems for Upload Customers permission
+          let filteredSubItems = nav.subItems;
+          if (nav.name === "Customers" && nav.subItems) {
+            filteredSubItems = nav.subItems.filter(
+              (item) =>
+                item.name !== "Upload Customers" || canAccess("Customer", "create")
+            );
+          }
+
           return (
             <li key={nav.name}>
-              {nav.subItems ? (
+              {filteredSubItems ? (
                 <button
                   onClick={() => handleSubmenuToggle(index, menuType)}
                   className={`menu-item group  ${openSubmenu?.type === menuType && openSubmenu?.index === index
@@ -185,7 +172,7 @@ const AppSidebar: React.FC = () => {
                   </Link>
                 )
               )}
-              {nav.subItems && (isExpanded || isHovered || isMobileOpen) && (
+              {filteredSubItems && (isExpanded || isHovered || isMobileOpen) && (
                 <div
                   ref={(el) => {
                     subMenuRefs.current[`${menuType}-${index}`] = el;
@@ -199,7 +186,7 @@ const AppSidebar: React.FC = () => {
                   }}
                 >
                   <ul className="mt-2 space-y-1 ml-9">
-                    {nav.subItems.map((subItem) => (
+                    {filteredSubItems.map((subItem) => (
                       <li key={subItem.name}>
                         <Link
                           href={subItem.path}

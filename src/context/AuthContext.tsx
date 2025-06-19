@@ -123,9 +123,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('Logout error:', error);
     } finally {
       clearAuthData(type);
-      window.location.reload();
+      if (type === 'admin') {
+        router.push('/login');
+      } else {
+        router.push('/signin');
+      }
     }
-  }, [clearAuthData]);
+  }, [clearAuthData, router]);
 
   const checkAuth = useCallback(async () => {
     setIsLoading(true);

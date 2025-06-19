@@ -21,6 +21,7 @@ import { useModal } from "@/hooks/useModal";
 import { PhoneIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 import { UserPermissionGuard } from '@/components/common/PermissionGuard';
 import UnauthorizedComponent from '@/components/common/UnauthorizedComponent';
+import * as XLSX from "xlsx";
 
 interface Customer {
   _id: string;
@@ -76,8 +77,6 @@ export default function BasicTableOne() {
 
   const pageSizeOptions = getPageSizeOptions();
 
-  const [excelFile, setExcelFile] = useState<File | null>(null);
-  const [isUploadingExcel, setIsUploadingExcel] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(true);
 
   const fetchCustomers = async (page: number, size: number, status: number) => {
@@ -158,56 +157,85 @@ export default function BasicTableOne() {
     }
   };
 
-  const handleExcelFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      setExcelFile(event.target.files[0]);
-    } else {
-      setExcelFile(null);
-    }
-  };
-
-  const handleUploadExcel = async () => {
-    if (!excelFile) {
-      toast.error("Please select an Excel file to upload.");
-      return;
-    }
-
-    setIsUploadingExcel(true);
-    const formData = new FormData();
-    formData.append("file", excelFile);
-
-    const uploadPromise: Promise<string> = new Promise(async (resolve, reject) => {
-      try {
-        const response = await fetch("/api/admin/customers/uploadCustomers", {
-          method: "POST",
-          body: formData,
-          credentials: "include",
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          return reject(data.message || "Failed to upload Excel file.");
-        }
-
-        resolve(data.message || "Excel file uploaded successfully.");
-      } catch (error) {
-        console.error("Excel upload error:", error);
-        reject("Network error or unable to connect to server.");
-      }
+  // Add Excel download handler
+  const handleDownloadExcel = () => {
+    // Prepare data for Excel
+    const data = customerList.map((cust, idx) => ({
+      'Sr. No.': (currentPage - 1) * pageSize + idx + 1,
+      'Customer': cust.customer,
+      'Phone': cust.phone,
+      'Fore Closure': Number(cust.fore_closure),
+      'Settlement': Number(cust.settlement.$numberDecimal),
+      'Min. Part Payment': Number(cust.minimum_part_payment.$numberDecimal),
+      'Foreclosure Reward': Number(cust.foreclosure_reward.$numberDecimal),
+      'Settlement Reward': Number(cust.settlement_reward.$numberDecimal),
+      'Min. Part Payment Reward': Number(cust.minimum_part_payment_reward.$numberDecimal),
+      'Status': cust.isPaid ? 'Paid' : 'Pending',
+    }));
+    // Create sheet
+    const ws = XLSX.utils.json_to_sheet(data);
+    // Add header row manually for bold/freeze/filter
+    const header = [
+      'Sr. No.',
+      'Customer',
+      'Phone',
+      'Fore Closure',
+      'Settlement',
+      'Min. Part Payment',
+      'Foreclosure Reward',
+      'Settlement Reward',
+      'Min. Part Payment Reward',
+      'Status',
+    ];
+    XLSX.utils.sheet_add_aoa(ws, [header], { origin: 'A1' });
+    // Style header row: bold, dark text, neutral background
+    header.forEach((_, idx) => {
+      const cell = ws[XLSX.utils.encode_cell({ r: 0, c: idx })];
+      if (cell) cell.s = {
+        font: { bold: true, color: { rgb: '1E293B' } }, // Tailwind slate-800
+        fill: { fgColor: { rgb: 'E5E7EB' } }, // Tailwind slate-200
+        alignment: { horizontal: 'center', vertical: 'center' },
+      };
     });
-
-    toast.promise(uploadPromise, {
-      loading: "Uploading Excel file...",
-      success: (msg) => {
-        fetchCustomers(currentPage, pageSize, selectedStatus); // Refresh customer list
-        setExcelFile(null); // Clear selected file
-        return msg;
-      },
-      error: (err) => err,
-    }).finally(() => {
-      setIsUploadingExcel(false);
-    });
+    // Freeze header row (for both Excel and Google Sheets compatibility)
+    ws['!freeze'] = { xSplit: 0, ySplit: 1 };
+    ws['!panes'] = [{ ySplit: 1, topLeftCell: 'A2', activePane: 'bottomLeft', state: 'frozen' }];
+    // Add autofilter to header row
+    ws['!autofilter'] = { ref: `A1:J${data.length + 2}` };
+    // Set column widths
+    ws['!cols'] = [
+      { wch: 8 }, { wch: 18 }, { wch: 14 }, { wch: 14 }, { wch: 14 },
+      { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 22 }, { wch: 10 }
+    ];
+    // Add totals row
+    const totalRow = [
+      '', 'Total', '',
+      data.reduce((sum, d) => sum + (d['Fore Closure'] || 0), 0),
+      data.reduce((sum, d) => sum + (d['Settlement'] || 0), 0),
+      data.reduce((sum, d) => sum + (d['Min. Part Payment'] || 0), 0),
+      data.reduce((sum, d) => sum + (d['Foreclosure Reward'] || 0), 0),
+      data.reduce((sum, d) => sum + (d['Settlement Reward'] || 0), 0),
+      data.reduce((sum, d) => sum + (d['Min. Part Payment Reward'] || 0), 0),
+      '',
+    ];
+    XLSX.utils.sheet_add_aoa(ws, [totalRow], { origin: -1 });
+    // Style totals row: bold, light neutral background
+    const totalRowIdx = data.length + 1;
+    for (let c = 0; c < header.length; c++) {
+      const cell = ws[XLSX.utils.encode_cell({ r: totalRowIdx, c })];
+      if (cell) cell.s = {
+        font: { bold: true, color: { rgb: '1E293B' } },
+        fill: { fgColor: { rgb: 'F1F5F9' } }, // Tailwind slate-100
+        alignment: { horizontal: 'center', vertical: 'center' },
+      };
+    }
+    // Name file with date/time
+    const now = new Date();
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    const fileName = `customers_list_${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}_${pad(now.getHours())}_${pad(now.getMinutes())}-${pad(now.getMilliseconds())}.xlsx`;
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Customers');
+    XLSX.writeFile(wb, fileName);
   };
 
   if (!isAuthorized) {
@@ -224,6 +252,7 @@ export default function BasicTableOne() {
 
       {/* Improved Header Section */}
       <div className="p-4 space-y-4 md:space-y-0 md:flex md:items-center md:justify-between md:gap-4 border-b border-gray-200 dark:border-white/[0.05]">
+
         {/* Left Section - Filters */}
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
           {/* Page Size Selector */}
@@ -269,50 +298,15 @@ export default function BasicTableOne() {
           </div>
         </div>
 
-
-        <UserPermissionGuard action="update">
-          {/* Right Section - Excel Upload */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 bg-gray-50 dark:bg-gray-800/50  rounded-lg">
-            <div className="flex items-center gap-3 w-full sm:w-auto">
-              <input
-                type="file"
-                accept=".xlsx, .xls"
-                onChange={handleExcelFileChange}
-                className="hidden"
-                id="excel-upload-input"
-              />
-              <button
-                onClick={() => document.getElementById('excel-upload-input')?.click()}
-                disabled={isUploadingExcel}
-                className="inline-flex items-center px-2.5 py-2 justify-center gap-1 rounded-full font-medium text-sm bg-brand-50 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400 cursor-pointer"
-              >
-                {isUploadingExcel ? "Uploading..." : "Upload Customers"}<svg className="fill-current" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M9.2502 4.99951C9.2502 4.5853 9.58599 4.24951 10.0002 4.24951C10.4144 4.24951 10.7502 4.5853 10.7502 4.99951V9.24971H15.0006C15.4148 9.24971 15.7506 9.5855 15.7506 9.99971C15.7506 10.4139 15.4148 10.7497 15.0006 10.7497H10.7502V15.0001C10.7502 15.4143 10.4144 15.7501 10.0002 15.7501C9.58599 15.7501 9.2502 15.4143 9.2502 15.0001V10.7497H5C4.58579 10.7497 4.25 10.4139 4.25 9.99971C4.25 9.5855 4.58579 9.24971 5 9.24971H9.2502V4.99951Z" fill=""></path></svg>
-              </button>
-
-
-            </div>
-
-            {excelFile && (
-              <div className="flex items-center gap-3 w-full sm:w-auto">
-                <span className="text-sm text-gray-600 dark:text-gray-300 truncate max-w-[200px]">
-                  {excelFile.name}
-                </span>
-                {!isUploadingExcel && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={handleUploadExcel}
-                    disabled={isUploadingExcel}
-                    className="whitespace-nowrap"
-                  >
-                    Confirm Upload
-                  </Button>
-                )}
-              </div>
-            )}
-          </div>
-        </UserPermissionGuard>
-        
+        {/* Download Excel Button */}
+        <div className="mb-2 flex justify-end">
+          <button
+            onClick={handleDownloadExcel}
+            className="px-4 py-2 bg-brand-500 text-white rounded font-semibold shadow hover:bg-brand-600 transition text-sm"
+          >
+            Download Excel
+          </button>
+        </div>
       </div>
 
       <div className="max-w-full overflow-x-auto">
