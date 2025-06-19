@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '@/context/AuthContext';
+
 import React from 'react';
 import {
     Table,
@@ -42,6 +44,9 @@ interface User {
     isActive: boolean;
     permissions: Permission[];
     __v: number;
+    createdAt: Date;
+    updatedAt: Date;
+
 }
 
 const PermissionToggle = ({
@@ -202,6 +207,7 @@ export default function UsersListTable() {
     ];
 
     const basePageSizes = [10, 25, 50, 100, 500];
+    const { admin } = useAuth();
 
     const getPageSizeOptions = () => {
         if (totalRecords === 0) return [10];
@@ -317,7 +323,7 @@ export default function UsersListTable() {
         setIsSubmitting(true);
 
         // Create update data without _id in permissions
-        const updateData: UpdateUserData ={
+        const updateData: UpdateUserData = {
             name: formData.name,
             email: formData.email,
             isActive: formData.isActive,
@@ -412,6 +418,7 @@ export default function UsersListTable() {
                         <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
                             <TableRow>
                                 <TableCell isHeader className="px-5 py-3 font-medium text-start text-theme-xs text-gray-500">Sr. No.</TableCell>
+                                <TableCell isHeader className="px-5 py-3 font-medium text-start text-theme-xs text-gray-500">Created/Updated</TableCell>
                                 <TableCell isHeader className="px-5 py-3 font-medium text-start text-theme-xs text-gray-500">Name</TableCell>
                                 <TableCell isHeader className="px-5 py-3 font-medium text-start text-theme-xs text-gray-500">Email</TableCell>
                                 <TableCell isHeader className="px-5 py-3 font-medium text-start text-theme-xs text-gray-500">Status</TableCell>
@@ -422,24 +429,28 @@ export default function UsersListTable() {
                         <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
                             {!loading && userList.map((user, index) => (
                                 <TableRow key={user._id}>
-                                    <TableCell className="px-5 py-4 text-start text-theme-sm text-gray-600 dark:text-gray-400">{(currentPage - 1) * pageSize + index + 1}</TableCell>
-                                    <TableCell className="px-5 py-4 text-start text-theme-sm text-gray-600 dark:text-gray-400"> {user.name}</TableCell>
-                                    <TableCell className="px-5 py-4 text-start text-theme-sm text-gray-600 dark:text-gray-400">{user.email}</TableCell>
-                                    <TableCell className="px-5 py-4 text-start text-theme-sm text-gray-600 dark:text-gray-400">
+                                    <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400">{(currentPage - 1) * pageSize + index + 1}</TableCell>
+                                    <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400"> {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}<br></br>{user?.updatedAt ? new Date(user.updatedAt).toLocaleDateString() : 'N/A'}</TableCell>
+                                    <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400"> {user.name}</TableCell>
+                                    <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400">{user.email}</TableCell>
+                                    <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400">
                                         <Badge size="sm" color={user.isActive ? 'success' : 'error'}>
                                             {user.isActive ? 'Active' : 'Inactive'}
                                         </Badge>
                                     </TableCell>
 
-                                    <TableCell className="px-5 py-4 text-start text-theme-sm text-gray-600 dark:text-gray-400">
+                                    <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400">
                                         <UserPermissionGuard action="update">
+                                            {/* {admin?.email !== user.email && ( */}
                                             <button
                                                 onClick={() => handleEditClick(user)}
                                                 className="p-2 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-all"
                                                 title="Edit user"
+                                                aria-label={`Edit ${user.name}`}
                                             >
                                                 <PencilSquareIcon className="w-5 h-5" />
                                             </button>
+                                            {/* )} */}
                                         </UserPermissionGuard>
                                     </TableCell>
                                 </TableRow>
@@ -468,16 +479,30 @@ export default function UsersListTable() {
                     <div className="flex rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-theme-xs">
                         {/* Tab Buttons */}
                         <div className="w-1/4 border-r border-gray-300 dark:border-gray-700 p-2">
-                            {tabs.map((tab) => (
-                                <button
-                                    key={tab.id}
-                                    onClick={() => setActiveTab(tab.id)}
-                                    className={`w-full mt-4 py-1 pl-3 pr-8 text-sm rounded-lg text-left appearance-none h-10 shadow-theme-xs focus:outline-hidden focus:ring-3 bg-none transition-all ${activeTab === tab.id ? 'bg-brand-100 text-brand-600 dark:bg-brand-900 dark:text-brand-200 border border-brand-300 dark:border-brand-800' : 'text-gray-800 bg-transparent border border-transparent dark:text-white/90 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
-                                >
-                                    {tab.label}
-                                </button>
-                            ))}
+                            {tabs.map((tab) => {
+                                const isEditingOwnProfile = admin?.email === formData?.email;
+
+                                // If admin is editing their own profile, only show "Basic Details"
+                                if (isEditingOwnProfile && tab.label !== 'Basic Details') {
+                                    return null;
+                                }
+
+                                return (
+                                    <button
+                                        key={tab.id}
+                                        onClick={() => setActiveTab(tab.id)}
+                                        className={`w-full mt-4 py-1 pl-3 pr-8 text-sm rounded-lg text-left appearance-none h-10 shadow-theme-xs focus:outline-hidden focus:ring-1 bg-none transition-all ${activeTab === tab.id
+                                                ? 'bg-brand-100 text-brand-600 dark:bg-brand-900 dark:text-brand-200 border border-brand-100 dark:border-brand-100'
+                                                : 'text-gray-800 bg-transparent border border-transparent dark:text-white/90 hover:bg-gray-100 dark:hover:bg-gray-800'
+                                            }`}
+                                    >
+                                        {tab.label}
+                                    </button>
+                                );
+                            })}
                         </div>
+
+
 
                         {/* Tab Content */}
                         <div className="w-3/4 p-4 text-sm text-gray-700 dark:text-white/90">
@@ -495,6 +520,7 @@ export default function UsersListTable() {
                                     <input
                                         type="email"
                                         value={formData.email}
+                                        disabled={admin?.email === formData?.email}
                                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                         className="border p-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                                     />
@@ -510,6 +536,7 @@ export default function UsersListTable() {
 
                                     <Label>Status</Label>
                                     <select
+                                        disabled={admin?.email === formData?.email}
                                         value={formData.isActive ? 'active' : 'inactive'}
                                         onChange={(e) =>
                                             setFormData({ ...formData, isActive: e.target.value === 'active' })
@@ -572,7 +599,7 @@ export default function UsersListTable() {
                                 <button
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
-                                    className={`w-full mt-4 py-1 pl-3 pr-8 text-sm rounded-lg text-left appearance-none h-10 shadow-theme-xs focus:outline-hidden focus:ring-3 bg-none transition-all ${activeTab === tab.id ? 'bg-brand-100 text-brand-600 dark:bg-brand-900 dark:text-brand-200 border border-brand-300 dark:border-brand-800' : 'text-gray-800 bg-transparent border border-transparent dark:text-white/90 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+                                    className={`w-full mt-4 py-1 pl-3 pr-8 text-sm rounded-lg text-left appearance-none h-10 shadow-theme-xs focus:outline-hidden focus:ring-1 bg-none transition-all ${activeTab === tab.id ? 'bg-brand-100 text-brand-600 dark:bg-brand-900 dark:text-brand-200 border border-brand-100 dark:border-brand-100' : 'text-gray-800 bg-transparent border border-transparent dark:text-white/90 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
                                 >
                                     {tab.label}
                                 </button>

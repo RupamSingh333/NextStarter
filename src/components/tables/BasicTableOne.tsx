@@ -355,10 +355,10 @@ export default function BasicTableOne() {
               {!loading && customerList.map((cust, index) => (
                 <TableRow key={cust._id}>
                   {/* New Sr. No. cell */}
-                  <TableCell className="px-5 py-4 text-start text-theme-sm text-gray-600 dark:text-gray-400">
+                  <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400">
                     {(currentPage - 1) * pageSize + index + 1}
                   </TableCell>
-                  <TableCell className="px-5 py-4 text-start text-theme-sm text-gray-800 dark:text-white/90">
+                  <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-800 dark:text-white/90">
                     <span className="inline-flex items-center gap-1 mt-1">
                       <UserCircleIcon className="w-5 h-5" /> &nbsp;
                       {cust.customer}
@@ -372,30 +372,30 @@ export default function BasicTableOne() {
                   </TableCell>
 
 
-                  <TableCell className="px-5 py-4 text-start text-theme-sm text-gray-600 dark:text-gray-400">
+                  <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400">
                     ₹{cust.fore_closure}
                     <br></br><Badge size="sm" color='success'>
                       ₹{cust.foreclosure_reward.$numberDecimal}
                     </Badge>
                   </TableCell>
-                  <TableCell className="px-5 py-4 text-start text-theme-sm text-gray-600 dark:text-gray-400">
+                  <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400">
                     ₹{cust.settlement.$numberDecimal}
                     <br></br><Badge size="sm" color='success'>
                       ₹{cust.settlement_reward.$numberDecimal}
                     </Badge>
                   </TableCell>
-                  <TableCell className="px-5 py-4 text-start text-theme-sm text-gray-600 dark:text-gray-400">
+                  <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400">
                     ₹{cust.minimum_part_payment.$numberDecimal}<br></br><Badge size="sm" color='success'>
                       ₹{cust.minimum_part_payment_reward.$numberDecimal}
                     </Badge>
                   </TableCell>
 
-                  <TableCell className="px-5 py-4 text-start text-theme-sm">
+                  <TableCell className="px-5 py-1 text-start text-theme-sm">
                     <Badge size="sm" color={cust.isPaid ? 'success' : 'warning'}>
                       {cust.isPaid ? 'Paid' : 'Pending'}
                     </Badge>
                   </TableCell>
-                  <TableCell className="px-5 py-4 text-start">
+                  <TableCell className="px-5 py-1 text-start">
                     <div className="flex flex-wrap gap-2">
                       {cust.payments.map((p) => (
                         <a
@@ -418,7 +418,7 @@ export default function BasicTableOne() {
 
                   <UserPermissionGuard action="update">
                     {/* Action cell: keep Edit and Delete buttons, replace Activate/Deactivate button with label */}
-                    <TableCell className="px-5 py-4 text-start space-x-2 flex items-center gap-2">
+                    <TableCell className="px-5 py-1 text-start space-x-2 flex items-center gap-2">
                       {(cust.isPaid === false && cust.payments.length > 0) && (
                         <button
                           type="button"
