@@ -123,11 +123,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('Logout error:', error);
     } finally {
       clearAuthData(type);
-      if (type === 'admin') {
-        router.push('/login');
-      } else {
-        router.push('/signin');
-      }
+      // if (type === 'admin') {
+      //   router.push('/login');
+      // } else {
+      //   router.push('/signin');
+      // }
     }
   }, [clearAuthData, router]);
 
