@@ -127,7 +127,7 @@ export default function UploadCustomersPage() {
                 setExcelFile(null);
                 setScanStatus('idle');
             }
-        } catch (error) {
+        } catch {
             setApiSuccess(false);
             setApiMessage("Network error or unable to connect to server.");
             setScanStatus('error');
