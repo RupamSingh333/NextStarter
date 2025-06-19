@@ -4,6 +4,7 @@ import React from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { motion } from 'framer-motion';
+import { formatNumber } from "@/hooks/useNumberFormate";
 // import { useAuth } from '@/context/AuthContext';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -81,14 +82,14 @@ const PaymentBreakdown = ({ user, loading }: { user: User | null, loading: boole
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 p-2 md:p-4">
-      {/* Right side - Payment Cards */}
+      {/* Left side - Payment Cards */}
       <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
         {/* Foreclosure Amount Card */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-          className="bg-[rgb(147,171,255)] rounded-3xl p-4 md:p-6 text-white shadow-xl flex flex-col justify-between hover:scale-105 transition-transform duration-300 transform-gpu"
+          className="bg-[#011de9a3] dark:bg-[#011de91c] rounded-3xl p-4 md:p-6 text-white shadow-xl flex flex-col justify-between hover:scale-105 transition-transform duration-300 transform-gpu"
         >
           <div>
             <h3 className="text-base md:text-lg font-medium mb-3 md:mb-4">
@@ -97,7 +98,7 @@ const PaymentBreakdown = ({ user, loading }: { user: User | null, loading: boole
 
             {/* Updated this block */}
             <div className="flex justify-between items-center text-2xl md:text-3xl font-bold mb-2">
-              <span>₹{foreclosureAmount.toFixed(2)}</span>
+              <span>₹ {formatNumber(foreclosureAmount)}</span>
               <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
               </svg>
@@ -105,7 +106,7 @@ const PaymentBreakdown = ({ user, loading }: { user: User | null, loading: boole
             </div>
 
             <div className="text-xs md:text-sm opacity-90">
-              {foreclosureReward.toFixed(2)} reward
+              ₹ {formatNumber(foreclosureReward)} reward
             </div>
           </div>
 
@@ -115,7 +116,7 @@ const PaymentBreakdown = ({ user, loading }: { user: User | null, loading: boole
                 href={user.payment_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-[160px] md:w-auto bg-white text-[rgb(147,171,255)] rounded-full px-4 md:px-6 py-2 md:py-3 font-medium text-center hover:bg-gray-100 transition-colors duration-300 shadow-md text-sm md:text-base"
+                className="w-[160px] md:w-auto bg-white dark:text-[#011de9] text-[#011de9a3] rounded-full px-4 md:px-6 py-2 md:py-3 font-medium text-center hover:bg-gray-100 transition-colors duration-300 shadow-md text-sm md:text-base"
               >
                 <span className="md:inline">Proceed to Payment</span>
               </a>
@@ -127,7 +128,7 @@ const PaymentBreakdown = ({ user, loading }: { user: User | null, loading: boole
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-          className="bg-[rgb(147,171,255)] rounded-3xl p-4 md:p-6 text-white shadow-xl flex flex-col justify-between hover:scale-105 transition-transform duration-300 transform-gpu"
+          className="bg-[#2f0845a8] dark:bg-[#680e723d] rounded-3xl p-4 md:p-6 text-white shadow-xl flex flex-col justify-between hover:scale-105 transition-transform duration-300 transform-gpu"
         >
           <div>
             <h3 className="text-base md:text-lg font-medium mb-3 md:mb-4">
@@ -136,7 +137,7 @@ const PaymentBreakdown = ({ user, loading }: { user: User | null, loading: boole
 
             {/* Updated this block */}
             <div className="flex justify-between items-center text-2xl md:text-3xl font-bold mb-2">
-              <span>₹{settlementAmount.toFixed(2)}</span>
+              <span>₹ {formatNumber(settlementAmount)}</span>
               <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
               </svg>
@@ -144,7 +145,7 @@ const PaymentBreakdown = ({ user, loading }: { user: User | null, loading: boole
             </div>
 
             <div className="text-xs md:text-sm opacity-90">
-              {settlementReward.toFixed(2)} reward
+           ₹ {formatNumber(settlementReward)} reward
             </div>
           </div>
 
@@ -154,7 +155,7 @@ const PaymentBreakdown = ({ user, loading }: { user: User | null, loading: boole
                 href={user.payment_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-[160px] md:w-auto bg-white text-[rgb(147,171,255)] rounded-full px-4 md:px-6 py-2 md:py-3 font-medium text-center hover:bg-gray-100 transition-colors duration-300 shadow-md text-sm md:text-base"
+                className="w-[160px] md:w-auto bg-white  dark:text-[#680e72] text-[#2f0845a8] rounded-full px-4 md:px-6 py-2 md:py-3 font-medium text-center hover:bg-gray-100 transition-colors duration-300 shadow-md text-sm md:text-base"
               >
                 <span className="md:inline">Proceed to Payment</span>
               </a>
@@ -166,7 +167,7 @@ const PaymentBreakdown = ({ user, loading }: { user: User | null, loading: boole
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-          className="bg-[rgb(147,171,255)] rounded-3xl p-4 md:p-6 text-white shadow-xl flex flex-col justify-between hover:scale-105 transition-transform duration-300 transform-gpu"
+          className="bg-[#615d57] dark:bg-[#42413f52] rounded-3xl p-4 md:p-6 text-white shadow-xl flex flex-col justify-between hover:scale-105 transition-transform duration-300 transform-gpu"
         >
           <div>
             <h3 className="text-base md:text-lg font-medium mb-3 md:mb-4">
@@ -175,7 +176,7 @@ const PaymentBreakdown = ({ user, loading }: { user: User | null, loading: boole
 
             {/* Updated this block */}
             <div className="flex justify-between items-center text-2xl md:text-3xl font-bold mb-2">
-              <span>₹{minimumPaymentAmount.toFixed(2)}</span>
+              <span>₹ {formatNumber(minimumPaymentAmount)}</span>
               <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
               </svg>
@@ -183,7 +184,7 @@ const PaymentBreakdown = ({ user, loading }: { user: User | null, loading: boole
             </div>
 
             <div className="text-xs md:text-sm opacity-90">
-              {minimumPaymentReward.toFixed(2)} reward
+              ₹ {formatNumber(minimumPaymentReward)} reward 
             </div>
           </div>
 
@@ -193,7 +194,7 @@ const PaymentBreakdown = ({ user, loading }: { user: User | null, loading: boole
                 href={user.payment_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-[160px] md:w-auto bg-white text-[rgb(147,171,255)] rounded-full px-4 md:px-6 py-2 md:py-3 font-medium text-center hover:bg-gray-100 transition-colors duration-300 shadow-md text-sm md:text-base"
+                className="w-[160px] md:w-auto bg-white dark:text-[#42413f] text-[#615d57] rounded-full px-4 md:px-6 py-2 md:py-3 font-medium text-center hover:bg-gray-100 transition-colors duration-300 shadow-md text-sm md:text-base"
               >
                 <span className="md:inline">Proceed to Payment</span>
               </a>
@@ -205,7 +206,7 @@ const PaymentBreakdown = ({ user, loading }: { user: User | null, loading: boole
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
-          className={`rounded-3xl p-4 md:p-6 shadow-xl flex flex-col justify-between ${user.isPaid ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}`}
+          className={` bg-[#615d57] dark:bg-[#46a75812] rounded-3xl p-4 md:p-6 shadow-xl flex flex-col justify-between ${user.isPaid ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}`}
         >
           <div>
             <h3 className="text-base md:text-lg font-medium mb-3 md:mb-4">Payment Status</h3>
@@ -231,7 +232,7 @@ const PaymentBreakdown = ({ user, loading }: { user: User | null, loading: boole
           )}
         </motion.div>
       </div>
-      {/* Left side - Chart */}
+      {/* Right side - Chart */}
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
