@@ -76,8 +76,7 @@ export default function UploadCustomersPage() {
             const worksheet = workbook.Sheets[sheetName];
             const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
             const headerRow = Array.isArray(json[0]) ? json[0] : json[0] ? Object.values(json[0]) : [];
-            const headers = headerRow.map((h: any) => (typeof h === 'string' ? h.trim() : h));
-            // console.log(headers);
+            const headers = headerRow.map((h: string) => (typeof h === 'string' ? h.trim() : h));
             const missing = REQUIRED_HEADERS.filter(h => !headers.includes(h));
             if (missing.length > 0) {
                 setScanStatus('error');
@@ -86,7 +85,7 @@ export default function UploadCustomersPage() {
             } else {
                 setScanStatus('success');
             }
-        } catch (err) {
+        } catch {
             setScanStatus('error');
             setScanError('Failed to read Excel file.');
         }

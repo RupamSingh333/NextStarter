@@ -11,7 +11,7 @@ import { useAuth } from '@/context/AuthContext';
 
 export default function DashboardPage() {
   const { user, loading, checkAuth } = useAuth();
-  console.log(user)
+  // console.log(user)
 
   useEffect(() => {
     checkAuth();
