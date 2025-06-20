@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Header from '@/components/home/Header';
 
 export default function SignInForm() {
   const router = useRouter();
@@ -111,7 +112,7 @@ export default function SignInForm() {
       const data = await response.json();
       
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to verify OTP');
+        // throw new Error(data.message || 'Failed to verify OTP');
       }
       if (data.success) {
         // Use auth context to handle login and redirect
@@ -136,7 +137,11 @@ export default function SignInForm() {
 
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 p-4 sm:p-6">
+    <>
+      <Header />
+      <div className="mt-4 flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 p-4 sm:p-6">
+                
+
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -326,6 +331,11 @@ export default function SignInForm() {
           </motion.div>
         </div>
       </motion.div>
+               
+
     </div>
+    </>
+    
+    
   );
 }

@@ -11,7 +11,6 @@ import {
     TableHeader,
     TableRow,
 } from '../ui/table';
-import Badge from '../ui/badge/Badge';
 import Button from '@/components/ui/button/Button';
 import Pagination from '../tables/Pagination';
 import PageLoader from '../ui/loading/PageLoader';
@@ -312,6 +311,52 @@ export default function UsersListTable() {
         }
     };
 
+    const changeStatus = async (userId: string, status: boolean, email: string) => {
+        if (!userId) return;
+        setIsSubmitting(true);
+
+        // Create update data without _id in permissions
+        const toUpdateData = {
+            email: email,
+            isActive: !status,
+            onlyStatus:true
+
+        };
+
+      
+
+        const promise = fetch(`/api/admin/users/update/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(toUpdateData),
+        }).then(async (res) => {
+            const result = await res.json();
+            if (!res.ok || !result.success) {
+                toast.error(result.message);
+            }
+            return result;
+        });
+
+        toast.promise(promise, {
+            loading: 'Updating user...',
+            success: (res) => res?.success ? 'User updated successfully!' : null,
+            error: (err) => err.message || 'Update failed',
+        });
+
+        try {
+            const result = await promise;
+            if (result.success) {
+                fetchUsers(currentPage, pageSize);
+               
+            }
+        } catch (error) {
+            console.error('Update error:', error);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
     const handleUpdate = async () => {
         if (!editUserId) return;
 
@@ -434,9 +479,24 @@ export default function UsersListTable() {
                                     <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400"> {user.name}</TableCell>
                                     <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400">{user.email}</TableCell>
                                     <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400">
-                                        <Badge size="sm" color={user.isActive ? 'success' : 'error'}>
+                                        <div key={`${user._id}_new`} className="flex items-center space-x-2">
+                                            <label className="inline-flex items-center cursor-pointer">
+                                                <input 
+                                                    onChange={() => changeStatus(user._id, user.isActive, user.email)}
+                                                    type="checkbox"
+                                                    className="sr-only peer"
+                                                    checked={user.isActive ? true : false}
+                                                    disabled={admin?.email === user.email}
+
+                                                />
+                                                <div className="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600">
+                                                </div>
+
+                                            </label>
+                                        </div>
+                                        {/* <Badge size="sm" color={user.isActive ? 'success' : 'error'}>
                                             {user.isActive ? 'Active' : 'Inactive'}
-                                        </Badge>
+                                        </Badge> */}
                                     </TableCell>
 
                                     <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400">
@@ -470,12 +530,12 @@ export default function UsersListTable() {
             </div>
 
             {/* Edit User Modal */}
-            <Modal isOpen={isOpen} onClose={() => { setEditUserId(null); closeModal(); }} className="p-5 lg:p-8">
-                <h4 className="mb-4 text-base font-semibold text-gray-800 dark:text-white">
+            <Modal isOpen={isOpen} onClose={() => { setEditUserId(null); closeModal(); }} className=" mt-16 p-5 lg:p-8">
+                <h4 className="mb-4 text-base font-semibold text-gray-800 dark:text-white ">
                     Update User: {formData.name}
                 </h4>
 
-                <div className="max-w-4xl mx-auto mt-10">
+                <div className="max-w-4xl mx-auto ">
                     <div className="flex rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-theme-xs">
                         {/* Tab Buttons */}
                         <div className="w-1/4 border-r border-gray-300 dark:border-gray-700 p-2">
@@ -492,8 +552,8 @@ export default function UsersListTable() {
                                         key={tab.id}
                                         onClick={() => setActiveTab(tab.id)}
                                         className={`w-full mt-4 py-1 pl-3 pr-8 text-sm rounded-lg text-left appearance-none h-10 shadow-theme-xs focus:outline-hidden focus:ring-1 bg-none transition-all ${activeTab === tab.id
-                                                ? 'bg-brand-100 text-brand-600 dark:bg-brand-900 dark:text-brand-200 border border-brand-100 dark:border-brand-100'
-                                                : 'text-gray-800 bg-transparent border border-transparent dark:text-white/90 hover:bg-gray-100 dark:hover:bg-gray-800'
+                                            ? 'bg-brand-100 text-brand-600 dark:bg-brand-900 dark:text-brand-200 border border-brand-100 dark:border-brand-100'
+                                            : 'text-gray-800 bg-transparent border border-transparent dark:text-white/90 hover:bg-gray-100 dark:hover:bg-gray-800'
                                             }`}
                                     >
                                         {tab.label}
@@ -586,7 +646,7 @@ export default function UsersListTable() {
             <Modal
                 isOpen={isCreateModalOpen}
                 onClose={() => setIsCreateModalOpen(false)}
-                className="p-5 lg:p-8"
+                className="p-5 lg:p-8  mt-16"
             >
                 <h4 className="mb-4 text-base font-semibold text-gray-800 dark:text-white">
                     Create New User

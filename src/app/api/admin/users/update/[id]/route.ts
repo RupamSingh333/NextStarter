@@ -17,12 +17,14 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const body = await request.json();
     const userId = params.id;
 
-    if (!body.name || !body.email || !userId) {
+    if (!body?.onlyStatus && (!body.name || !body.email || !userId)) {
       return NextResponse.json(
         { success: false, message: 'Missing required fields: name, email, or user ID.' },
         { status: 400 }
       );
     }
+    delete body.onlyStatus;
+
 
     const response = await fetch(`${API_BASE_URL}/users/update`, {
       method: 'PUT',

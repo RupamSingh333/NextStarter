@@ -4,6 +4,7 @@ interface User {
   customer: string;
   isPaid: boolean;
   fore_closure: number;
+  lender_name:string;
 }
 
 interface WelcomeHeaderProps {
@@ -17,7 +18,7 @@ const WelcomeHeader = ({ user }: WelcomeHeaderProps) => {
         Welcome (Namaste) {user?.customer}!
       </h1>
       <p className="text-gray-600 dark:text-gray-300 mt-2">
-        Your RepayKaro loan outstanding {user?.isPaid ? "was" : "is"} ₹{user?.fore_closure}
+        Your {user?.lender_name} loan outstanding {user?.isPaid ? "was" : "is"} ₹{user?.fore_closure}
       </p>
     </div>
   );

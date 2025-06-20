@@ -30,6 +30,7 @@ interface User {
   createdAt: string;
   updatedAt: string;
   permissions: Permission[]; // Added permissions field
+  lender_name:string;
 }
 
 interface Admin {

@@ -35,7 +35,6 @@ interface DashboardData {
     paidPartialSum: string;
   };
 }
-const colors = ["blue-light", "success", "warning"];
 
 export const EcommerceMetrics = () => {
   const [loading, setLoading] = useState(true);
@@ -49,6 +48,9 @@ export const EcommerceMetrics = () => {
       (perm) => perm.module === module && perm.actions.includes(action)
     ) || false;
   };
+
+
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -94,8 +96,8 @@ export const EcommerceMetrics = () => {
           value={users.userCount}
           icon={<GroupIcon className="text-blue-600 size-6 dark:text-blue-300" />}
           subValues={[
-            { label: "Active", value: users.activeUserCount, color: "green" },
-            { label: "Inactive", value: users.inActiveUserCount, color: "red" },
+            { label: "Active", value: users.activeUserCount, color: "white" },
+            { label: "Inactive", value: users.inActiveUserCount, color: "white" },
           ]}
         />
       )}
@@ -109,8 +111,8 @@ export const EcommerceMetrics = () => {
             value={formatNumber(customers.customerCount)}
             icon={<GroupIcon className="text-gray-800 size-6 dark:text-white/90" />}
             subValues={[
-              { label: "Paid", value: formatNumber(customers.piadCustomerCount), color: "green" },
-              { label: "Unpaid", value: formatNumber(customers.unPaidCustomerCount), color: "red" },
+              { label: "Paid", value: formatNumber(customers.piadCustomerCount), color: "white" },
+              { label: "Unpaid", value: formatNumber(customers.unPaidCustomerCount), color: "white" },
             ]}
           />
 
@@ -125,9 +127,9 @@ export const EcommerceMetrics = () => {
             prefix="₹"
             icon={<BoxIconLine className="text-yellow-600 size-6 dark:text-yellow-400" />}
             subValues={[
-              { label: "Foreclosure", value: formatNumber(parseFloat(payments.paidForeClosureSum)) },
-              { label: "Settlement", value: formatNumber(parseFloat(payments.paidSettlementSum)) },
-              { label: "Partial", value: formatNumber(parseFloat(payments.paidPartialSum)) },
+              { label: "Foreclosure", value: formatNumber(parseFloat(payments.paidForeClosureSum)),color: "white" },
+              { label: "Settlement", value: formatNumber(parseFloat(payments.paidSettlementSum)),color: "white" },
+              { label: "Partial", value: formatNumber(parseFloat(payments.paidPartialSum)) ,color: "white"},
             ]}
           />
 
@@ -141,14 +143,14 @@ export const EcommerceMetrics = () => {
               {
                 label: "Paid",
                 value: formatNumber(parseFloat(payments.paidForeClosureSum)),
-                color: "green",
+                color: "white",
               },
               {
                 label: "Pending",
                 value: formatNumber(
                   parseFloat(payments.foreClosureSum) - parseFloat(payments.paidForeClosureSum)
                 ),
-                color: "red",
+                color: "white",
               },
             ]}
           />
@@ -163,14 +165,14 @@ export const EcommerceMetrics = () => {
               {
                 label: "Paid",
                 value: formatNumber(parseFloat(payments.paidSettlementSum)),
-                color: "green",
+                color: "white",
               },
               {
                 label: "Pending",
                 value: formatNumber(
                   parseFloat(payments.settlementSum) - parseFloat(payments.paidSettlementSum)
                 ),
-                color: "red",
+                color: "white",
               },
             ]}
           />
@@ -185,14 +187,14 @@ export const EcommerceMetrics = () => {
               {
                 label: "Paid",
                 value: formatNumber(parseFloat(payments.paidPartialSum)),
-                color: "green",
+                color: "white",
               },
               {
                 label: "Pending",
                 value: formatNumber(
                   parseFloat(payments.partialSum) - parseFloat(payments.paidPartialSum)
                 ),
-                color: "red",
+                color: "white",
               },
             ]}
           />
@@ -250,10 +252,9 @@ const MetricCard = ({
               style={{ animationDelay: `${index * 100}ms` }}
             >
               {(() => {
-                const randomColor = colors[Math.floor(Math.random() * colors.length)];
                 return (
                   <span
-                    className={`inline-flex items-center px-2.5 py-0.5 justify-center gap-1 rounded-full font-medium text-sm bg-${randomColor}-50 text-${randomColor}-500 dark:bg-${randomColor}-500/15 dark:text-${randomColor}-500`}
+                    className={`inline-flex items-center px-2.5 py-0.5 justify-center gap-1 rounded-full font-medium text-sm bg-blue-light-50 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500`}
                   >
                     {sub.label}
                   </span>
@@ -262,10 +263,10 @@ const MetricCard = ({
 
 
               <span
-                className={`font-medium ${sub.color === "green"
-                  ? "text-green-600"
+                className={`font-medium ${sub.color === "gray"
+                  ? "text-gray-600"
                   : sub.color === "red"
-                    ? "text-red-500"
+                    ? "text-gray-500"
                     : "text-gray-800 dark:text-white"
                   }`}
               >

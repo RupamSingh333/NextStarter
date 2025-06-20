@@ -33,7 +33,7 @@ export default function HomePage() {
                             <div className="absolute bottom-1/4 left-1/3 w-64 h-64 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
                         </div>
                     </div>
-                    
+
                     <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                             <ScrollAnimation animation="slideLeft" className="space-y-8" delay={300}>
@@ -51,7 +51,7 @@ export default function HomePage() {
                                         href="/signin"
                                         className="hover-button inline-flex justify-center items-center px-8 py-4 border border-transparent text-base font-medium rounded-2xl text-white gradient-bg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transform hover:scale-105 transition-all duration-500 shadow-xl hover:shadow-2xl animate-pulse-subtle"
                                     >
-                                        Get Started
+                                        Check Your Offer
                                     </Link>
                                     <Link
                                         href="#features"
@@ -342,7 +342,7 @@ export default function HomePage() {
             />
         </div>
     );
-} 
+}
 
 const TERMS_AND_CONDITIONS_CONTENT = `Trems & Conditions
 Terms and Conditions – Communication Consent

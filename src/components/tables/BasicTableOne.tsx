@@ -18,7 +18,7 @@ import Pagination from '../tables/Pagination';
 import PageLoader from '../ui/loading/PageLoader';
 import { toast } from 'react-hot-toast';
 import { useModal } from "@/hooks/useModal";
-import { PhoneIcon, UserCircleIcon } from '@heroicons/react/24/outline';
+// import { PhoneIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 import { UserPermissionGuard } from '@/components/common/PermissionGuard';
 import UnauthorizedComponent from '@/components/common/UnauthorizedComponent';
 import * as XLSX from "xlsx";
@@ -47,6 +47,7 @@ interface Customer {
     _id: string;
     screen_shot: string;
   }[];
+  lender_name: string;
 }
 
 export default function BasicTableOne() {
@@ -171,6 +172,7 @@ export default function BasicTableOne() {
       'Settlement Reward': Number(cust.settlement_reward.$numberDecimal),
       'Min. Part Payment Reward': Number(cust.minimum_part_payment_reward.$numberDecimal),
       'Status': cust.isPaid ? 'Paid' : 'Pending',
+      'Lender': cust?.lender_name || "N/A",
     }));
     // Create sheet
     const ws = XLSX.utils.json_to_sheet(data);
@@ -186,6 +188,7 @@ export default function BasicTableOne() {
       'Settlement Reward',
       'Min. Part Payment Reward',
       'Status',
+      'Lender',
     ];
     XLSX.utils.sheet_add_aoa(ws, [header], { origin: 'A1' });
     // Style header row: bold, dark text, neutral background
@@ -201,7 +204,7 @@ export default function BasicTableOne() {
     ws['!freeze'] = { xSplit: 0, ySplit: 1 };
     ws['!panes'] = [{ ySplit: 1, topLeftCell: 'A2', activePane: 'bottomLeft', state: 'frozen' }];
     // Add autofilter to header row
-    ws['!autofilter'] = { ref: `A1:J${data.length + 2}` };
+    ws['!autofilter'] = { ref: `A1:K${data.length + 2}` };
     // Set column widths
     ws['!cols'] = [
       { wch: 8 }, { wch: 18 }, { wch: 14 }, { wch: 14 }, { wch: 14 },
@@ -300,12 +303,13 @@ export default function BasicTableOne() {
 
         {/* Download Excel Button */}
         <div className="mb-2 flex justify-end">
-          <button
+
+          <a
             onClick={handleDownloadExcel}
-            className="px-4 py-2 bg-brand-500 text-white rounded font-semibold shadow hover:bg-brand-600 transition text-sm"
+            className="inline-flex items-center px-5 py-3 justify-center gap-1 rounded-full font-medium text-sm bg-blue-light-100 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500 cursor-pointer"
           >
-            Download Excel
-          </button>
+            Download
+          </a>
         </div>
       </div>
 
@@ -320,7 +324,10 @@ export default function BasicTableOne() {
                   Sr. No.
                 </TableCell>
                 <TableCell isHeader className="px-5 py-3 font-medium text-start text-theme-xs text-gray-500">
-                  Customer
+                  Customer / Phone
+                </TableCell>
+                <TableCell isHeader className="px-5 py-3 font-medium text-start text-theme-xs text-gray-500">
+                  Lender
                 </TableCell>
 
                 <TableCell isHeader className="px-5 py-3 font-medium text-start text-theme-xs text-gray-500">
@@ -354,17 +361,19 @@ export default function BasicTableOne() {
                   </TableCell>
                   <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-800 dark:text-white/90">
                     <span className="inline-flex items-center gap-1 mt-1">
-                      <UserCircleIcon className="w-5 h-5" /> &nbsp;
+                      {/* <UserCircleIcon className="w-5 h-5" /> &nbsp; */}
                       {cust.customer}
                     </span>
 
                     <br />
                     <span className="inline-flex items-center gap-1 mt-1">
-                      <PhoneIcon className="w-4 h-4" /> &nbsp;
+                      {/* <PhoneIcon className="w-4 h-4" /> &nbsp; */}
                       {cust.phone}
                     </span>
                   </TableCell>
-
+                  <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400">
+                    {cust?.lender_name || "N/A"}
+                  </TableCell>
 
                   <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400">
                     ₹{cust.fore_closure}

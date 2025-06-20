@@ -8,17 +8,20 @@ import { toast } from "react-hot-toast";
 import UnauthorizedComponent from '@/components/common/UnauthorizedComponent';
 import { useAuth } from '@/context/AuthContext';
 import PageLoader from "@/components/ui/loading/PageLoader";
+import { ArrowUpIcon, ArrowDownIcon } from "@/icons";
 
 
 const REQUIRED_HEADERS = [
-    'Mobile',
-    'Fore Closure',
-    'Settlement',
-    'Minimum Part Amount',
-    'Forclosure Reward',
-    'Settlement Reward',
-    'Minimum Part Amount Reward',
-    'payment url',
+    'customer',
+    'phone',
+    'fore_closure',
+    'settlement',
+    'minimum_part_payment',
+    'foreclosure_reward',
+    'settlement_reward',
+    'minimum_part_payment_reward',
+    'payment_url',
+    'lender_name'
 ];
 
 export default function UploadCustomersPage() {
@@ -171,29 +174,36 @@ export default function UploadCustomersPage() {
     return (
         <div>
             <PageBreadcrumb pageTitle="Upload Customers" />
-            <div className="flex flex-col items-center w-full mb-6">
+            <div className="flex justify-end w-full mb-6">
                 <a
-                    href="/proposed_file_name%20(2).xlsx"
+                    href="/upload_customer_sample_file.xlsx"
                     download
-                    className="px-5 py-2 bg-brand-500 text-white rounded-lg shadow hover:bg-brand-600 transition text-base font-medium mt-2 w-full max-w-xs text-center"
+                    className="inline-flex items-center px-5 py-3 justify-center gap-1 rounded-full font-medium text-sm bg-blue-light-100 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500"
                 >
+                    <ArrowDownIcon className="w-5 " />
                     Download Sample Excel
                 </a>
+
             </div>
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full max-w-5xl mx-auto">
                 {/* Left: DropZone Card */}
-                <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg flex flex-col items-center justify-center min-h-[340px] p-8 w-full h-full">
+                <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl flex flex-col min-h-[340px] p-8 w-full h-full relative">
                     <CustomDropZone />
-                    <Button
-                        onClick={handleUpload}
-                        disabled={isUploading || !excelFile || scanStatus !== 'success'}
-                        className="w-full mt-6"
-                    >
-                        {isUploading ? "Uploading..." : "Upload"}
-                    </Button>
+
+                    <div className="absolute bottom-6 right-6">
+                        <Button
+                            onClick={handleUpload}
+                            disabled={isUploading || !excelFile || scanStatus !== 'success'}
+                            className="px-5 py-2 bg-brand-500 text-white rounded-lg shadow hover:bg-brand-600 transition text-base font-medium text-center"
+                        >
+                            <ArrowUpIcon />
+                            {isUploading ? "Uploading..." : "Upload"}
+                        </Button>
+                    </div>
                 </div>
+
                 {/* Right: Scan/Validation Card */}
-                <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg flex flex-col items-center justify-center min-h-[340px] p-8 w-full h-full relative overflow-hidden">
+                <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl flex flex-col items-center justify-center min-h-[340px] p-8 w-full h-full relative overflow-hidden">
                     {/* API compliment or error message */}
                     {apiSuccess === true && apiMessage && (
                         <div className="text-emerald-500 font-bold text-lg flex flex-col items-center justify-center h-full">
@@ -215,28 +225,66 @@ export default function UploadCustomersPage() {
                             {scanStatus === 'idle' && <span className="text-gray-400 text-lg font-medium">Waiting for file...</span>}
                             {scanStatus === 'scanning' && (
                                 <div className="relative flex flex-col items-center justify-center w-full h-full">
-                                    {/* Glowing border */}
-                                    <div className="absolute inset-0 rounded-2xl border-4 border-emerald-400 animate-pulse pointer-events-none" style={{ boxShadow: '0 0 40px 5px #18c89b55' }} />
-                                    {/* Scanning box */}
-                                    <div className="relative w-[260px] h-[160px] sm:w-[320px] sm:h-[200px] bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center justify-center overflow-hidden shadow-md">
-                                        {/* Animated gradient bar */}
-                                        <div className="absolute left-0 top-0 w-full h-full z-0">
-                                            <div className="absolute left-0 top-0 w-full h-2 bg-gradient-to-r from-emerald-400 via-emerald-200 to-emerald-400 animate-scan-bar" />
+                                    <div className="relative " >
+                                        <div className="w-[250px] h-[250px] my-5 outline-offset-[10px]  " >
+                                            {/* Corner borders */}
+                                            < div className="absolute left-0 top-0 w-[45px] h-[46px] border-l-[5px] border-t-[5px] border-emerald-400 rounded-tl-[5px]" />
+                                            <div className="absolute right-0 top-0 w-[45px] h-[46px] border-r-[5px] border-t-[5px] border-emerald-400 rounded-tr-[5px]" />
+                                            <div className="absolute left-0 bottom-0 w-[45px] h-[46px] border-l-[5px] border-b-[5px] border-emerald-400 rounded-bl-[5px]" />
+                                            <div className="absolute right-0 bottom-0 w-[45px] h-[46px] border-r-[5px] border-b-[5px] border-emerald-400 rounded-br-[5px]" />
+
+                                            {/* Scanning text */}
+                                            < p className="text-emerald-400 absolute bottom-[-30px] left-[38%] text-base font-semibold animate-[blinker_1s_linear_infinite] uppercase font-sans" >
+                                                <span className="inline-block w-3 h-3 rounded-full bg-emerald-400 relative right-1" />
+                                                Scanning
+                                            </p>
+
+                                            {/* Animated bar */}
+                                            <span className="absolute top-[5%] left-[4%] w-2.5 h-[90%] bg-emerald-400 shadow-[0_0_50px_10px_#18c89b] clip-path-[inset(0)] animate-[x_1s_ease-in-out_infinite_alternate,y_1s_ease-in-out_infinite]" />
                                         </div>
-                                        {/* Scanning text */}
-                                        <span className="relative z-10 text-emerald-500 font-bold text-xl tracking-widest animate-[blinker_1s_linear_infinite] flex items-center gap-2">
-                                            <span className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse" />
-                                            Scanning...
-                                        </span>
+
+                                        < style jsx global > {`
+        @keyframes move {
+          0%,
+          100% {
+            transform: translateY(190px);
+          }
+          50% {
+            transform: translateY(0%);
+          }
+          75% {
+            transform: translateY(160px);
+          }
+        }
+
+        @keyframes blinker {
+          50% {
+            opacity: 0;
+          }
+        }
+
+        @keyframes x {
+          to {
+            transform: translateX(-100%);
+            left: 100%;
+          }
+        }
+
+        @keyframes y {
+          33% {
+            clip-path: inset(0 0 0 -100px);
+          }
+          50% {
+            clip-path: inset(0 0 0 0);
+          }
+          83% {
+            clip-path: inset(0 -100px 0 0);
+          }
+        }
+      `} </style>
                                     </div>
-                                    <style jsx global>{`
-                                        @keyframes blinker { 50% { opacity: 0; } }
-                                        @keyframes scan-bar {
-                                            0% { top: 0; opacity: 0.7; }
-                                            50% { top: 80%; opacity: 1; }
-                                            100% { top: 0; opacity: 0.7; }
-                                        }
-                                    `}</style>
+
+
                                 </div>
                             )}
                             {scanStatus === 'success' && (
