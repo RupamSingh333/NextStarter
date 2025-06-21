@@ -148,8 +148,7 @@ const Header = () => {
   }
 
   return (
-    <header className={`fixed top-0 left-0 w-full transition-all duration-300 z-50 ${
-      isScrolled ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-xl rounded-b-2xl' : 'bg-transparent'
+    <header className={`fixed top-0 left-0 w-full transition-all duration-300 z-50 ${isScrolled ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-xl rounded-b-2xl' : 'bg-transparent'
       }
       }`}>
       <div className="container mx-auto px-4">
@@ -203,7 +202,12 @@ const Header = () => {
                 <button onClick={() => setIsUploadModalOpen(true)} className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 dark:hover:text-purple-400 rounded-lg transition-colors duration-200 border-t border-gray-200 dark:border-gray-700">
                   Upload Screenshot
                 </button>
-
+                <Link
+                  href="/user/timeline"
+                  className="block px-4 py-2 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 dark:hover:text-purple-400 rounded-lg transition-colors duration-200"
+                >
+                  Payment Status
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 dark:hover:text-purple-400 rounded-lg transition-colors duration-200 border-t border-gray-200 dark:border-gray-700"
@@ -266,6 +270,12 @@ const Header = () => {
               <button onClick={() => setIsUploadModalOpen(true)} className="block w-full text-left px-4 py-2 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 dark:hover:text-purple-400 rounded-lg transition-colors duration-200 border-t border-gray-200 dark:border-gray-700">
                 Upload Screenshot
               </button>
+              <Link
+                href="/user/timeline"
+                className="block px-4 py-2 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:text-purple-600 dark:hover:text-purple-400 rounded-lg transition-colors duration-200"
+              >
+                Payment Status
+              </Link>
 
               <button
                 onClick={handleLogout}

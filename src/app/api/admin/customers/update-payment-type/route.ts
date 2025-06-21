@@ -28,8 +28,8 @@ export async function PUT(request: NextRequest) {
     //   { status: 200 }
     // );
     
-    const response = await fetch(`${API_BASE_URL}/customers/updateCustomerPayment`, {
-      method: 'PUT',
+    const response = await fetch(`${API_BASE_URL}/coupons/create-coupon-update-payment`, {
+      method: 'POST',
       headers: {
         Authorization: `Bearer ${adminToken}`,
         'Content-Type': 'application/json',

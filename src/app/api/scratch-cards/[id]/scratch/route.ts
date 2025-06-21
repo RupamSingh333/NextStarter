@@ -14,7 +14,7 @@ export async function POST(
       return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
     }
 
-    const { id } = params;
+    const { id } = await params;
     console.log("id from scratch card:",id)
 
     const response = await fetch(`${API_BASE_URL}/coupons/coupon-scratch`, {
