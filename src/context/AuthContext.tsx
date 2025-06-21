@@ -123,6 +123,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
+      console.log('Clearing auth data for:', type);
       clearAuthData(type);
       // if (type === 'admin') {
       //   router.push('/login');

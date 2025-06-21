@@ -52,25 +52,27 @@ export const Modal: React.FC<ModalProps> = ({
 
   const contentClasses = isFullscreen
     ? "w-full h-full"
-    : "relative w-full max-w-2xl mx-auto rounded-2xl bg-white dark:bg-gray-800 shadow-2xl border border-gray-200 dark:border-gray-700";
+    : "relative w-full max-w-2xl mx-auto rounded-2xl bg-white dark:bg-gray-800 shadow-2xl border border-gray-200 dark:border-gray-700 m-4";
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center overflow-y-auto z-50">
+    <div className="fixed inset-0 flex items-center justify-center overflow-y-auto z-[9999] p-4">
       {!isFullscreen && (
         <div
-          className="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-[2px] transition-opacity"
+          className="fixed inset-0 bg-black/70 dark:bg-black/80 modal-backdrop transition-all duration-300 ease-in-out"
           onClick={onClose}
         ></div>
       )}
       <div
         ref={modalRef}
-        className={`${contentClasses} ${className} transform transition-all duration-300 ease-in-out`}
+        className={`${contentClasses} ${className} modal-content transform transition-all duration-300 ease-in-out ${
+          isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
         {showCloseButton && (
           <button
             onClick={onClose}
-            className="absolute right-3 top-3 z-50 flex h-9.5 w-9.5 items-center justify-center rounded-full bg-gray-100/80 dark:bg-gray-700/80 text-gray-600 dark:text-gray-300 transition-colors hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white backdrop-blur-sm sm:right-6 sm:top-6 sm:h-11 sm:w-11"
+            className="absolute right-3 top-3 z-50 flex h-9.5 w-9.5 items-center justify-center rounded-full bg-gray-100/90 dark:bg-gray-700/90 text-gray-600 dark:text-gray-300 modal-close-button hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white backdrop-blur-sm sm:right-6 sm:top-6 sm:h-11 sm:w-11 shadow-lg"
           >
             <svg
               width="24"

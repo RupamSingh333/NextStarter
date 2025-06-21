@@ -150,33 +150,33 @@ const UploadModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
+    <div className="fixed inset-0 z-[9999] overflow-y-auto p-4">
+      <div className="fixed inset-0 bg-black/70 dark:bg-black/80 modal-backdrop transition-all duration-300"></div>
 
-      <div className="flex min-h-screen items-center justify-center p-4">
-        <div className="relative w-full max-w-3xl transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-6 text-left shadow-xl transition-all">
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="relative w-full max-w-3xl transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-4 sm:p-6 text-left shadow-2xl transition-all duration-300 border border-gray-200 dark:border-gray-700 modal-content">
           {/* Delete Confirmation Dialog */}
           {deleteConfirmation.isOpen && (
-            <div className="absolute inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
-              <div className="w-full max-w-sm rounded-lg bg-white dark:bg-gray-800 p-6">
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/70 dark:bg-black/80 modal-backdrop">
+              <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-gray-800 p-4 sm:p-6 shadow-2xl border border-gray-200 dark:border-gray-700 m-4 modal-content">
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
                   Delete Screenshot
                 </h3>
                 <p className="text-gray-500 dark:text-gray-400 mb-6">
                   Are you sure you want to delete this screenshot? This action cannot be undone.
                 </p>
-                <div className="flex justify-end gap-3">
+                <div className="flex flex-col sm:flex-row justify-end gap-3">
                   <button
                     type="button"
                     onClick={() => setDeleteConfirmation({ isOpen: false, screenshotId: null })}
-                    className="rounded-md bg-white dark:bg-gray-700 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600"
+                    className="rounded-full bg-white dark:bg-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-900 dark:text-white shadow-lg ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200 hover:scale-105"
                   >
                     Cancel
                   </button>
                   <button
                     type="button"
                     onClick={handleConfirmDelete}
-                    className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500"
+                    className="rounded-full bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-red-500 transition-all duration-200 hover:scale-105"
                   >
                     Delete
                   </button>
@@ -185,19 +185,19 @@ const UploadModal = ({
             </div>
           )}
 
-          <div className="absolute right-4 top-4">
+          <div className="absolute right-3 top-3 sm:right-4 sm:top-4">
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-500 focus:outline-none"
+              className="text-gray-400 hover:text-gray-500 focus:outline-none modal-close-button p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
               disabled={isUploading}
             >
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
          
-            <div className="flex flex-col md:flex-row gap-6">
+            <div className="flex flex-col lg:flex-row gap-6 mt-4">
               {/* Upload Section */}
                {!user?.isPaid && (
               <div className="flex-1">
@@ -206,7 +206,7 @@ const UploadModal = ({
                 </h3>
 
                 <div className="mt-2">
-                  <div className="flex justify-center rounded-lg border border-dashed border-gray-900/25 dark:border-gray-600 px-6 py-10">
+                  <div className="flex justify-center rounded-lg border border-dashed border-gray-900/25 dark:border-gray-600 px-4 sm:px-6 py-8 sm:py-10">
                     <div className="text-center">
                       {preview ? (
                         <div className="mb-4">
@@ -259,11 +259,11 @@ const UploadModal = ({
                   </div>
                 </div>
 
-                <div className="mt-6 flex justify-end gap-3">
+                <div className="mt-6 flex flex-col sm:flex-row justify-end gap-3">
                   <button
                     type="button"
                     onClick={onClose}
-                    className="rounded-md bg-white dark:bg-gray-700 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600"
+                    className="rounded-full bg-white dark:bg-gray-700 px-4 py-2.5 text-sm font-semibold text-gray-900 dark:text-white shadow-lg ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition-all duration-200 hover:scale-105"
                     disabled={isUploading}
                   >
                     Cancel
@@ -272,7 +272,7 @@ const UploadModal = ({
                     type="button"
                     onClick={handleSubmit}
                     disabled={!selectedFile || isUploading}
-                    className={`rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm ${selectedFile && !isUploading
+                    className={`rounded-full px-4 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-200 hover:scale-105 ${selectedFile && !isUploading
                       ? 'bg-indigo-600 hover:bg-indigo-500'
                       : 'bg-indigo-400 cursor-not-allowed'
                       }`}
@@ -283,7 +283,7 @@ const UploadModal = ({
               </div>
  )}
               {/* Uploaded Screenshots Section */}
-              <div className="flex-1 border-t md:border-t-0 md:border-l border-gray-200 dark:border-gray-700 pt-4 md:pt-0 md:pl-6">
+              <div className="flex-1 border-t lg:border-t-0 lg:border-l border-gray-200 dark:border-gray-700 pt-4 lg:pt-0 lg:pl-6">
                 <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
                   Uploaded Screenshots
                 </h4>
@@ -320,7 +320,7 @@ const UploadModal = ({
                               console.log('Delete button clicked for screenshot:', screenshot);
                               handleDeleteClick(screenshot._id);
                             }}
-                            className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-70 hover:opacity-100 transition-opacity duration-200 hover:bg-red-600 z-10 shadow-lg"
+                            className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-70 hover:opacity-100 transition-all duration-200 hover:bg-red-600 z-10 shadow-lg hover:scale-110"
                             title="Delete screenshot"
                           >
                             <TrashIcon className="h-4 w-4" />
