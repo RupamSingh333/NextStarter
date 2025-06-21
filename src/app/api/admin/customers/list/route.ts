@@ -16,16 +16,31 @@ export async function GET(request: NextRequest) {
         { status: 401 }
       );
     }
-
     // Get query parameters
     const searchParams = request.nextUrl.searchParams;
     const page = searchParams.get('page') || '1';
     const perPage = searchParams.get('perPage') || '10';
     const filter = searchParams.get('filter') || '-1';
+    const customer = searchParams.get('customer') || '';
+    const phone = searchParams.get('phone') || '';
+    const email = searchParams.get('email') || '';
+    const lender = searchParams.get('lender') || '';
+
+    // Build filter query string
+    const filterParams = [
+      customer && `customer=${encodeURIComponent(customer)}`,
+      phone && `phone=${encodeURIComponent(phone)}`,
+      email && `email=${encodeURIComponent(email)}`,
+      lender && `lender=${encodeURIComponent(lender)}`,
+    ].filter(Boolean).join('&');
+
+    // Construct the API URL
+    const apiUrl = `${API_BASE_URL}/customers/list?page=${page}&perPage=${perPage}&filter=${filter}${filterParams ? `&${filterParams}` : ''
+      }`;
+
 
     // Call external API
-    const response = await fetch(
-      `${API_BASE_URL}/customers/list?page=${page}&perPage=${perPage}&filter=${filter}`,
+    const response = await fetch(apiUrl,
       {
         headers: {
           'Authorization': `Bearer ${adminToken}`,
@@ -35,9 +50,9 @@ export async function GET(request: NextRequest) {
       }
     );
 
-    
+
     const data = await response.json();
-    
+
     // console.log('response',data);
 
     if (data && !data.isAuthorized) {
@@ -47,7 +62,7 @@ export async function GET(request: NextRequest) {
     if (!response.ok) {
       throw new Error('Failed to fetch customers');
     }
-    
+
     // console.log('>Response status:', data);  
 
     return NextResponse.json(data);
