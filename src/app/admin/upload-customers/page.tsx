@@ -8,6 +8,7 @@ import { toast } from "react-hot-toast";
 import UnauthorizedComponent from '@/components/common/UnauthorizedComponent';
 import { useAuth } from '@/context/AuthContext';
 import PageLoader from "@/components/ui/loading/PageLoader";
+import StatusIcon from "@/components/common/Icon";
 import { ArrowUpIcon, ArrowDownIcon } from "@/icons";
 
 
@@ -203,17 +204,21 @@ export default function UploadCustomersPage() {
                 </div>
 
                 {/* Right: Scan/Validation Card */}
+                {/* {alert("hi")} */}
+
                 <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl flex flex-col items-center justify-center min-h-[340px] p-8 w-full h-full relative overflow-hidden">
                     {/* API compliment or error message */}
+
                     {apiSuccess === true && apiMessage && (
                         <div className="text-emerald-500 font-bold text-lg flex flex-col items-center justify-center h-full">
+                            {<StatusIcon type="pass" className="w-24 h-24  mx-auto relative z-10" />}<br></br>
                             <span className="text-3xl mb-2">🎉</span>
                             {apiMessage}
                         </div>
                     )}
                     {apiSuccess === false && apiMessage && (
                         <div className="text-red-500 font-semibold text-center flex flex-col items-center gap-2">
-                            <div>{apiMessage}</div>
+                            <div>{<StatusIcon type="fail" className="w-24 h-24  mx-auto relative z-10" />}<br></br>{apiMessage}</div>
                             {missingHeaders.length > 0 && (
                                 <div className="mt-2 text-xs text-red-400">Missing: {missingHeaders.join(', ')}</div>
                             )}
@@ -222,82 +227,88 @@ export default function UploadCustomersPage() {
                     {/* Default scanning/validation UI if no API result */}
                     {apiSuccess === null && (
                         <>
-                            {scanStatus === 'idle' && <span className="text-gray-400 text-lg font-medium">Waiting for file...</span>}
-                            {scanStatus === 'scanning' && (
-                                <div className="relative flex flex-col items-center justify-center w-full h-full">
-                                    <div className="relative " >
-                                        <div className="w-[250px] h-[250px] my-5 outline-offset-[10px]  " >
-                                            {/* Corner borders */}
-                                            < div className="absolute left-0 top-0 w-[45px] h-[46px] border-l-[5px] border-t-[5px] border-emerald-400 rounded-tl-[5px]" />
-                                            <div className="absolute right-0 top-0 w-[45px] h-[46px] border-r-[5px] border-t-[5px] border-emerald-400 rounded-tr-[5px]" />
-                                            <div className="absolute left-0 bottom-0 w-[45px] h-[46px] border-l-[5px] border-b-[5px] border-emerald-400 rounded-bl-[5px]" />
-                                            <div className="absolute right-0 bottom-0 w-[45px] h-[46px] border-r-[5px] border-b-[5px] border-emerald-400 rounded-br-[5px]" />
-
-                                            {/* Scanning text */}
-                                            < p className="text-emerald-400 absolute bottom-[-30px] left-[38%] text-base font-semibold animate-[blinker_1s_linear_infinite] uppercase font-sans" >
-                                                <span className="inline-block w-3 h-3 rounded-full bg-emerald-400 relative right-1" />
-                                                Scanning
-                                            </p>
-
-                                            {/* Animated bar */}
-                                            <span className="absolute top-[5%] left-[4%] w-2.5 h-[90%] bg-emerald-400 shadow-[0_0_50px_10px_#18c89b] clip-path-[inset(0)] animate-[x_1s_ease-in-out_infinite_alternate,y_1s_ease-in-out_infinite]" />
-                                        </div>
-
-                                        < style jsx global > {`
-        @keyframes move {
-          0%,
-          100% {
-            transform: translateY(190px);
-          }
-          50% {
-            transform: translateY(0%);
-          }
-          75% {
-            transform: translateY(160px);
-          }
-        }
-
-        @keyframes blinker {
-          50% {
-            opacity: 0;
-          }
-        }
-
-        @keyframes x {
-          to {
-            transform: translateX(-100%);
-            left: 100%;
-          }
-        }
-
-        @keyframes y {
-          33% {
-            clip-path: inset(0 0 0 -100px);
-          }
-          50% {
-            clip-path: inset(0 0 0 0);
-          }
-          83% {
-            clip-path: inset(0 -100px 0 0);
-          }
-        }
-      `} </style>
-                                    </div>
-
-
-                                </div>
-                            )}
-                            {scanStatus === 'success' && (
-                                <span className="text-emerald-500 font-semibold text-lg">Excel headers are valid!</span>
-                            )}
-                            {scanStatus === 'error' && (
-                                <div className="text-red-500 font-semibold text-center flex flex-col items-center gap-2">
-                                    <div>Excel header validation failed.</div>
-                                    {scanError && <div>{scanError}</div>}
-                                    {missingHeaders.length > 0 && (
-                                        <div className="mt-2 text-xs text-red-400">Missing: {missingHeaders.join(', ')}</div>
+                            {isUploading ? (
+                                <PageLoader />
+                            ) : (
+                                <>
+                                    {scanStatus === 'idle' && (
+                                        <span className="text-gray-400 text-lg font-medium">Waiting for file...</span>
                                     )}
-                                </div>
+                                    {scanStatus === 'scanning' && (
+                                        <div className="relative flex flex-col items-center justify-center w-full h-full">
+                                            <div className="relative">
+                                                <div className="w-[250px] h-[250px] my-5 outline-offset-[10px]">
+                                                    {/* Corner borders */}
+                                                    <div className="absolute left-0 top-0 w-[45px] h-[46px] border-l-[5px] border-t-[5px] border-emerald-400 rounded-tl-[5px]" />
+                                                    <div className="absolute right-0 top-0 w-[45px] h-[46px] border-r-[5px] border-t-[5px] border-emerald-400 rounded-tr-[5px]" />
+                                                    <div className="absolute left-0 bottom-0 w-[45px] h-[46px] border-l-[5px] border-b-[5px] border-emerald-400 rounded-bl-[5px]" />
+                                                    <div className="absolute right-0 bottom-0 w-[45px] h-[46px] border-r-[5px] border-b-[5px] border-emerald-400 rounded-br-[5px]" />
+
+                                                    {/* Scanning text */}
+                                                    <p className="text-emerald-400 absolute bottom-[-30px] left-[38%] text-base font-semibold animate-[blinker_1s_linear_infinite] uppercase font-sans">
+                                                        <span className="inline-block w-3 h-3 rounded-full bg-emerald-400 relative right-1" />
+                                                        Scanning
+                                                    </p>
+
+                                                    {/* Animated bar */}
+                                                    <span className="absolute top-[5%] left-[4%] w-2.5 h-[90%] bg-emerald-400 shadow-[0_0_50px_10px_#18c89b] clip-path-[inset(0)] animate-[x_1s_ease-in-out_infinite_alternate,y_1s_ease-in-out_infinite]" />
+                                                </div>
+
+                                                <style jsx global>{`
+                @keyframes move {
+                  0%,
+                  100% {
+                    transform: translateY(190px);
+                  }
+                  50% {
+                    transform: translateY(0%);
+                  }
+                  75% {
+                    transform: translateY(160px);
+                  }
+                }
+
+                @keyframes blinker {
+                  50% {
+                    opacity: 0;
+                  }
+                }
+
+                @keyframes x {
+                  to {
+                    transform: translateX(-100%);
+                    left: 100%;
+                  }
+                }
+
+                @keyframes y {
+                  33% {
+                    clip-path: inset(0 0 0 -100px);
+                  }
+                  50% {
+                    clip-path: inset(0 0 0 0);
+                  }
+                  83% {
+                    clip-path: inset(0 -100px 0 0);
+                  }
+                }
+              `}</style>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {scanStatus === 'success' && (
+                                        <span className="text-emerald-500 font-semibold text-lg">{<StatusIcon type="success" className="w-24 h-24  mx-auto relative z-10" />}<br></br>Excel headers are valid!</span>
+                                    )}
+                                    {scanStatus === 'error' && (
+                                        <div className="text-red-500 font-semibold text-center flex flex-col items-center gap-2">
+                                            <div>{<StatusIcon type="fail" className="w-24 h-24  mx-auto relative z-10" />}<br></br>Excel header validation failed.</div>
+                                            {scanError && <div>{scanError}</div>}
+                                            {missingHeaders.length > 0 && (
+                                                <div className="mt-2 text-xs text-red-400">Missing: {missingHeaders.join(', ')}</div>
+                                            )}
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </>
                     )}
