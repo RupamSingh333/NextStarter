@@ -157,7 +157,7 @@ const Header = () => {
           <div className="flex-shrink-0 transform hover:scale-105 transition-transform duration-300">
             <Link href="/" className="block p-2 rounded-2xl">
               <span className="font-bold text-xl sm:text-2xl lg:text-3xl gradient-text dark:gradient-text transition-colors duration-300">
-                RepayKaro1
+                RepayKaro
               </span>
             </Link>
           </div>

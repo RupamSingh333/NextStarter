@@ -119,7 +119,7 @@ export default function ScratchCards() {
       <h2 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-gray-200">Your Rewards</h2>
 
       {cards.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {cards.map(card => (
             <div key={card._id} className="relative rounded-xl border shadow-sm bg-white dark:bg-gray-800 overflow-hidden hover-animate">
               {card.scratched === 0 ? (
