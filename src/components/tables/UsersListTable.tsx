@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { useDebounce } from '@/hooks/useDebounce';
 
 import React from 'react';
 import {
@@ -18,15 +19,19 @@ import { Modal } from "@/components/ui/modal";
 import Label from "@/components/form/Label";
 import { toast } from 'react-hot-toast';
 import { useModal } from "@/hooks/useModal";
-import { PencilSquareIcon, UserPlusIcon } from '@heroicons/react/24/outline';
+import { PencilSquareIcon } from '@heroicons/react/24/outline';
 import { UserPermissionGuard } from '@/components/common/PermissionGuard';
 import UnauthorizedComponent from '@/components/common/UnauthorizedComponent';
+import * as XLSX from 'xlsx';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FiFilter, FiChevronDown, FiChevronUp, FiX } from 'react-icons/fi';
 
 interface Permission {
     module: string;
     actions: string[];
     _id?: string;
 }
+
 interface UpdateUserData {
     name: string;
     email: string;
@@ -45,7 +50,11 @@ interface User {
     __v: number;
     createdAt: Date;
     updatedAt: Date;
+}
 
+interface Filters {
+    name: string;
+    email: string;
 }
 
 const PermissionToggle = ({
@@ -171,6 +180,7 @@ const PermissionManager = ({
 };
 
 export default function UsersListTable() {
+    const [allUsers, setAllUsers] = useState<User[]>([]); // Store all fetched users
     const [userList, setUserList] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
@@ -180,6 +190,7 @@ export default function UsersListTable() {
     const [editUserId, setEditUserId] = useState<string | null>(null);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isAuthorized, setIsAuthorized] = useState(true);
+    const [showFilterPanel, setShowFilterPanel] = useState(false);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -199,6 +210,13 @@ export default function UsersListTable() {
     const { isOpen, openModal, closeModal } = useModal();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [activeTab, setActiveTab] = useState('basicDetails');
+    const [filters, setFilters] = useState<Filters>({
+        name: '',
+        email: '',
+    });
+
+    // Debounced filters with 300ms delay
+    const debouncedFilters = useDebounce(filters, 300);
 
     const tabs = [
         { id: 'basicDetails', label: 'Basic Details' },
@@ -208,28 +226,29 @@ export default function UsersListTable() {
     const basePageSizes = [10, 25, 50, 100, 500];
     const { admin } = useAuth();
 
-    const getPageSizeOptions = () => {
+    const getPageSizeOptions = useCallback(() => {
         if (totalRecords === 0) return [10];
         const filtered = basePageSizes.filter((size) => size < totalRecords);
         if (!filtered.includes(totalRecords)) {
             filtered.push(totalRecords);
         }
         return [...new Set(filtered)].sort((a, b) => a - b);
-    };
+    }, [totalRecords]);
 
     const pageSizeOptions = getPageSizeOptions();
 
-    const fetchUsers = async (page: number, size: number) => {
+    // Fetch all users initially
+    const fetchAllUsers = useCallback(async () => {
         setLoading(true);
         try {
-            const response = await fetch(`/api/admin/users/list?page=${page}&perPage=${size}`, {
+            const response = await fetch(`/api/admin/users/list?perPage=1000`, {
                 credentials: 'include',
             });
             const data = await response.json();
             if (data.success) {
-                setUserList(data.data);
+                setAllUsers(data.data);
                 setTotalRecords(data.totalRecords);
-                setTotalPages(Math.ceil(data.totalRecords / size));
+                setTotalPages(Math.ceil(data.totalRecords / 1000));
                 setIsAuthorized(true);
             } else if (data.isAuthorized === false) {
                 setIsAuthorized(false);
@@ -242,7 +261,40 @@ export default function UsersListTable() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    // Filter users client-side based on filters and pagination
+    const filteredUsers = useMemo(() => {
+        let result = [...allUsers];
+
+        // Apply text filters
+        if (debouncedFilters.name) {
+            result = result.filter(user =>
+                user.name.toLowerCase().includes(debouncedFilters.name.toLowerCase())
+            );
+        }
+        if (debouncedFilters.email) {
+            result = result.filter(user =>
+                user.email.toLowerCase().includes(debouncedFilters.email.toLowerCase())
+            );
+        }
+
+        return result;
+    }, [allUsers, debouncedFilters]);
+
+    // Update paginated list when filters or pagination changes
+    useEffect(() => {
+        const start = (currentPage - 1) * pageSize;
+        const end = start + pageSize;
+        setUserList(filteredUsers.slice(start, end));
+        setTotalPages(Math.ceil(filteredUsers.length / pageSize));
+        setTotalRecords(filteredUsers.length);
+    }, [currentPage, pageSize, filteredUsers]);
+
+    // Initial fetch
+    useEffect(() => {
+        fetchAllUsers();
+    }, [fetchAllUsers]);
 
     const handleEditClick = (user: User) => {
         setEditUserId(user._id);
@@ -300,7 +352,7 @@ export default function UsersListTable() {
         try {
             const result = await promise;
             if (result.success) {
-                fetchUsers(currentPage, pageSize);
+                fetchAllUsers();
                 setCreateFormData({ name: '', email: '', password: '', permissions: [] });
                 setIsCreateModalOpen(false);
             }
@@ -315,15 +367,11 @@ export default function UsersListTable() {
         if (!userId) return;
         setIsSubmitting(true);
 
-        // Create update data without _id in permissions
         const toUpdateData = {
             email: email,
             isActive: !status,
-            onlyStatus:true
-
+            onlyStatus: true
         };
-
-      
 
         const promise = fetch(`/api/admin/users/update/${userId}`, {
             method: 'PUT',
@@ -348,8 +396,7 @@ export default function UsersListTable() {
         try {
             const result = await promise;
             if (result.success) {
-                fetchUsers(currentPage, pageSize);
-               
+                fetchAllUsers();
             }
         } catch (error) {
             console.error('Update error:', error);
@@ -357,6 +404,7 @@ export default function UsersListTable() {
             setIsSubmitting(false);
         }
     };
+
     const handleUpdate = async () => {
         if (!editUserId) return;
 
@@ -402,7 +450,7 @@ export default function UsersListTable() {
         try {
             const result = await promise;
             if (result.success) {
-                fetchUsers(currentPage, pageSize);
+                fetchAllUsers();
                 closeModal();
             }
         } catch (error) {
@@ -412,9 +460,71 @@ export default function UsersListTable() {
         }
     };
 
-    useEffect(() => {
-        fetchUsers(currentPage, pageSize);
-    }, [currentPage, pageSize]);
+    const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFilters(prev => ({ ...prev, [name]: value }));
+        setCurrentPage(1);
+    };
+
+    const resetFilters = () => {
+        setFilters({
+            name: '',
+            email: '',
+        });
+        setCurrentPage(1);
+    };
+
+    const handleDownloadExcel = () => {
+        // Prepare data for Excel
+        const data = userList.map((cust, idx) => ({
+            'Sr. No.': (currentPage - 1) * pageSize + idx + 1,
+            'Name': cust.name,
+            'Email': cust.email,
+            'Status': cust.isActive ? 'Active' : 'InActive',
+            'CreatedAt': cust?.createdAt || "N/A",
+            'UpdatedAt': cust?.updatedAt || "N/A",
+        }));
+
+        // Create sheet
+        const ws = XLSX.utils.json_to_sheet(data);
+        // Add header row manually for bold/freeze/filter
+        const header = [
+            'Sr. No.',
+            'Name',
+            'Email',
+            'Status',
+            'CreatedAt',
+            'UpdatedAt'
+        ];
+        XLSX.utils.sheet_add_aoa(ws, [header], { origin: 'A1' });
+        // Style header row: bold, dark text, neutral background
+        header.forEach((_, idx) => {
+            const cell = ws[XLSX.utils.encode_cell({ r: 0, c: idx })];
+            if (cell) cell.s = {
+                font: { bold: true, color: { rgb: '1E293B' } }, // Tailwind slate-800
+                fill: { fgColor: { rgb: 'E5E7EB' } }, // Tailwind slate-200
+                alignment: { horizontal: 'center', vertical: 'center' },
+            };
+        });
+        // Freeze header row (for both Excel and Google Sheets compatibility)
+        ws['!freeze'] = { xSplit: 0, ySplit: 1 };
+        ws['!panes'] = [{ ySplit: 1, topLeftCell: 'A2', activePane: 'bottomLeft', state: 'frozen' }];
+        // Add autofilter to header row
+        ws['!autofilter'] = { ref: `A1:F${data.length + 2}` };
+        // Set column widths
+        ws['!cols'] = [
+            { wch: 8 }, { wch: 18 }, { wch: 14 }, { wch: 14 }, { wch: 14 },
+            { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 22 }, { wch: 10 }
+        ];
+
+        // Name file with date/time
+        const now = new Date();
+        const pad = (n: number) => n.toString().padStart(2, '0');
+        const fileName = `users_list_${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}_${pad(now.getHours())}_${pad(now.getMinutes())}-${pad(now.getMilliseconds())}.xlsx`;
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Users');
+        XLSX.writeFile(wb, fileName);
+    };
 
     if (!isAuthorized) {
         return <UnauthorizedComponent />;
@@ -430,30 +540,108 @@ export default function UsersListTable() {
 
             <UserPermissionGuard action="create">
                 <div className="flex justify-between items-center p-4 gap-4 flex-wrap">
-                    <div className="flex items-center gap-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-white whitespace-nowrap">Page Size:</label>
-                        <select
-                            value={pageSize}
-                            onChange={(e) => {
-                                setPageSize(Number(e.target.value));
-                                setCurrentPage(1);
-                            }}
-                            className="w-full py-2 pl-3 pr-8 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg appearance-none dark:bg-dark-900 h-9 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                        >
-                            {pageSizeOptions.map((size) => (
-                                <option key={size} value={size}>
-                                    {size}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                    {/* Main Filters Section */}
+                    <div className="p-4 space-y-4 md:space-y-0 md:flex md:items-center md:justify-between md:gap-4 border-b border-gray-200 dark:border-white/[0.05]">
+                        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                            {/* Page Size Selector */}
+                            <div className="flex items-center gap-2 min-w-[150px]">
+                                <label className="text-sm font-medium text-gray-700 dark:text-white whitespace-nowrap">
+                                    Page Size:
+                                </label>
+                                <select
+                                    value={pageSize}
+                                    onChange={(e) => {
+                                        setPageSize(Number(e.target.value));
+                                        setCurrentPage(1);
+                                    }}
+                                    className="w-full py-2 pl-3 pr-8 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg appearance-none dark:bg-dark-900 h-9 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 cursor-pointer"
+                                >
+                                    {pageSizeOptions.map((size) => (
+                                        <option key={size} value={size}>
+                                            {size}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
 
-                    <span
-                        onClick={handleCreateClick}
-                        className="inline-flex items-center px-2.5 py-2 justify-center gap-1 rounded-full font-medium text-sm bg-brand-50 text-brand-500 dark:bg-brand-500/15 dark:text-brand-400 cursor-pointer p-8"
-                    >
-                        <UserPlusIcon className="w-4 h-4" />  Add User
-                    </span>
+                            {/* Toggle Filter Panel Button */}
+                            <a
+                                onClick={() => setShowFilterPanel(!showFilterPanel)}
+                                className="inline-flex items-center px-5 py-3 justify-center gap-1 rounded-full font-medium text-sm bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500 cursor-pointer"
+                            >
+                                <FiFilter className="w-4 h-4" />
+                                {showFilterPanel ? 'Hide Filters' : 'Advanced Filters'}
+                                {showFilterPanel ? <FiChevronUp className="w-4 h-4" /> : <FiChevronDown className="w-4 h-4" />}
+                            </a>
+                            <a
+                                onClick={resetFilters}
+                                className="inline-flex items-center px-5 py-3 justify-center gap-1 rounded-full font-medium text-sm bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500 cursor-pointer"
+                            >
+                                <FiX className="w-4 h-4" />
+                                Reset Filters
+                            </a>
+                        </div>
+
+                        {/* Excel Download Button - floated right */}
+                       
+                    </div>
+                     <div className="ml-auto">
+                           
+                             <a
+                                onClick={handleCreateClick}
+                                className="mr-2 inline-flex items-center px-5 py-3 justify-center gap-1 rounded-full font-medium text-sm bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500 cursor-pointer"
+                            >
+                              Add User
+                            </a>
+                            <a
+                                onClick={handleDownloadExcel}
+                                className="inline-flex items-center px-5 py-3 justify-center gap-1 rounded-full font-medium text-sm bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500 cursor-pointer"
+                            >
+                                Download
+                            </a>
+                        </div>
+
+                    <AnimatePresence>
+                        {showFilterPanel && (
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                transition={{ duration: 0.3, ease: "easeInOut" }}
+                                className="overflow-hidden w-full"
+                            >
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-white/[0.05]">
+                                    <div className="space-y-1">
+                                        <label className="text-sm font-medium text-gray-700 dark:text-white">
+                                            Name:
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="name"
+                                            value={filters.name}
+                                            onChange={handleFilterChange}
+                                            className="w-full py-2 px-3 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg dark:bg-dark-900 h-9 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                                            placeholder="Search by name"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <label className="text-sm font-medium text-gray-700 dark:text-white">
+                                            Email:
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="email"
+                                            value={filters.email}
+                                            onChange={handleFilterChange}
+                                            className="w-full py-2 px-3 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg dark:bg-dark-900 h-9 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                                            placeholder="Search by email"
+                                        />
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
             </UserPermissionGuard>
 
@@ -481,27 +669,21 @@ export default function UsersListTable() {
                                     <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400">
                                         <div key={`${user._id}_new`} className="flex items-center space-x-2">
                                             <label className="inline-flex items-center cursor-pointer">
-                                                <input 
+                                                <input
                                                     onChange={() => changeStatus(user._id, user.isActive, user.email)}
                                                     type="checkbox"
                                                     className="sr-only peer"
                                                     checked={user.isActive ? true : false}
                                                     disabled={admin?.email === user.email}
-
                                                 />
                                                 <div className="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600">
                                                 </div>
-
                                             </label>
                                         </div>
-                                        {/* <Badge size="sm" color={user.isActive ? 'success' : 'error'}>
-                                            {user.isActive ? 'Active' : 'Inactive'}
-                                        </Badge> */}
                                     </TableCell>
 
                                     <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400">
                                         <UserPermissionGuard action="update">
-                                            {/* {admin?.email !== user.email && ( */}
                                             <button
                                                 onClick={() => handleEditClick(user)}
                                                 className="p-2 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-all"
@@ -510,7 +692,6 @@ export default function UsersListTable() {
                                             >
                                                 <PencilSquareIcon className="w-5 h-5" />
                                             </button>
-                                            {/* )} */}
                                         </UserPermissionGuard>
                                     </TableCell>
                                 </TableRow>
@@ -561,8 +742,6 @@ export default function UsersListTable() {
                                 );
                             })}
                         </div>
-
-
 
                         {/* Tab Content */}
                         <div className="w-3/4 p-4 text-sm text-gray-700 dark:text-white/90">
