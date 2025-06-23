@@ -11,14 +11,34 @@ import { useState } from 'react';
 export default function HomePage() {
     const [acceptedTerms, setAcceptedTerms] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
-
+    // const [isVisible, setIsVisible] = useState(false);
     const handleAcceptTerms = () => {
         setAcceptedTerms(true);
         setIsModalOpen(false);
     };
+    // useEffect(() => {
+    //     const handleScroll = () => {
+    //         const rocketSection = document.getElementById('rocket-section');
+    //         if (!rocketSection) return;
+
+    //         const rect = rocketSection.getBoundingClientRect();
+    //         const isInView = rect.top < window.innerHeight * 0.75; // Trigger when 75% in view
+
+    //         if (isInView) {
+    //             setIsVisible(true);
+    //             window.removeEventListener('scroll', handleScroll); // Remove listener after triggering
+    //         }
+    //     };
+
+    //     window.addEventListener('scroll', handleScroll);
+    //     handleScroll(); // Check on mount in case already visible
+
+    //     return () => window.removeEventListener('scroll', handleScroll);
+    // }, []);
 
     return (
         <div className="min-h-screen flex flex-col">
+
             <Header />
 
             <main className="flex-grow">
@@ -79,16 +99,50 @@ export default function HomePage() {
                 </section>
 
                 {/* RepayKaro Overview */}
-                <section className="py-20 bg-gray-50 dark:bg-gray-800  shadow-inner-top">
-                    <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-4xl">
-                        <ScrollAnimation animation="fade" delay={400}>
-                            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 animate-fadeIn">
-                                About <span className="gradient-text animate-gradient">RepayKaro</span>
-                            </h2>
-                            <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed animate-fadeIn" style={{ animationDelay: '0.6s' }}>
-                                RepayKaro specializes in helping lenders recover bad debts efficiently, while offering customers the motivation to repay by providing attractive incentives.
-                            </p>
-                        </ScrollAnimation>
+                <section className="pb-10 md:pb-15 bg-gray-50 dark:bg-gray-800  shadow-inner-top">
+                    <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-4xl"> {/* Increased max-width */}
+                        <div className="flex flex-col md:flex-row items-center gap-12"> {/* Flex container */}
+                            {/* Image Column (Left) */}
+
+                            <ScrollAnimation animation="slideLeft" className="relative h-64 md:h-66 flex items-center justify-center  overflow-hidden " delay={900}>
+                                <div className="absolute inset-0 bg-gradient-to-r  animate-gradient-shift"></div>
+
+                                <Image
+                                    src="/images/mission_white.svg"
+                                    alt="Decorative background"
+                                    width={178}
+                                    height={100}
+                                    className="dark:hidden "
+
+                                />
+                                <Image
+                                    src="/images/mission_black.svg"
+                                    alt="Decorative background"
+                                    width={178}
+                                    height={100}
+                                    className="hidden dark:block "
+
+                                />
+
+                                <div className="absolute inset-0  from-white/10 to-transparent animate-shine"></div>
+                            </ScrollAnimation>
+
+
+                            {/*  (Right) */}
+                            <div className="w-full">
+                                <ScrollAnimation animation="fade" delay={400}>
+                                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 animate-fadeIn">
+                                        About <span className="gradient-text animate-gradient">RepayKaro</span>
+                                    </h2>
+
+                                    <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed animate-fadeIn" style={{ animationDelay: '0.6s' }}>
+
+                                        RepayKaro specializes in helping lenders recover bad debts efficiently, while offering customers the motivation to repay by providing attractive incentives.
+                                    </p>
+
+                                </ScrollAnimation>
+                            </div>
+                        </div>
                     </div>
                 </section>
 
@@ -146,6 +200,7 @@ export default function HomePage() {
                                     Customers are provided with different repayment solutions depending on their financial situation. Whether they want to pay off pending dues, foreclose a loan, or settle the loan completely, we provide them with the flexibility to choose an option that works best for them.
                                 </p>
                             </ScrollAnimation>
+
                         </div>
                     </div>
                 </section>
@@ -206,31 +261,102 @@ export default function HomePage() {
                                     </div>
                                 </ScrollAnimation>
                             ))}
+
+                        </div>
+
+                    </div>
+
+
+
+
+                </section>
+
+
+                {/* Incentives and Rewards Section */}
+                <section className="py-2 bg-gray-50 dark:bg-gray-800 shadow-inner-top">
+                    <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl"> {/* Increased max-width */}
+                        <div className="flex flex-col md:flex-row items-center gap-12"> {/* Flex container */}
+                            {/* Image Column (Left) */}
+                            <ScrollAnimation animation="slideLeft" className="relative h-64 md:h-96   flex items-center justify-center  overflow-hidden " delay={500}>
+                                <div className="absolute inset-0 bg-gradient-to-r  animate-gradient-shift"></div>
+                                <Image
+                                    src="/images/cup.png"
+                                    alt="FAQ Illustration"
+
+                                    className=' object-contain rounded-3xl animate-float'
+                                    width={272}
+                                    height={472}
+                                />
+
+                                <div className="absolute inset-0  from-white/10 to-transparent animate-shine"></div>
+                            </ScrollAnimation>
+
+
+                            {/*  (Right) */}
+                            <div className="w-full">
+                                <ScrollAnimation animation="fade" className="mb-12" delay={400}>
+                                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 animate-fadeIn">
+                                        Incentives and Rewards: A <span className="gradient-text animate-gradient">Win-Win Solution</span>
+                                    </h2>
+                                    <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed animate-fadeIn" style={{ animationDelay: '0.6s' }}>
+                                        RepayKaro takes a unique approach to debt recovery by offering customers exciting incentives in return for prompt repayment. These rewards can be redeemed on major online platforms, making the repayment process more engaging and rewarding for customers.
+                                    </p>
+                                    <div className="mt-8 animate-fadeIn" style={{ animationDelay: '0.8s' }}>
+                                        <Link
+                                            href="#get-started"
+                                            className="inline-flex justify-center items-center px-8 py-4 border border-transparent text-base font-medium rounded-2xl text-white gradient-bg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transform hover:scale-105 transition-all duration-500 shadow-xl hover:shadow-2xl animate-pulse-subtle"
+                                        >
+                                            Get started
+                                        </Link>
+                                    </div>
+                                </ScrollAnimation>
+
+
+                            </div>
                         </div>
                     </div>
                 </section>
+                {/* Partners Section */}
+                <section className="py-2 bg-gray-50 dark:bg-gray-800  shadow-inner-top">
+                    <div className="relative min-h-[700px]  mt-1">
+                        {/* Cat Background Image */}
+                        <div className="absolute inset-0 z-0">
+                            <Image
+                                src="/images/cat_white.svg"
+                                alt="Decorative background"
+                                fill
+                                className="object-cover rounded-3xl animate-float dark:hidden "
 
-                {/* Incentives and Rewards Section */}
-                <section className="py-20 bg-gray-50 dark:bg-gray-800 shadow-inner-top">
-                    <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-4xl">
-                        <ScrollAnimation animation="fade" delay={400}>
+                            />
+                            <Image
+                                src="/images/cat_black.svg"
+                                alt="Decorative background"
+                                fill
+                                className="hidden object-cover rounded-3xl animate-float dark:block "
+
+                            />
+                        </div>
+
+                        {/* Content Container (positioned above background) */}
+                        <div className="relative  p-8 md:p-12 max-w-2xl">
                             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 animate-fadeIn">
-                                Incentives and Rewards: A <span className="gradient-text animate-gradient">Win-Win Solution</span>
+                                There will : A <span className="gradient-text animate-gradient">be partner</span>
                             </h2>
                             <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed animate-fadeIn" style={{ animationDelay: '0.6s' }}>
                                 RepayKaro takes a unique approach to debt recovery by offering customers exciting incentives in return for prompt repayment. These rewards can be redeemed on major online platforms, making the repayment process more engaging and rewarding for customers.
                             </p>
-                            <div className="mt-8 animate-fadeIn" style={{ animationDelay: '0.8s' }}>
-                                <Link
-                                    href="#get-started"
-                                    className="inline-flex justify-center items-center px-8 py-4 border border-transparent text-base font-medium rounded-2xl text-white gradient-bg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transform hover:scale-105 transition-all duration-500 shadow-xl hover:shadow-2xl animate-pulse-subtle"
-                                >
-                                    Get started
-                                </Link>
-                            </div>
-                        </ScrollAnimation>
+                        </div>
+
+                        {/* Animation Style */}
+                        <style jsx global>{`
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(.9); }
+      50% { transform: translateY(-20px) scale(1); }
+    }
+  `}</style>
                     </div>
                 </section>
+
 
                 {/* Get Started / Contact Form */}
                 <section id="get-started" className="py-20 bg-white dark:bg-gray-900  shadow-inner-top">
@@ -242,6 +368,7 @@ export default function HomePage() {
                             <p className="text-lg text-gray-600 dark:text-gray-300 mb-2 animate-fadeIn" style={{ animationDelay: '0.5s' }}>100% Satisfaction Guaranteed</p>
                             <p className="text-lg text-gray-600 dark:text-gray-300 animate-fadeIn" style={{ animationDelay: '0.7s' }}>Reach out to us via our contact form, and a member of our team will be in touch to help you get started.</p>
                         </ScrollAnimation>
+                        
                         <ScrollAnimation animation="slideUp" className="space-y-6" delay={600}>
                             <form className="space-y-6 bg-white dark:bg-gray-800 p-8 md:p-12 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 animate-fadeIn">
                                 {/* Form fields with animations */}
@@ -286,50 +413,102 @@ export default function HomePage() {
                                 </div>
                             </form>
                         </ScrollAnimation>
+                        {/* <Image
+                            id="rocket-section"
+                            src="/images/rocket.svg"
+                            alt="Rocket Illustration"
+                            
+                            width={272}
+                            height={472}
+                            style={{
+                                animationName: isVisible ? 'rocketLaunch' : 'none',
+                                animationDuration: '2s',
+                                animationTimingFunction: 'ease-in',
+                                animationFillMode: 'forwards',
+                                animationIterationCount: 1,
+                                animationPlayState: isVisible ? 'running' : 'paused'
+                            }}
+                        />
+
+                        <style jsx global>{`
+    @keyframes rocketLaunch {
+      0% { transform: translateY(0) rotate(0); opacity: 0; }
+      30% { transform: translateY(-20px) rotate(-5deg); }
+      70% { transform: translateY(-100px) rotate(2deg); }
+      100% { transform: translateY(-200px) rotate(0); opacity: 1; }
+    }
+  `}</style> */}
+
                     </div>
                 </section>
 
                 {/* FAQ Section */}
-                <section className="py-20 bg-gray-50 dark:bg-gray-800 rounded-3xl shadow-inner-top">
-                    <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
-                        <ScrollAnimation animation="fade" className="text-center mb-12" delay={400}>
-                            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4 animate-fadeIn">
-                                <span className="gradient-text animate-gradient">FAQ</span> - Frequently Asked Questions
-                            </h2>
-                            <p className="text-lg text-gray-600 dark:text-gray-300 animate-fadeIn" style={{ animationDelay: '0.6s' }}>
-                                Get knowledge beforehand.
-                            </p>
-                        </ScrollAnimation>
-                        <div className="space-y-6">
-                            {[
-                                {
-                                    question: "What is RepayKaro?",
-                                    answer: "RepayKaro is a platform that helps lenders recover bad debts by providing attractive repayment incentives to customers, promoting a smoother debt recovery process."
-                                },
-                                {
-                                    question: "How do incentives work?",
-                                    answer: "Customers receive incentives like discounts, gift coupons, or reward points upon successful repayment. These can be redeemed on various leading platforms."
-                                },
-                                {
-                                    question: "Is my data secure?",
-                                    answer: "Yes, we prioritize the security of your data. We use industry-standard encryption and security protocols to protect your information."
-                                }
-                            ].map((faq, index) => (
-                                <ScrollAnimation
-                                    key={index}
-                                    animation="slideUp"
-                                    delay={400 + (index * 200)}
-                                    className="hover-card"
-                                >
-                                    <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-md animate-fadeIn" style={{ animationDelay: `${0.8 + (index * 0.2)}s` }}>
-                                        <h3 className="font-semibold text-lg text-gray-900 dark:text-white mb-2">{faq.question}</h3>
-                                        <p className="text-gray-600 dark:text-gray-300">{faq.answer}</p>
-                                    </div>
+                <section className="py-20 bg-gray-50 dark:bg-gray-800  shadow-inner-top">
+                    <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl"> {/* Increased max-width */}
+                        <div className="flex flex-col md:flex-row items-center gap-12"> {/* Flex container */}
+                            {/* Image Column (Left) */}
+
+                            <ScrollAnimation animation="slideLeft" className="relative h-64 md:h-96 flex items-center justify-center  overflow-hidden " delay={500}>
+                                <div className="absolute inset-0 bg-gradient-to-r  animate-gradient-shift"></div>
+                                <Image
+                                    src="/images/FAQ_White.svg"
+                                    alt="FAQ Illustration"
+
+                                    className='object-contain rounded-3xl animate-float'
+                                    width={272}
+                                    height={472}
+                                />
+
+                                <div className="absolute inset-0  from-white/10 to-transparent animate-shine"></div>
+                            </ScrollAnimation>
+
+
+                            {/* FAQ Content Column (Right) */}
+                            <div className="w-full">
+                                <ScrollAnimation animation="fade" className="mb-12" delay={400}>
+                                    <h2 className="text-3xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4 animate-fadeIn">
+                                        <span className="gradient-text animate-gradient">FAQ</span> - Frequently Asked Questions
+                                    </h2>
+                                    <p className="text-lg text-gray-600 dark:text-gray-300 animate-fadeIn" style={{ animationDelay: '0.6s' }}>
+                                        Get knowledge beforehand.
+                                    </p>
                                 </ScrollAnimation>
-                            ))}
+
+                                <div className="space-y-6">
+                                    {[
+                                        {
+                                            question: "What is RepayKaro?",
+                                            answer: "RepayKaro is a platform that helps lenders recover bad debts by providing attractive repayment incentives to customers, promoting a smoother debt recovery process."
+                                        },
+                                        {
+                                            question: "How do incentives work?",
+                                            answer: "Customers receive incentives like discounts, gift coupons, or reward points upon successful repayment. These can be redeemed on various leading platforms."
+                                        },
+                                        {
+                                            question: "Is my data secure?",
+                                            answer: "Yes, we prioritize the security of your data. We use industry-standard encryption and security protocols to protect your information."
+                                        }
+                                    ].map((faq, index) => (
+                                        <ScrollAnimation
+                                            key={index}
+                                            animation="slideUp"
+                                            delay={400 + (index * 200)}
+                                            className="hover-card"
+                                        >
+                                            <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-md animate-fadeIn" style={{ animationDelay: `${0.8 + (index * 0.2)}s` }}>
+                                                <h3 className="font-semibold text-lg text-gray-900 dark:text-white mb-2">{faq.question}</h3>
+                                                <p className="text-gray-600 dark:text-gray-300">{faq.answer}</p>
+                                            </div>
+                                        </ScrollAnimation>
+                                    ))}
+                                </div>
+
+                            </div>
+
                         </div>
                     </div>
                 </section>
+
             </main>
 
             <Footer />
