@@ -15,6 +15,8 @@ import {
 
 } from 'lucide-react';
 import Head from 'next/head';
+import { User } from '@/types/User';
+import ScrollAnimation from '@/components/common/ScrollAnimation';
 
 interface Timeline {
     _id: string;
@@ -66,59 +68,43 @@ export default function Home() {
     return (
         <DashboardLayout>
             <Head>
-              <title>Timeline</title>
+                <title>Timeline</title>
             </Head>
-            <main className="flex-1 flex flex-col overflow-y-auto min-h-0 p-0">
-                <div className="sticky top-0 z-20 bg-white dark:bg-gray-800">
-                  {user && <WelcomeHeader user={user as any} />}
+            <main className="flex-1 flex flex-col overflow-y-auto min-h-0 p-0 bg-gradient-to-b from-white to-purple-50 dark:from-gray-900 dark:to-gray-800">
+                <div className="sticky top-0 z-20 bg-white/80 dark:bg-gray-800/80 backdrop-blur border-b border-gray-100 dark:border-gray-700 shadow-sm">
+                    {user && <WelcomeHeader user={user as unknown as User} />}
                 </div>
-                <div className="pt-2 md:pt-4 p-2 md:p-4 lg:p-8">
-                    {loading ? (
-                        <div className="max-w-2xl mx-auto p-6">
-                            <div className="relative border-l-2 border-gray-300 dark:border-gray-700 pl-6">
-                                {[1, 2, 3].map((_, i) => {
-                                    const Icon = icons[i % icons.length];
-                                    return (
-                                        <motion.div
-                                            key={i}
-                                            initial="hidden"
-                                            animate="visible"
-                                            transition={{ duration: 0.6, delay: i * 0.2 }}
-                                            className="mb-10 last:mb-0 relative"
-                                        >
-                                            {/* Icon */}
-                                            <div className="absolute -left-[50px] top-1.5 bg-white dark:bg-gray-900 p-3 rounded-full shadow-md">
-                                                <Icon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                <section className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 flex flex-col items-center min-h-[60vh]">
+                    <ScrollAnimation animation="fade" delay={200}>
+                        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2 text-center animate-fadeIn">
+                            Your Activity Timeline
+                        </h1>
+                        <p className="text-lg text-gray-600 dark:text-gray-300 mb-8 text-center animate-fadeIn" style={{ animationDelay: '0.3s' }}>
+                            Track your recent actions, rewards, and important events here.
+                        </p>
+                    </ScrollAnimation>
+                    <div className="w-full max-w-2xl mx-auto">
+                        {loading ? (
+                            <ScrollAnimation animation="slideUp" delay={300}>
+                                <div className="p-6 rounded-2xl shadow-xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-700 flex flex-col gap-6 animate-fadeIn">
+                                    {[1, 2, 3].map((_, i) => (
+                                        <div key={i} className="flex items-center gap-4 animate-pulse-subtle">
+                                            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-400 to-pink-400 opacity-30" />
+                                            <div className="flex-1">
+                                                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-2" />
+                                                <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded w-1/3" />
                                             </div>
-
-                                            {/* Loading Card */}
-                                            <motion.div
-                                                whileHover={{
-                                                    y: -5,
-                                                    scale: 1.02,
-                                                    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
-                                                }}
-                                                transition={{ type: 'spring', stiffness: 300 }}
-                                                className="bg-white dark:bg-gray-900 p-4 rounded-md shadow-md \
-                       border border-transparent hover:border-blue-500 \
-                       hover:shadow-[0_0_10px_2px_rgba(59,130,246,0.7)] \
-                       transition-all duration-300 ease-in-out"
-                                            >
-                                                <div className="text-sm text-gray-400">Loading...</div>
-                                                <h3 className="text-lg font-semibold text-gray-400">Fetching title...</h3>
-                                                <p className="mt-1 text-sm text-gray-400">Loading description...</p>
-                                            </motion.div>
-                                        </motion.div>
-                                    );
-                                })}
-                            </div></div>
-                    ) : (
-                        <div className="max-w-2xl mx-auto p-6">
-                            <AnimatedTimeline items={timeline} />
-                        </div>
-                    )}
-
-                </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </ScrollAnimation>
+                        ) : (
+                            <ScrollAnimation animation="slideUp" delay={300}>
+                                <AnimatedTimeline items={timeline} />
+                            </ScrollAnimation>
+                        )}
+                    </div>
+                </section>
             </main>
         </DashboardLayout>
     );

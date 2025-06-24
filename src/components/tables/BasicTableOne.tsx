@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { useDebounce } from '@/hooks/useDebounce';
+// import { useDebounce } from '@/hooks/useDebounce';
 import { Table, TableBody, TableCell, TableHeader, TableRow } from '../ui/table';
 import Badge from '../ui/badge/Badge';
 import Image from 'next/image';
@@ -16,7 +16,7 @@ import { UserPermissionGuard } from '@/components/common/PermissionGuard';
 import UnauthorizedComponent from '@/components/common/UnauthorizedComponent';
 import * as XLSX from 'xlsx';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiFilter, FiChevronDown, FiChevronUp, FiX, FiDownload } from 'react-icons/fi';
+import { FiFilter, FiChevronDown, FiChevronUp,FiDownload } from 'react-icons/fi';
 import { Dropdown } from '@/components/ui/dropdown/Dropdown';
 import { DropdownItem } from '@/components/ui/dropdown/DropdownItem';
 
@@ -79,7 +79,7 @@ const CustomerTable: React.FC = () => {
   const [allCustomers, setAllCustomers] = useState<Customer[]>([]); // Store last API result
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  // const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const [pageSize, setPageSize] = useState(25);
   const [selectedStatus, setSelectedStatus] = useState(-1);
@@ -142,7 +142,7 @@ const CustomerTable: React.FC = () => {
         setAllCustomers(data.data);
         setCustomerList(data.data);
         setTotalRecords(data.totalRecords);
-        setTotalPages(data.totalPages);
+        // setTotalPages(data.totalPages);
         setIsAuthorized(true);
       } else if (data.isAuthorized === false) {
         setIsAuthorized(false);

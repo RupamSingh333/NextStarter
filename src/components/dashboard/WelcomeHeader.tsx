@@ -15,7 +15,7 @@ interface WelcomeHeaderProps {
 const WelcomeHeader = ({ user, className = '' }: WelcomeHeaderProps) => {
   return (
     <div
-      className={`bg-white dark:bg-gray-800 rounded-xl px-4 py-4 md:px-6 md:py-6 shadow-sm mb-4 md:mb-6 w-full flex flex-col items-start ${className}`}
+      className={`bg-white dark:bg-gray-900 rounded-xl px-4 py-4 md:px-6 md:py-6 shadow-sm mb-4 md:mb-6 w-full flex flex-col items-start ${className}`}
       style={{ zIndex: 20 }}
     >
       <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
