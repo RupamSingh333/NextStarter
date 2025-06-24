@@ -14,6 +14,8 @@ import {
     StarIcon, ClockIcon
 
 } from 'lucide-react';
+import Head from 'next/head';
+
 interface Timeline {
     _id: string;
     customer_id: string;
@@ -63,10 +65,14 @@ export default function Home() {
 
     return (
         <DashboardLayout>
+            <Head>
+              <title>Timeline</title>
+            </Head>
             <main className="flex-1 flex flex-col overflow-y-auto min-h-0 p-0">
-                <div className="p-2 md:p-4 lg:p-8">
-                    <WelcomeHeader user={user} />
-
+                <div className="sticky top-0 z-20 bg-white dark:bg-gray-800">
+                  {user && <WelcomeHeader user={user as any} />}
+                </div>
+                <div className="pt-2 md:pt-4 p-2 md:p-4 lg:p-8">
                     {loading ? (
                         <div className="max-w-2xl mx-auto p-6">
                             <div className="relative border-l-2 border-gray-300 dark:border-gray-700 pl-6">
@@ -93,9 +99,9 @@ export default function Home() {
                                                     boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
                                                 }}
                                                 transition={{ type: 'spring', stiffness: 300 }}
-                                                className="bg-white dark:bg-gray-900 p-4 rounded-md shadow-md 
-                       border border-transparent hover:border-blue-500 
-                       hover:shadow-[0_0_10px_2px_rgba(59,130,246,0.7)] 
+                                                className="bg-white dark:bg-gray-900 p-4 rounded-md shadow-md \
+                       border border-transparent hover:border-blue-500 \
+                       hover:shadow-[0_0_10px_2px_rgba(59,130,246,0.7)] \
                        transition-all duration-300 ease-in-out"
                                             >
                                                 <div className="text-sm text-gray-400">Loading...</div>
