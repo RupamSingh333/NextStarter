@@ -1,5 +1,5 @@
 'use client';
-import { motion } from 'framer-motion';
+// import { motion } from 'framer-motion';
 import AnimatedTimeline from '@/components/timeline/AnimatedTimeline';
 import WelcomeHeader from '@/components/dashboard/WelcomeHeader';
 import DashboardLayout from '@/components/layout/DashboardLayout';
@@ -30,14 +30,14 @@ interface Timeline {
 
 
 export default function Home() {
-    const icons = [
-        UserIcon,
-        CheckCircleIcon,
-        CreditCardIcon,
-        GiftIcon,
-        CalendarIcon,
-        StarIcon, ClockIcon
-    ];
+    // const icons = [
+    //     UserIcon,
+    //     CheckCircleIcon,
+    //     CreditCardIcon,
+    //     GiftIcon,
+    //     CalendarIcon,
+    //     StarIcon, ClockIcon
+    // ];
     const hasFetched = useRef(false);
     const { user } = useAuth();
     const [timeline, setTimeline] = useState<Timeline[]>([]);

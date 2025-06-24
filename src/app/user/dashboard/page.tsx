@@ -5,9 +5,10 @@ import WelcomeHeader from '@/components/dashboard/WelcomeHeader';
 import PaymentBreakdown from '@/components/dashboard/PaymentBreakdown';
 // import Header from '@/components/home/Header';
 // import Footer from '@/components/home/Footer';
-import {  useEffect } from 'react';
+import { useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import Head from 'next/head';
+import { User } from '@/types/User';
 // import { formatDistanceToNow } from 'date-fns';
 
 export default function DashboardPage() {
@@ -16,7 +17,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     checkAuth();
-  }, []);
+  }, [checkAuth]);
 
   if (loading) {
     return (
@@ -52,7 +53,7 @@ export default function DashboardPage() {
         </Head>
         {user && (
           <div className="sticky top-0 z-20 bg-white dark:bg-gray-800">
-            <WelcomeHeader user={user as any} />
+            <WelcomeHeader user={user as unknown as User} />
           </div>
         )}
         <div className="pt-2 md:pt-4 flex-1 flex flex-col">
