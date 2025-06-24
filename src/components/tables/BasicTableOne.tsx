@@ -16,10 +16,13 @@ import { UserPermissionGuard } from '@/components/common/PermissionGuard';
 import UnauthorizedComponent from '@/components/common/UnauthorizedComponent';
 import * as XLSX from 'xlsx';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiFilter, FiChevronDown, FiChevronUp, FiX } from 'react-icons/fi';
+import { FiFilter, FiChevronDown, FiChevronUp, FiX, FiDownload } from 'react-icons/fi';
+import { Dropdown } from '@/components/ui/dropdown/Dropdown';
+import { DropdownItem } from '@/components/ui/dropdown/DropdownItem';
 
 interface DecimalValue {
   $numberDecimal: string;
+  lender: string;
 }
 
 interface Payment {
@@ -62,7 +65,7 @@ interface PaymentStatusOption {
   name: string;
 }
 
-const BASE_PAGE_SIZES = [10, 25, 50, 100, 500, 1000];
+const BASE_PAGE_SIZES = [10, 25, 50, 100];
 const PAYMENT_STATUS_OPTIONS: PaymentStatusOption[] = [
   { id: -1, name: 'All' },
   { id: 1, name: 'Paid' },
@@ -72,21 +75,27 @@ const PAYMENT_STATUS_OPTIONS: PaymentStatusOption[] = [
 
 const CustomerTable: React.FC = () => {
   // State management
-  const [allCustomers, setAllCustomers] = useState<Customer[]>([]); // Store all fetched customers
   const [customerList, setCustomerList] = useState<Customer[]>([]);
+  const [allCustomers, setAllCustomers] = useState<Customer[]>([]); // Store last API result
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(25);
   const [selectedStatus, setSelectedStatus] = useState(-1);
   const [filters, setFilters] = useState<Filters>({
     customer: '',
     phone: '',
     lender: '',
   });
+  const [appliedFilters, setAppliedFilters] = useState<Filters>({
+    customer: '',
+    phone: '',
+    lender: '',
+  });
   const [isAuthorized, setIsAuthorized] = useState(true);
   const [showFilterPanel, setShowFilterPanel] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   // Modal state
   const { isOpen, openModal, closeModal } = useModal();
@@ -94,27 +103,34 @@ const CustomerTable: React.FC = () => {
   const [selectedID, setSelectedId] = useState<string>();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Debounced filters
-  const debouncedFilters = useDebounce(filters, 300); // Reduced delay for better responsiveness
-
   // Get page size options based on total records
-  const getPageSizeOptions = useCallback(() => {
-    if (totalRecords === 0) return [10];
-    const filtered = BASE_PAGE_SIZES.filter(size => size < totalRecords);
-    if (!filtered.includes(totalRecords)) {
-      filtered.push(totalRecords);
-    }
-    return [...new Set(filtered)].sort((a, b) => a - b);
-  }, [totalRecords]);
+  // const getPageSizeOptions = useCallback(() => {
+  //   if (totalRecords === 0) return [10, 25, 50, 100];
+  //   const filtered = BASE_PAGE_SIZES.filter(size => size < totalRecords);
+  //   if (totalRecords > 0 && !filtered.includes(totalRecords)) {
+  //     filtered.push(totalRecords);
+  //   }
+  //   return [...new Set([10, 25, 50, 100, ...filtered])].sort((a, b) => a - b);
+  // }, [totalRecords]);
 
-  const pageSizeOptions = getPageSizeOptions();
+  // const pageSizeOptions = getPageSizeOptions();
+  const pageSizeOptions = BASE_PAGE_SIZES;
 
-  // Fetch customers data
+  // Fetch customers data (server-side)
   const fetchCustomers = useCallback(async () => {
     setLoading(true);
     try {
+      const params = new URLSearchParams({
+        perPage: pageSize.toString(),
+        page: currentPage.toString(),
+        status: selectedStatus.toString(),
+        customer: appliedFilters.customer,
+        phone: appliedFilters.phone,
+        lender: appliedFilters.lender,
+      });
+
       const response = await fetch(
-        `/api/admin/customers/list?perPage=1000`, // Fetch larger initial dataset
+        `/api/admin/customers/list?${params.toString()}`,
         { credentials: 'include' }
       );
 
@@ -124,77 +140,85 @@ const CustomerTable: React.FC = () => {
 
       if (data.success) {
         setAllCustomers(data.data);
+        setCustomerList(data.data);
         setTotalRecords(data.totalRecords);
-        setTotalPages(Math.ceil(data.totalRecords / 1000)); // Initial pagination based on fetch
+        setTotalPages(data.totalPages);
         setIsAuthorized(true);
       } else if (data.isAuthorized === false) {
         setIsAuthorized(false);
+        setCustomerList([]);
+        setAllCustomers([]);
+        setTotalRecords(0);
+      } else {
+        setCustomerList([]);
+        setAllCustomers([]);
+        setTotalRecords(0);
       }
     } catch (error) {
       console.error('Error fetching customers:', error);
       toast.error('Failed to fetch customers');
+      setCustomerList([]);
+      setAllCustomers([]);
+      setTotalRecords(0);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [currentPage, pageSize, selectedStatus, appliedFilters]);
 
-  // Filter customers client-side
-  const filteredCustomers = useMemo(() => {
-    let result = [...allCustomers];
-
-    // Apply status filter
-    if (selectedStatus !== -1) {
-      result = result.filter(customer =>
-        selectedStatus === 1 ? customer.isPaid :
-          selectedStatus === 0 ? !customer.isPaid :
-            selectedStatus === 3 ? customer.isLogin : true
-      );
-    }
-
-    // Apply text filters
-    if (debouncedFilters.customer) {
-      result = result.filter(customer =>
-        customer.customer.toLowerCase().includes(debouncedFilters.customer.toLowerCase())
-      );
-    }
-    if (debouncedFilters.phone) {
-      result = result.filter(customer =>
-        customer.phone.includes(debouncedFilters.phone)
-      );
-    }
-
-    if (debouncedFilters.lender) {
-      result = result.filter(customer =>
-        customer.lender_name?.toLowerCase().includes(debouncedFilters.lender.toLowerCase()) || false
-      );
-    }
-
-    return result;
-  }, [allCustomers, selectedStatus, debouncedFilters]);
-
-  // Update paginated list
-  useEffect(() => {
-    const start = (currentPage - 1) * pageSize;
-    const end = start + pageSize;
-    setCustomerList(filteredCustomers.slice(start, end));
-    setTotalPages(Math.ceil(filteredCustomers.length / pageSize));
-    setTotalRecords(filteredCustomers.length);
-  }, [currentPage, pageSize, filteredCustomers]);
-
-  // Initial fetch
+  // Initial fetch and fetch on dependency change
   useEffect(() => {
     fetchCustomers();
   }, [fetchCustomers]);
 
-  // Handle filter changes
+  // Client-side filter logic (remove client-side pagination)
+  const filteredCustomers = useMemo(() => {
+    let result = [...allCustomers];
+    if (filters.customer) {
+      result = result.filter(customer =>
+        customer.customer.toLowerCase().includes(filters.customer.toLowerCase())
+      );
+    }
+    if (filters.phone) {
+      result = result.filter(customer =>
+        customer.phone.includes(filters.phone)
+      );
+    }
+    if (filters.lender) {
+      result = result.filter(customer =>
+        customer.lender_name?.toLowerCase().includes(filters.lender.toLowerCase()) || false
+      );
+    }
+    return result;
+  }, [allCustomers, filters]);
+
+  // Instead, set customerList directly from API response
+  useEffect(() => {
+    setCustomerList(filteredCustomers);
+  }, [filteredCustomers]);
+
+  // On page change, call API (already handled by fetchCustomers useEffect)
+  // When filters/search are applied, always start from page 1
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [appliedFilters, selectedStatus, pageSize]);
+
+  // Handle filter changes (client-side filtering only)
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFilters(prev => ({ ...prev, [name]: value }));
-    setCurrentPage(1);
+  };
+
+  const handleSearch = () => {
+    setAppliedFilters({ ...filters });
   };
 
   const resetFilters = () => {
     setFilters({
+      customer: '',
+      phone: '',
+      lender: '',
+    });
+    setAppliedFilters({
       customer: '',
       phone: '',
       lender: '',
@@ -227,7 +251,7 @@ const CustomerTable: React.FC = () => {
       }
 
       toast.success("Payment type updated successfully");
-      fetchCustomers(); // Refetch to update the cached data
+      fetchCustomers(); // Refetch to update the list
     } catch (error) {
       console.error("Update error:", error);
       toast.error(error instanceof Error ? error.message : "Failed to update payment type");
@@ -236,10 +260,10 @@ const CustomerTable: React.FC = () => {
     }
   };
 
- const handleDownloadExcel = () => {
+  const generateExcel = (data: Customer[], fileNamePrefix: string) => {
     // Prepare data for Excel
-    const data = customerList.map((cust, idx) => ({
-      'Sr. No.': (currentPage - 1) * pageSize + idx + 1,
+    const excelData = data.map((cust, idx) => ({
+      'Sr. No.': idx + 1,
       'Customer': cust.customer,
       'Phone': cust.phone,
       'Fore Closure': Number(cust.fore_closure),
@@ -251,8 +275,10 @@ const CustomerTable: React.FC = () => {
       'Status': cust.isPaid ? 'Paid' : 'Pending',
       'Lender': cust?.lender_name || "N/A",
     }));
+
     // Create sheet
-    const ws = XLSX.utils.json_to_sheet(data);
+    const ws = XLSX.utils.json_to_sheet(excelData);
+
     // Add header row manually for bold/freeze/filter
     const header = [
       'Sr. No.',
@@ -268,6 +294,7 @@ const CustomerTable: React.FC = () => {
       'Lender',
     ];
     XLSX.utils.sheet_add_aoa(ws, [header], { origin: 'A1' });
+
     // Style header row: bold, dark text, neutral background
     header.forEach((_, idx) => {
       const cell = ws[XLSX.utils.encode_cell({ r: 0, c: idx })];
@@ -277,30 +304,34 @@ const CustomerTable: React.FC = () => {
         alignment: { horizontal: 'center', vertical: 'center' },
       };
     });
+
     // Freeze header row (for both Excel and Google Sheets compatibility)
     ws['!freeze'] = { xSplit: 0, ySplit: 1 };
     ws['!panes'] = [{ ySplit: 1, topLeftCell: 'A2', activePane: 'bottomLeft', state: 'frozen' }];
     // Add autofilter to header row
-    ws['!autofilter'] = { ref: `A1:K${data.length + 2}` };
+    ws['!autofilter'] = { ref: `A1:K${excelData.length + 2}` };
+
     // Set column widths
     ws['!cols'] = [
       { wch: 8 }, { wch: 18 }, { wch: 14 }, { wch: 14 }, { wch: 14 },
       { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 22 }, { wch: 10 }
     ];
+
     // Add totals row
     const totalRow = [
       '', 'Total', '',
-      data.reduce((sum, d) => sum + (d['Fore Closure'] || 0), 0),
-      data.reduce((sum, d) => sum + (d['Settlement'] || 0), 0),
-      data.reduce((sum, d) => sum + (d['Min. Part Payment'] || 0), 0),
-      data.reduce((sum, d) => sum + (d['Foreclosure Reward'] || 0), 0),
-      data.reduce((sum, d) => sum + (d['Settlement Reward'] || 0), 0),
-      data.reduce((sum, d) => sum + (d['Min. Part Payment Reward'] || 0), 0),
+      excelData.reduce((sum, d) => sum + (d['Fore Closure'] || 0), 0),
+      excelData.reduce((sum, d) => sum + (d['Settlement'] || 0), 0),
+      excelData.reduce((sum, d) => sum + (d['Min. Part Payment'] || 0), 0),
+      excelData.reduce((sum, d) => sum + (d['Foreclosure Reward'] || 0), 0),
+      excelData.reduce((sum, d) => sum + (d['Settlement Reward'] || 0), 0),
+      excelData.reduce((sum, d) => sum + (d['Min. Part Payment Reward'] || 0), 0),
       '',
     ];
     XLSX.utils.sheet_add_aoa(ws, [totalRow], { origin: -1 });
+
     // Style totals row: bold, light neutral background
-    const totalRowIdx = data.length + 1;
+    const totalRowIdx = excelData.length + 1;
     for (let c = 0; c < header.length; c++) {
       const cell = ws[XLSX.utils.encode_cell({ r: totalRowIdx, c })];
       if (cell) cell.s = {
@@ -309,13 +340,50 @@ const CustomerTable: React.FC = () => {
         alignment: { horizontal: 'center', vertical: 'center' },
       };
     }
+
     // Name file with date/time
     const now = new Date();
     const pad = (n: number) => n.toString().padStart(2, '0');
-    const fileName = `customers_list_${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}_${pad(now.getHours())}_${pad(now.getMinutes())}-${pad(now.getMilliseconds())}.xlsx`;
+    const fileName = `${fileNamePrefix}_${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}_${pad(now.getHours())}_${pad(now.getMinutes())}-${pad(now.getMilliseconds())}.xlsx`;
+
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Customers');
     XLSX.writeFile(wb, fileName);
+  };
+
+  const handleDownload = async (type: 'all' | 'filtered') => {
+    const toastId = toast.loading(`Preparing download...`);
+    try {
+      const params = new URLSearchParams({
+        perPage: '100000', // Fetch all records for download
+        page: '1',
+      });
+
+      if (type === 'filtered') {
+        params.set('status', selectedStatus.toString());
+        params.set('customer', appliedFilters.customer);
+        params.set('phone', appliedFilters.phone);
+        params.set('lender', appliedFilters.lender);
+      }
+
+      const response = await fetch(`/api/admin/customers/list?${params.toString()}`, {
+        credentials: 'include',
+      });
+
+      const result = await response.json();
+
+      if (result.success && result.data.length > 0) {
+        toast.success('Starting download...', { id: toastId });
+        generateExcel(result.data, type === 'all' ? 'all_customers' : 'filtered_customers');
+      } else if (result.success && result.data.length === 0) {
+        toast.error('No data to download.', { id: toastId });
+      } else {
+        throw new Error(result.message || 'Failed to fetch data');
+      }
+    } catch (error) {
+      console.error('Download error:', error);
+      toast.error(error instanceof Error ? error.message : 'An unknown error occurred', { id: toastId });
+    }
   };
 
   if (!isAuthorized) {
@@ -332,6 +400,7 @@ const CustomerTable: React.FC = () => {
 
       {/* Main Filters Section */}
       <div className="p-4 space-y-4 md:space-y-0 md:flex md:items-center md:justify-between md:gap-4 border-b border-gray-200 dark:border-white/[0.05]">
+        {/* Filters (Page Size, Payment Status) - LEFT */}
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
           {/* Page Size Selector */}
           <div className="flex items-center gap-2 min-w-[150px] ">
@@ -344,7 +413,7 @@ const CustomerTable: React.FC = () => {
                 setPageSize(Number(e.target.value));
                 setCurrentPage(1);
               }}
-              className="w-full py-2 pl-3 pr-8 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg appearance-none dark:bg-dark-900 h-9 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 cursor-pointer"
+              className="w-full py-1.5 pl-3 pr-8 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg appearance-none dark:bg-dark-900 h-8 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 cursor-pointer"
             >
               {pageSizeOptions.map((size) => (
                 <option key={size} value={size}>
@@ -365,7 +434,7 @@ const CustomerTable: React.FC = () => {
                 setSelectedStatus(Number(e.target.value));
                 setCurrentPage(1);
               }}
-              className="w-full py-2 pl-3 pr-8 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg appearance-none dark:bg-dark-900 h-9 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 cursor-pointer"
+              className="w-full py-1.5 pl-3 pr-8 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg appearance-none dark:bg-dark-900 h-8 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 cursor-pointer"
             >
               {PAYMENT_STATUS_OPTIONS.map((status) => (
                 <option key={status.id} value={status.id}>
@@ -374,32 +443,45 @@ const CustomerTable: React.FC = () => {
               ))}
             </select>
           </div>
-
-          {/* Toggle Filter Panel Button */}
-          <a
+        </div>
+        {/* Action Buttons: Advanced Filter + Download Dropdown (RIGHT) */}
+        <div className="flex items-center gap-2">
+          {/* Advanced Filter Button */}
+          <Button
+            size="sm"
+            variant="outline"
+            className="inline-flex items-center px-4 py-1.5 h-8 rounded-full font-medium text-sm bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500"
             onClick={() => setShowFilterPanel(!showFilterPanel)}
-            className="inline-flex items-center px-5 py-3 justify-center gap-1 rounded-full font-medium text-sm bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500 cursor-pointer"
           >
             <FiFilter className="w-4 h-4" />
             {showFilterPanel ? 'Hide Filters' : 'Advanced Filters'}
             {showFilterPanel ? <FiChevronUp className="w-4 h-4" /> : <FiChevronDown className="w-4 h-4" />}
-          </a>
-          <a
-            onClick={resetFilters}
-            className="inline-flex items-center px-5 py-3 justify-center gap-1 rounded-full font-medium text-sm bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500 cursor-pointer"
-          >
-            <FiX className="w-4 h-4" />
-            Reset Filters
-          </a>
+          </Button>
+          {/* Excel Download Dropdown */}
+          <div className="relative">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="dropdown-toggle inline-flex items-center justify-center gap-1 rounded-full font-medium text-sm px-4 py-1.5 h-8 bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500"
+            >
+              <FiDownload className="w-4 h-4" />
+              Download
+              <FiChevronDown className="w-4 h-4" />
+            </Button>
+            <Dropdown
+              isOpen={isDropdownOpen}
+              onClose={() => setIsDropdownOpen(false)}
+            >
+              <DropdownItem onClick={() => { handleDownload('filtered'); setIsDropdownOpen(false); }}>
+                Download Filtered
+              </DropdownItem>
+              <DropdownItem onClick={() => { handleDownload('all'); setIsDropdownOpen(false); }}>
+                Download All
+              </DropdownItem>
+            </Dropdown>
+          </div>
         </div>
-
-        {/* Excel Download Button */}
-        <a
-          onClick={handleDownloadExcel}
-          className="inline-flex items-center px-5 py-3 justify-center gap-1 rounded-full font-medium text-sm bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500 cursor-pointer"
-        >
-          Download
-        </a>
       </div>
 
       {/* Advanced Filter Panel */}
@@ -443,8 +525,6 @@ const CustomerTable: React.FC = () => {
                 />
               </div>
 
-
-
               {/* Lender Search */}
               <div className="space-y-1">
                 <label className="text-sm font-medium text-gray-700 dark:text-white">
@@ -458,6 +538,31 @@ const CustomerTable: React.FC = () => {
                   className="w-full py-2 px-3 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg dark:bg-dark-900 h-9 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                   placeholder="Search lender"
                 />
+              </div>
+
+              {/* Search & Reset Buttons */}
+              <div className="flex items-end pt-3 gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="inline-flex items-center px-4 py-1.5 h-8 rounded-full font-medium text-sm bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500"
+                  onClick={handleSearch}
+                  disabled={
+                    !filters.customer.trim() &&
+                    !filters.phone.trim() &&
+                    !filters.lender.trim()
+                  }
+                >
+                  Search
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="inline-flex items-center px-4 py-1.5 h-8 rounded-full font-medium text-sm bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500"
+                  onClick={resetFilters}
+                >
+                  Reset
+                </Button>
               </div>
             </div>
           </motion.div>
@@ -501,89 +606,98 @@ const CustomerTable: React.FC = () => {
             </TableHeader>
 
             <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-              {customerList.map((cust, index) => (
-                <TableRow key={cust._id}>
-                  <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400">
-                    {(currentPage - 1) * pageSize + index + 1}
-                  </TableCell>
-                  <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-800 dark:text-white/90">
-                    <span className="inline-flex items-center gap-1 mt-1">
-                      {cust.customer}
-                    </span>
-                    <br />
-                    <span className="inline-flex items-center gap-1 mt-1">
-                      {cust.phone}
-                    </span>
-                  </TableCell>
-                  <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400">
-                    {cust?.lender_name || "N/A"}
-                  </TableCell>
-                  <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400">
-                    ₹{cust.fore_closure}
-                    <br />
-                    <Badge size="sm" color='success'>
-                      ₹{cust.foreclosure_reward.$numberDecimal}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400">
-                    ₹{cust.settlement.$numberDecimal}
-                    <br />
-                    <Badge size="sm" color='success'>
-                      ₹{cust.settlement_reward.$numberDecimal}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400">
-                    ₹{cust.minimum_part_payment.$numberDecimal}
-                    <br />
-                    <Badge size="sm" color='success'>
-                      ₹{cust.minimum_part_payment_reward.$numberDecimal}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="px-5 py-1 text-start text-theme-sm">
-                    <Badge size="sm" color={cust.isPaid ? 'success' : 'warning'}>
-                      {cust.isPaid ? 'Paid' : 'Pending'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="px-5 py-1 text-start">
-                    <div className="flex flex-wrap gap-2">
-                      {cust.payments.map((p) => (
-                        <a
-                          key={p._id}
-                          href={p.screen_shot}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <Image
-                            src={p.screen_shot}
-                            alt="Screenshot"
-                            width={40}
-                            height={40}
-                            className="rounded border border-gray-300"
-                          />
-                        </a>
-                      ))}
-                    </div>
-                  </TableCell>
-                  <UserPermissionGuard action="update">
-                    <TableCell className="px-5 py-1 text-start space-x-2 flex items-center gap-2">
-                      {(cust.isPaid === false && cust.payments.length > 0) && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSelectedId(cust._id);
-                            openModal();
-                          }}
-                          className="focus:outline-none"
-                        >
-                          <Badge size="sm" color={cust.isActive ? 'success' : 'error'}>
-                            {cust.isActive ? 'Active' : 'Inactive'}
-                          </Badge>
-                        </button>
-                      )}
-                    </TableCell>
-                  </UserPermissionGuard>
+              {!loading && customerList.length === 0 ? (
+                <TableRow>
+                  <td colSpan={9} className="py-10 px-5 text-center text-gray-500 dark:text-gray-400">
+                    No results found.<br />
+                    <span className="text-xs text-gray-400">Click <b>Search</b> to check the server for more results.</span>
+                  </td>
                 </TableRow>
-              ))}
+              ) : (
+                customerList.map((cust, index) => (
+                  <TableRow key={cust._id}>
+                    <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400">
+                      {(currentPage - 1) * pageSize + index + 1}
+                    </TableCell>
+                    <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-800 dark:text-white/90">
+                      <span className="inline-flex items-center gap-1 mt-1">
+                        {cust.customer}
+                      </span>
+                      <br />
+                      <span className="inline-flex items-center gap-1 mt-1">
+                        {cust.phone}
+                      </span>
+                    </TableCell>
+                    <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400">
+                      {cust?.lender_name || "N/A"}
+                    </TableCell>
+                    <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400">
+                      ₹{cust.fore_closure}
+                      <br />
+                      <Badge size="sm" color='success'>
+                        ₹{cust.foreclosure_reward.$numberDecimal}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400">
+                      ₹{cust.settlement.$numberDecimal}
+                      <br />
+                      <Badge size="sm" color='success'>
+                        ₹{cust.settlement_reward.$numberDecimal}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="px-5 py-1 text-start text-theme-sm text-gray-600 dark:text-gray-400">
+                      ₹{cust.minimum_part_payment.$numberDecimal}
+                      <br />
+                      <Badge size="sm" color='success'>
+                        ₹{cust.minimum_part_payment_reward.$numberDecimal}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="px-5 py-1 text-start text-theme-sm">
+                      <Badge size="sm" color={cust.isPaid ? 'success' : 'warning'}>
+                        {cust.isPaid ? 'Paid' : 'Pending'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="px-5 py-1 text-start">
+                      <div className="flex flex-wrap gap-2">
+                        {cust.payments.map((p) => (
+                          <a
+                            key={p._id}
+                            href={p.screen_shot}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <Image
+                              src={p.screen_shot}
+                              alt="Screenshot"
+                              width={40}
+                              height={40}
+                              className="rounded border border-gray-300"
+                            />
+                          </a>
+                        ))}
+                      </div>
+                    </TableCell>
+                    <UserPermissionGuard action="update">
+                      <TableCell className="px-5 py-1 text-start space-x-2 flex items-center gap-2">
+                        {(cust.isPaid === false && cust.payments.length > 0) && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedId(cust._id);
+                              openModal();
+                            }}
+                            className="focus:outline-none"
+                          >
+                            <Badge size="sm" color={cust.isActive ? 'success' : 'error'}>
+                              {cust.isActive ? 'Active' : 'Inactive'}
+                            </Badge>
+                          </button>
+                        )}
+                      </TableCell>
+                    </UserPermissionGuard>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </div>
@@ -593,7 +707,7 @@ const CustomerTable: React.FC = () => {
       <div className="flex justify-between items-center px-5 py-4">
         <Pagination
           currentPage={currentPage}
-          totalPages={totalPages}
+          totalPages={Math.ceil(totalRecords / pageSize)}
           totalItems={totalRecords}
           onPageChange={(page) => setCurrentPage(page)}
         />
