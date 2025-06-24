@@ -5,15 +5,15 @@ import WelcomeHeader from '@/components/dashboard/WelcomeHeader';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/context/AuthContext';
 import { useState, useEffect, useRef } from 'react';
-import {
-    UserIcon,
-    CheckCircleIcon,
-    CreditCardIcon,
-    GiftIcon,
-    CalendarIcon,
-    StarIcon, ClockIcon
+// import {
+//     UserIcon,
+//     CheckCircleIcon,
+//     CreditCardIcon,
+//     GiftIcon,
+//     CalendarIcon,
+//     StarIcon, ClockIcon
 
-} from 'lucide-react';
+// } from 'lucide-react';
 import Head from 'next/head';
 import { User } from '@/types/User';
 import ScrollAnimation from '@/components/common/ScrollAnimation';
