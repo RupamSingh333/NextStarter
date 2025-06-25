@@ -539,10 +539,10 @@ export default function UsersListTable() {
             )}
 
             <UserPermissionGuard action="create">
-                <div className="flex justify-between items-center p-4 gap-4 flex-wrap">
+                <div className="flex flex-col gap-4 p-4">
                     {/* Main Filters Section */}
-                    <div className="p-4 space-y-4 md:space-y-0 md:flex md:items-center md:justify-between md:gap-4 border-b border-gray-200 dark:border-white/[0.05]">
-                        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+                    <div className="border-b border-gray-200 dark:border-white/[0.05] flex flex-col gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             {/* Page Size Selector */}
                             <div className="flex items-center gap-2 min-w-[150px]">
                                 <label className="text-sm font-medium text-gray-700 dark:text-white whitespace-nowrap">
@@ -554,7 +554,7 @@ export default function UsersListTable() {
                                         setPageSize(Number(e.target.value));
                                         setCurrentPage(1);
                                     }}
-                                    className="w-full py-2 pl-3 pr-8 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg appearance-none dark:bg-dark-900 h-9 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 cursor-pointer"
+                                    className="w-full py-2 pl-3 pr-8 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg appearance-none dark:bg-dark-900 h-9 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 cursor-pointer"
                                 >
                                     {pageSizeOptions.map((size) => (
                                         <option key={size} value={size}>
@@ -564,77 +564,73 @@ export default function UsersListTable() {
                                 </select>
                             </div>
 
-                            {/* Toggle Filter Panel Button */}
+                            {/* Advanced Filter Toggle */}
                             <a
                                 onClick={() => setShowFilterPanel(!showFilterPanel)}
-                                className="inline-flex items-center px-5 py-3 justify-center gap-1 rounded-full font-medium text-sm bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500 cursor-pointer"
+                                className="inline-flex items-center px-4 py-2 justify-center gap-2 rounded-full font-medium text-sm bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500 cursor-pointer"
                             >
                                 <FiFilter className="w-4 h-4" />
-                                {showFilterPanel ? 'Hide Filters' : 'Advanced Filters'}
+                                {showFilterPanel ? "Hide Filters" : "Advanced Filters"}
                                 {showFilterPanel ? <FiChevronUp className="w-4 h-4" /> : <FiChevronDown className="w-4 h-4" />}
                             </a>
+
+                            {/* Reset Filters */}
                             <a
                                 onClick={resetFilters}
-                                className="inline-flex items-center px-5 py-3 justify-center gap-1 rounded-full font-medium text-sm bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500 cursor-pointer"
+                                className="inline-flex items-center px-4 py-2 justify-center gap-2 rounded-full font-medium text-sm bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500 cursor-pointer"
                             >
                                 <FiX className="w-4 h-4" />
                                 Reset Filters
                             </a>
                         </div>
 
-                        {/* Excel Download Button - floated right */}
-                       
-                    </div>
-                     <div className="ml-auto">
-                           
-                             <a
+                        {/* Add User & Download - 2nd row on small devices */}
+                        <div className=" mb-2 grid grid-cols-1 sm:grid-cols-2 gap-4 md:flex md:justify-end">
+                            <a
                                 onClick={handleCreateClick}
-                                className="mr-2 inline-flex items-center px-5 py-3 justify-center gap-1 rounded-full font-medium text-sm bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500 cursor-pointer"
+                                className="inline-flex items-center px-4 py-2 justify-center gap-2 rounded-full font-medium text-sm bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500 cursor-pointer"
                             >
-                              Add User
+                                Add User
                             </a>
                             <a
                                 onClick={handleDownloadExcel}
-                                className="inline-flex items-center px-5 py-3 justify-center gap-1 rounded-full font-medium text-sm bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500 cursor-pointer"
+                                className="inline-flex items-center px-4 py-2 justify-center gap-2 rounded-full font-medium text-sm bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500 cursor-pointer"
                             >
                                 Download
                             </a>
                         </div>
+                    </div>
 
+                    {/* Advanced Filter Panel */}
                     <AnimatePresence>
                         {showFilterPanel && (
                             <motion.div
                                 initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: 'auto' }}
+                                animate={{ opacity: 1, height: "auto" }}
                                 exit={{ opacity: 0, height: 0 }}
                                 transition={{ duration: 0.3, ease: "easeInOut" }}
                                 className="overflow-hidden w-full"
                             >
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-white/[0.05]">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-white/[0.05]">
                                     <div className="space-y-1">
-                                        <label className="text-sm font-medium text-gray-700 dark:text-white">
-                                            Name:
-                                        </label>
+                                        <label className="text-sm font-medium text-gray-700 dark:text-white">Name:</label>
                                         <input
                                             type="text"
                                             name="name"
                                             value={filters.name}
                                             onChange={handleFilterChange}
-                                            className="w-full py-2 px-3 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg dark:bg-dark-900 h-9 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                                            className="w-full py-2 px-3 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg dark:bg-dark-900 h-9 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                                             placeholder="Search by name"
                                         />
                                     </div>
-
                                     <div className="space-y-1">
-                                        <label className="text-sm font-medium text-gray-700 dark:text-white">
-                                            Email:
-                                        </label>
+                                        <label className="text-sm font-medium text-gray-700 dark:text-white">Email:</label>
                                         <input
                                             type="text"
                                             name="email"
                                             value={filters.email}
                                             onChange={handleFilterChange}
-                                            className="w-full py-2 px-3 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg dark:bg-dark-900 h-9 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                                            className="w-full py-2 px-3 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg dark:bg-dark-900 h-9 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                                             placeholder="Search by email"
                                         />
                                     </div>
@@ -643,6 +639,7 @@ export default function UsersListTable() {
                         )}
                     </AnimatePresence>
                 </div>
+
             </UserPermissionGuard>
 
             <div className="max-w-full overflow-x-auto">

@@ -16,7 +16,7 @@ import { UserPermissionGuard } from '@/components/common/PermissionGuard';
 import UnauthorizedComponent from '@/components/common/UnauthorizedComponent';
 import * as XLSX from 'xlsx';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiFilter, FiChevronDown, FiChevronUp,FiDownload } from 'react-icons/fi';
+import { FiFilter, FiChevronDown, FiChevronUp, FiDownload } from 'react-icons/fi';
 import { Dropdown } from '@/components/ui/dropdown/Dropdown';
 import { DropdownItem } from '@/components/ui/dropdown/DropdownItem';
 
@@ -52,6 +52,7 @@ interface Customer {
   isActive: boolean;
   payments: Payment[];
   lender_name: string;
+  verified_by: string;
 }
 
 interface Filters {
@@ -274,6 +275,7 @@ const CustomerTable: React.FC = () => {
       'Min. Part Payment Reward': Number(cust.minimum_part_payment_reward.$numberDecimal),
       'Status': cust.isPaid ? 'Paid' : 'Pending',
       'Lender': cust?.lender_name || "N/A",
+      'Verified By': cust?.verified_by || "N/A",
     }));
 
     // Create sheet
@@ -292,6 +294,7 @@ const CustomerTable: React.FC = () => {
       'Min. Part Payment Reward',
       'Status',
       'Lender',
+       'Verified By'
     ];
     XLSX.utils.sheet_add_aoa(ws, [header], { origin: 'A1' });
 
@@ -309,7 +312,7 @@ const CustomerTable: React.FC = () => {
     ws['!freeze'] = { xSplit: 0, ySplit: 1 };
     ws['!panes'] = [{ ySplit: 1, topLeftCell: 'A2', activePane: 'bottomLeft', state: 'frozen' }];
     // Add autofilter to header row
-    ws['!autofilter'] = { ref: `A1:K${excelData.length + 2}` };
+    ws['!autofilter'] = { ref: `A1:L${excelData.length + 2}` };
 
     // Set column widths
     ws['!cols'] = [
@@ -355,7 +358,7 @@ const CustomerTable: React.FC = () => {
     const toastId = toast.loading(`Preparing download...`);
     try {
       const params = new URLSearchParams({
-        perPage: '100000', // Fetch all records for download
+        perPage: pageSize.toString(), // Fetch all records for download
         page: '1',
       });
 
@@ -401,7 +404,7 @@ const CustomerTable: React.FC = () => {
       {/* Main Filters Section */}
       <div className="p-4 space-y-4 md:space-y-0 md:flex md:items-center md:justify-between md:gap-4 border-b border-gray-200 dark:border-white/[0.05]">
         {/* Filters (Page Size, Payment Status) - LEFT */}
-        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+        <div className="flex flex-col sm:flex-row gap-4 justify-between ">
           {/* Page Size Selector */}
           <div className="flex items-center gap-2 min-w-[150px] ">
             <label className="text-sm font-medium text-gray-700 dark:text-white whitespace-nowrap">
@@ -413,7 +416,7 @@ const CustomerTable: React.FC = () => {
                 setPageSize(Number(e.target.value));
                 setCurrentPage(1);
               }}
-              className="w-full py-1.5 pl-3 pr-8 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg appearance-none dark:bg-dark-900 h-8 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 cursor-pointer"
+              className="w-full py-1.5 pl-3 pr-8 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg appearance-none dark:bg-dark-900 h-12 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 cursor-pointer"
             >
               {pageSizeOptions.map((size) => (
                 <option key={size} value={size}>
@@ -434,7 +437,7 @@ const CustomerTable: React.FC = () => {
                 setSelectedStatus(Number(e.target.value));
                 setCurrentPage(1);
               }}
-              className="w-full py-1.5 pl-3 pr-8 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg appearance-none dark:bg-dark-900 h-8 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 cursor-pointer"
+              className="w-full py-1.5 pl-3 pr-8 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg appearance-none dark:bg-dark-900 h-12 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 cursor-pointer"
             >
               {PAYMENT_STATUS_OPTIONS.map((status) => (
                 <option key={status.id} value={status.id}>
@@ -445,12 +448,12 @@ const CustomerTable: React.FC = () => {
           </div>
         </div>
         {/* Action Buttons: Advanced Filter + Download Dropdown (RIGHT) */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 justify-end">
           {/* Advanced Filter Button */}
           <Button
             size="sm"
             variant="outline"
-            className="inline-flex items-center px-4 py-1.5 h-8 rounded-full font-medium text-sm bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500"
+            className="inline-flex items-center px-4 py-1.5 h-12 rounded-full font-medium text-sm bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500"
             onClick={() => setShowFilterPanel(!showFilterPanel)}
           >
             <FiFilter className="w-4 h-4" />
@@ -463,7 +466,7 @@ const CustomerTable: React.FC = () => {
               variant="outline"
               size="sm"
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="dropdown-toggle inline-flex items-center justify-center gap-1 rounded-full font-medium text-sm px-4 py-1.5 h-8 bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500"
+              className="dropdown-toggle inline-flex items-center justify-center gap-1 rounded-full font-medium text-sm px-4 py-1.5 h-12 bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500"
             >
               <FiDownload className="w-4 h-4" />
               Download
@@ -474,11 +477,11 @@ const CustomerTable: React.FC = () => {
               onClose={() => setIsDropdownOpen(false)}
             >
               <DropdownItem onClick={() => { handleDownload('filtered'); setIsDropdownOpen(false); }}>
-                Download Filtered
+                Download
               </DropdownItem>
-              <DropdownItem onClick={() => { handleDownload('all'); setIsDropdownOpen(false); }}>
+              {/* <DropdownItem onClick={() => { handleDownload('all'); setIsDropdownOpen(false); }}>
                 Download All
-              </DropdownItem>
+              </DropdownItem> */}
             </Dropdown>
           </div>
         </div>
@@ -489,63 +492,57 @@ const CustomerTable: React.FC = () => {
         {showFilterPanel && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-white/[0.05]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 px-4 py-5 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-white/[0.05]">
               {/* Customer Search */}
               <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700 dark:text-white">
-                  Customer:
-                </label>
+                <label className="text-sm font-medium text-gray-700 dark:text-white">Customer:</label>
                 <input
                   type="text"
                   name="customer"
                   value={filters.customer}
                   onChange={handleFilterChange}
-                  className="w-full py-2 px-3 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg dark:bg-dark-900 h-9 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                  className="w-full py-2 px-3 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg dark:bg-dark-900 h-9 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                   placeholder="Search customers"
                 />
               </div>
 
               {/* Phone Search */}
               <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700 dark:text-white">
-                  Phone:
-                </label>
+                <label className="text-sm font-medium text-gray-700 dark:text-white">Phone:</label>
                 <input
                   type="text"
                   name="phone"
                   value={filters.phone}
                   onChange={handleFilterChange}
-                  className="w-full py-2 px-3 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg dark:bg-dark-900 h-9 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                  className="w-full py-2 px-3 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg dark:bg-dark-900 h-9 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                   placeholder="Search phone"
                 />
               </div>
 
               {/* Lender Search */}
               <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700 dark:text-white">
-                  Lender:
-                </label>
+                <label className="text-sm font-medium text-gray-700 dark:text-white">Lender:</label>
                 <input
                   type="text"
                   name="lender"
                   value={filters.lender}
                   onChange={handleFilterChange}
-                  className="w-full py-2 px-3 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg dark:bg-dark-900 h-9 bg-none shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                  className="w-full py-2 px-3 text-sm text-gray-800 bg-transparent border border-gray-300 rounded-lg dark:bg-dark-900 h-9 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                   placeholder="Search lender"
                 />
               </div>
 
-              {/* Search & Reset Buttons */}
-              <div className="flex items-end pt-3 gap-2">
+              {/* Buttons */}
+              <div className="flex flex-col sm:flex-row sm:items-end sm:gap-2 gap-2 pt-3">
                 <Button
                   size="sm"
                   variant="outline"
-                  className="inline-flex items-center px-4 py-1.5 h-8 rounded-full font-medium text-sm bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500"
+                  className="w-full sm:w-auto inline-flex items-center px-4 py-1.5 h-12 rounded-full font-medium text-sm bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500"
                   onClick={handleSearch}
                   disabled={
                     !filters.customer.trim() &&
@@ -558,7 +555,7 @@ const CustomerTable: React.FC = () => {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="inline-flex items-center px-4 py-1.5 h-8 rounded-full font-medium text-sm bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500"
+                  className="w-full sm:w-auto inline-flex items-center px-4 py-1.5 h-12 rounded-full font-medium text-sm bg-blue-light-500/15 text-blue-light-500 dark:bg-blue-light-500/15 dark:text-blue-light-500"
                   onClick={resetFilters}
                 >
                   Reset
@@ -568,6 +565,7 @@ const CustomerTable: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
 
       {/* Table Section */}
       <div className="max-w-full overflow-x-auto">
@@ -595,6 +593,9 @@ const CustomerTable: React.FC = () => {
                 </TableCell>
                 <TableCell isHeader className="px-5 py-3 font-medium text-start text-theme-xs text-gray-500">
                   Status
+                </TableCell>
+                <TableCell isHeader className="px-5 py-3 font-medium text-start text-theme-xs text-gray-500">
+                  Verified By
                 </TableCell>
                 <TableCell isHeader className="px-5 py-3 font-medium text-start text-theme-xs text-gray-500">
                   Screenshots
@@ -656,6 +657,17 @@ const CustomerTable: React.FC = () => {
                       <Badge size="sm" color={cust.isPaid ? 'success' : 'warning'}>
                         {cust.isPaid ? 'Paid' : 'Pending'}
                       </Badge>
+
+                    </TableCell>
+                    <TableCell className="px-5 py-1 text-start text-theme-sm">
+
+                      {cust.verified_by && (
+                        <Badge size="sm" color='success'> {cust.verified_by}
+
+                        </Badge>
+
+                      )}
+
                     </TableCell>
                     <TableCell className="px-5 py-1 text-start">
                       <div className="flex flex-wrap gap-2">
@@ -677,6 +689,7 @@ const CustomerTable: React.FC = () => {
                         ))}
                       </div>
                     </TableCell>
+
                     <UserPermissionGuard action="update">
                       <TableCell className="px-5 py-1 text-start space-x-2 flex items-center gap-2">
                         {(cust.isPaid === false && cust.payments.length > 0) && (

@@ -10,6 +10,7 @@ import { useAuth } from '@/context/AuthContext';
 import PageLoader from "@/components/ui/loading/PageLoader";
 import StatusIcon from "@/components/common/Icon";
 import { ArrowUpIcon, ArrowDownIcon } from "@/icons";
+import Image from 'next/image';
 
 
 const REQUIRED_HEADERS = [
@@ -64,7 +65,7 @@ export default function UploadCustomersPage() {
             // Wait 2.5 seconds before validating
             setTimeout(() => {
                 validateExcelHeaders(acceptedFiles[0]);
-            }, 2500);
+            }, 10000);
         }
     };
 
@@ -236,64 +237,22 @@ export default function UploadCustomersPage() {
                                     )}
                                     {scanStatus === 'scanning' && (
                                         <div className="relative flex flex-col items-center justify-center w-full h-full">
-                                            <div className="relative">
-                                                <div className="w-[250px] h-[250px] my-5 outline-offset-[10px]">
-                                                    {/* Corner borders */}
-                                                    <div className="absolute left-0 top-0 w-[45px] h-[46px] border-l-[5px] border-t-[5px] border-emerald-400 rounded-tl-[5px]" />
-                                                    <div className="absolute right-0 top-0 w-[45px] h-[46px] border-r-[5px] border-t-[5px] border-emerald-400 rounded-tr-[5px]" />
-                                                    <div className="absolute left-0 bottom-0 w-[45px] h-[46px] border-l-[5px] border-b-[5px] border-emerald-400 rounded-bl-[5px]" />
-                                                    <div className="absolute right-0 bottom-0 w-[45px] h-[46px] border-r-[5px] border-b-[5px] border-emerald-400 rounded-br-[5px]" />
+                                            <Image
+                                                src="/images/white.gif"
+                                                alt="Decorative background"
+                                                 width={372}
+                                    height={472}
+                                                className="object-cover rounded-3xl animate-float dark:hidden "
 
-                                                    {/* Scanning text */}
-                                                    <p className="text-emerald-400 absolute bottom-[-30px] left-[38%] text-base font-semibold animate-[blinker_1s_linear_infinite] uppercase font-sans">
-                                                        <span className="inline-block w-3 h-3 rounded-full bg-emerald-400 relative right-1" />
-                                                        Scanning
-                                                    </p>
+                                            />
+                                            <Image
+                                                src="/images/black.gif"
+                                                alt="Decorative background"
+                                                width={372}
+                                    height={472}
+                                                className="hidden object-cover rounded-3xl animate-float dark:block "
 
-                                                    {/* Animated bar */}
-                                                    <span className="absolute top-[5%] left-[4%] w-2.5 h-[90%] bg-emerald-400 shadow-[0_0_50px_10px_#18c89b] clip-path-[inset(0)] animate-[x_1s_ease-in-out_infinite_alternate,y_1s_ease-in-out_infinite]" />
-                                                </div>
-
-                                                <style jsx global>{`
-                @keyframes move {
-                  0%,
-                  100% {
-                    transform: translateY(190px);
-                  }
-                  50% {
-                    transform: translateY(0%);
-                  }
-                  75% {
-                    transform: translateY(160px);
-                  }
-                }
-
-                @keyframes blinker {
-                  50% {
-                    opacity: 0;
-                  }
-                }
-
-                @keyframes x {
-                  to {
-                    transform: translateX(-100%);
-                    left: 100%;
-                  }
-                }
-
-                @keyframes y {
-                  33% {
-                    clip-path: inset(0 0 0 -100px);
-                  }
-                  50% {
-                    clip-path: inset(0 0 0 0);
-                  }
-                  83% {
-                    clip-path: inset(0 -100px 0 0);
-                  }
-                }
-              `}</style>
-                                            </div>
+                                            />
                                         </div>
                                     )}
                                     {scanStatus === 'success' && (
