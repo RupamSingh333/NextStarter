@@ -52,9 +52,9 @@ export default function DashboardPage() {
           <title>User Dashboard</title>
         </Head>
         {user && (
-          <div className="sticky top-0 z-20 bg-white dark:bg-gray-800">
-            <WelcomeHeader user={user as unknown as User} />
-          </div>
+           <div className="sticky top-0 z-20 bg-white dark:bg-gray-900  backdrop-blur dark:border-gray-800  border-r border-gray-200 shadow-sm  ">
+                    {user && <WelcomeHeader user={user as unknown as User} />}
+                </div>
         )}
         <div className="pt-2 md:pt-4 flex-1 flex flex-col">
           <PaymentBreakdown user={user} loading={loading} />

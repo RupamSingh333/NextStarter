@@ -81,7 +81,7 @@ const PaymentBreakdown = ({ user, loading }: { user: User | null, loading: boole
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 p-2 md:p-4">
+    <div className="grid mx-4 grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 p-2 md:p-4">
       {/* Left side - Payment Cards */}
       <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
         {/* Foreclosure Amount Card */}
@@ -209,8 +209,8 @@ const PaymentBreakdown = ({ user, loading }: { user: User | null, loading: boole
           className={` bg-[#615d57] dark:bg-[#46a75812] rounded-3xl p-4 md:p-6 shadow-xl flex flex-col justify-between ${user.isPaid ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}`}
         >
           <div>
-            <h3 className="text-base md:text-lg font-medium mb-3 md:mb-4">Payment Status</h3>
-            <div className={`text-2xl md:text-3xl font-bold mb-2 ${user.isPaid ? 'text-green-600' : 'text-orange-600'}`}>
+            <h3 className="text-base md:text-lg font-medium mb-2 md:mb-4">Payment Status</h3>
+            <div className={`text-2xl  md:text-2xl font-bold mb-2 ${user.isPaid ? 'text-green-600' : 'text-orange-600'}`}>
               {user.isPaid ? 'Completed ' : 'Pending'}
             </div>
             <div className={`text-xs md:text-sm ${user.isPaid ? 'text-green-700' : 'text-orange-700'}`}>

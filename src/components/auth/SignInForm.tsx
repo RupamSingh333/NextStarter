@@ -16,7 +16,7 @@ import Header from '@/components/home/Header';
 export default function SignInForm() {
   const router = useRouter();
   const { login } = useAuth();
-  const [mobileNumber, setMobileNumber] = useState("8538945025");
+  const [mobileNumber, setMobileNumber] = useState("");
   const [otp, setOtp] = useState("");
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -139,7 +139,7 @@ export default function SignInForm() {
   return (
     <>
       <Header />
-      <div className="mt-4 flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 p-4 sm:p-6">
+      <div className="mt-4 flex items-center justify-center min-h-screen  dark:bg-gray-900 p-4 sm:p-6">
                 
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}

@@ -225,6 +225,7 @@ const AppSidebar: React.FC = () => {
                 </div>
               )}
             </li>
+            
           );
         })}
       </ul>
@@ -368,6 +369,8 @@ const AppSidebar: React.FC = () => {
         </nav>
         {isExpanded || isHovered || isMobileOpen ? <SidebarWidget /> : null}
       </div>
+
+      
     </aside>
   );
 };

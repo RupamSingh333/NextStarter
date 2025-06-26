@@ -104,7 +104,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     <div className="flex h-screen bg-gray-50 dark:bg-gray-950 relative">
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-900 transform transition-all duration-300 ease-in-out md:relative md:translate-x-0 rounded-r-3xl shadow-2xl flex flex-col pt-4 pb-8 overflow-y-auto ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-900 transform transition-all duration-300 ease-in-out md:relative md:translate-x-0  flex flex-col pt-4 pb-8 dark:border-gray-800  border-r border-gray-200  overflow-y-auto ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between h-16 px-6 mb-4">
@@ -143,7 +143,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col rounded-tl-3xl rounded-bl-3xl shadow-2xl bg-gray-100 dark:bg-gray-800">
+      <div className="flex-1 flex flex-col shadow-2xl bg-gray-100 dark:bg-gray-800">
         {/* Mobile Header */}
         <header className="md:hidden bg-white dark:bg-gray-900 shadow-xl rounded-tl-3xl p-4 flex-shrink-0">
           <div className="flex items-center justify-between h-16">
@@ -174,7 +174,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         </header>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto min-h-0">
+        <div className="flex-1  overflow-y-auto max-h-screen">
           {children}
         </div>
       </div>

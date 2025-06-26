@@ -2,21 +2,55 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+const MOBILE_WHATSAPP = process.env.NEXT_PUBLIC_COMPANY_MOBILE_WHATSAPP;
 
 const Footer = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [isPulsing, setIsPulsing] = useState(false);
 
   useEffect(() => {
     // Add fade-in animation
     const timer = setTimeout(() => setIsVisible(true), 100);
-    return () => clearTimeout(timer);
+
+    // Add pulsing animation every 5 seconds
+    const pulseInterval = setInterval(() => {
+      setIsPulsing(true);
+      setTimeout(() => setIsPulsing(false), 1000);
+    }, 5000);
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(pulseInterval);
+    };
   }, []);
 
   return (
     <footer className={`bg-white dark:bg-gray-900 border-t border-purple-100 dark:border-purple-900/20 mt-auto transition-opacity duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
       <div className="container mx-auto px-4 py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center md:text-left">
+        {/* WhatsApp Floating Button */}
+        <div className="fixed bottom-4 right-4 z-[100]">
 
+          <a
+            href={`https://wa.me/${MOBILE_WHATSAPP}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block"
+          >
+            <div className={`relative animate-float ${isPulsing ? 'animate-pulse-once' : ''}`}>
+              <Image
+                src="/images/whatsapp-512.png"
+                alt="WhatsApp chat"
+                width={50}
+                height={50}
+                className={`inline-block hover:opacity-80 transition-all duration-3000 ${isPulsing ? 'scale-100' : 'scale-100'
+                  }`}
+              />
+            </div>
+          </a>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-center md:text-left">
           {/* Column 1: RepayKaro Info */}
           <div className="min-h-[150px]">
             <Link href="/" className="inline-block mb-4">
@@ -107,4 +141,4 @@ const Footer = () => {
   );
 };
 
-export default Footer; 
+export default Footer;

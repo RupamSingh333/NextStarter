@@ -15,9 +15,9 @@ export default function RewardsPage() {
         <title>Rewards</title>
       </Head>
       <main className="flex-1 flex flex-col overflow-y-auto min-h-0 p-0">
-        <div className="sticky top-0 z-20 bg-white dark:bg-gray-800">
-          {user && <WelcomeHeader user={user as unknown as User} />}
-        </div>
+         <div className="sticky top-0 z-20 bg-white dark:bg-gray-900 backdrop-blur dark:border-gray-800  border-r border-gray-200 shadow-sm  ">
+                    {user && <WelcomeHeader user={user as unknown as User} />}
+                </div>
         <div className="pt-2 md:pt-4 p-2 md:p-4 lg:p-8">
           <ScratchCards />
         </div>
